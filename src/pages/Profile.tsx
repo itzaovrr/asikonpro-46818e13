@@ -134,11 +134,11 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Content */}
+        {/* Content - Responsive Grid */}
         <div className="p-4 pb-8">
-          <div className="grid grid-cols-2 gap-3">
-            {mockProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
+            {[...mockProducts, ...mockProducts].map((product, index) => (
+              <ProductCard key={`${product.id}-${index}`} product={product} />
             ))}
           </div>
         </div>

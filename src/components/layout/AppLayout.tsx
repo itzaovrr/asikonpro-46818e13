@@ -2,6 +2,7 @@ import { useState, ReactNode } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileHeader } from "./MobileHeader";
 import { DesktopHeader } from "./DesktopHeader";
+import { DesktopSidebar } from "./DesktopSidebar";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { MobileSearchOverlay } from "@/components/search/MobileSearchOverlay";
@@ -11,6 +12,7 @@ interface AppLayoutProps {
   children: ReactNode;
   showTrustStrip?: boolean;
   showBottomNav?: boolean;
+  showSidebar?: boolean;
   className?: string;
 }
 
@@ -18,6 +20,7 @@ export function AppLayout({
   children, 
   showTrustStrip = true,
   showBottomNav = true,
+  showSidebar = true,
   className 
 }: AppLayoutProps) {
   const isMobile = useIsMobile();
@@ -40,8 +43,11 @@ export function AppLayout({
         <DesktopHeader showTrustStrip={showTrustStrip} cartCount={cartCount} />
       )}
 
-      {/* Sidebar */}
+      {/* Mobile Sidebar (Sheet) */}
       <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
+
+      {/* Desktop Sidebar */}
+      {!isMobile && showSidebar && <DesktopSidebar />}
 
       {/* Mobile Search Overlay */}
       <MobileSearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
@@ -49,9 +55,10 @@ export function AppLayout({
       {/* Main Content */}
       <main 
         className={cn(
-          "min-h-screen",
-          isMobile ? "pt-14" : "pt-[72px]",
+          "min-h-screen transition-all duration-300",
+          isMobile ? "pt-14" : "pt-[120px]",
           isMobile && showBottomNav && "pb-20",
+          !isMobile && showSidebar && "lg:pl-60",
           className
         )}
       >

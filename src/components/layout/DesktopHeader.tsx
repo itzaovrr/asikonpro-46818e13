@@ -1,4 +1,4 @@
-import { ShoppingCart, Users, ShoppingBag } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { SmartSearch } from "@/components/search/SmartSearch";
 import { UserMenu } from "./UserMenu";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { TrustStrip } from "./TrustStrip";
+import { NavigationMenu } from "./NavigationMenu";
 
 interface DesktopHeaderProps {
   showTrustStrip?: boolean;
@@ -21,7 +22,7 @@ export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopH
       {/* Trust Strip */}
       <TrustStrip show={showTrustStrip && !isScrolled} />
 
-      {/* Main Header */}
+      {/* Row 1 - Main Header */}
       <div
         className={cn(
           "bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300",
@@ -44,16 +45,6 @@ export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopH
 
           {/* Right - Icons */}
           <div className="flex items-center gap-2">
-            <Link to="/community">
-              <Button variant="ghost" size="icon" title="Community">
-                <Users className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Link to="/shop">
-              <Button variant="ghost" size="icon" title="Shop">
-                <ShoppingBag className="w-5 h-5" />
-              </Button>
-            </Link>
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative" title="Cart">
                 <ShoppingCart className="w-5 h-5" />
@@ -67,6 +58,18 @@ export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopH
             <NotificationsMenu />
             <UserMenu />
           </div>
+        </div>
+      </div>
+
+      {/* Row 2 - Navigation Menu */}
+      <div
+        className={cn(
+          "bg-background/90 backdrop-blur-sm border-b border-border/50 transition-all duration-300",
+          isScrolled ? "h-0 overflow-hidden opacity-0" : "py-2"
+        )}
+      >
+        <div className="container mx-auto px-4">
+          <NavigationMenu />
         </div>
       </div>
     </header>
