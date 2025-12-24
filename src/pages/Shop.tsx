@@ -1,31 +1,40 @@
-import { Sparkles } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, Heart } from "lucide-react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { CategoryCarousel } from "@/components/carousels";
-import { useProducts } from "@/hooks/useProducts";
+import { ShopFilters } from "@/components/shop/ShopFilters";
+import { useProducts, SortOption } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-const brands = [
-  { id: "featured", name: "Featured", icon: "✨" },
-  { id: "nike", name: "Nike", icon: "👟" },
-  { id: "adidas", name: "Adidas", icon: "🔥" },
-  { id: "gucci", name: "Gucci", icon: "💎" },
-  { id: "zara", name: "Zara", icon: "👗" },
-  { id: "puma", name: "Puma", icon: "🐆" },
-  { id: "reebok", name: "Reebok", icon: "⚡" },
-];
+const MAX_PRICE = 500;
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [activeBrand, setActiveBrand] = useState("featured");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
 
-  const { data: products, isLoading: productsLoading } = useProducts({ limit: 30 });
   const { data: categories, isLoading: categoriesLoading } = useCategories();
+
+  // Get active category ID
+  const activeCategoryId = useMemo(() => {
+    if (activeCategory === "All") return undefined;
+    const category = categories?.find((c) => c.name === activeCategory);
+    return category?.id;
+  }, [activeCategory, categories]);
+
+  // Fetch products with all filters
+  const { data: products, isLoading: productsLoading } = useProducts({
+    limit: 50,
+    categoryId: activeCategoryId,
+    search: searchQuery || undefined,
+    minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
+    maxPrice: priceRange[1] < MAX_PRICE ? priceRange[1] : undefined,
+    sortBy,
+  });
 
   // Transform categories for carousel
   const categoryItems = [
@@ -38,13 +47,19 @@ const Shop = () => {
     })) || []),
   ];
 
-  // Filter products by category
-  const filteredProducts = activeCategory === "All" 
-    ? products 
-    : products?.filter((p) => {
-        const category = categories?.find((c) => c.name === activeCategory);
-        return category ? p.category_id === category.id : true;
-      });
+  // Count active filters
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (priceRange[0] > 0 || priceRange[1] < MAX_PRICE) count++;
+    return count;
+  }, [priceRange]);
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setPriceRange([0, MAX_PRICE]);
+    setSortBy("newest");
+    setActiveCategory("All");
+  };
 
   return (
     <AppLayout>
@@ -62,28 +77,19 @@ const Shop = () => {
           <p className="text-xs text-muted-foreground mt-1">On Streetwear Fridays</p>
         </div>
 
-        {/* Brands Carousel */}
+        {/* Search & Filters */}
         <div className="px-4 lg:px-0">
-          <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-            {brands.map((brand) => (
-              <button
-                key={brand.id}
-                onClick={() => setActiveBrand(brand.id)}
-                className={`flex flex-col items-center gap-1.5 flex-shrink-0 ${
-                  activeBrand === brand.id ? "opacity-100" : "opacity-60"
-                }`}
-              >
-                <div className={`w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-2xl ${
-                  activeBrand === brand.id
-                    ? "gradient-primary"
-                    : "bg-secondary border border-border"
-                }`}>
-                  {brand.icon}
-                </div>
-                <span className="text-xs">{brand.name}</span>
-              </button>
-            ))}
-          </div>
+          <ShopFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            priceRange={priceRange}
+            onPriceChange={setPriceRange}
+            maxPriceLimit={MAX_PRICE}
+            activeFiltersCount={activeFiltersCount}
+            onClearFilters={handleClearFilters}
+          />
         </div>
 
         {/* Categories Carousel */}
@@ -101,7 +107,18 @@ const Shop = () => {
           />
         )}
 
-        {/* Products Grid - Responsive */}
+        {/* Results Count */}
+        <div className="px-4 lg:px-0">
+          <p className="text-sm text-muted-foreground">
+            {productsLoading ? (
+              <Skeleton className="h-4 w-24 inline-block" />
+            ) : (
+              `${products?.length || 0} products found`
+            )}
+          </p>
+        </div>
+
+        {/* Products Grid */}
         <div className="px-4 lg:px-0">
           {productsLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
@@ -113,9 +130,9 @@ const Shop = () => {
                 </div>
               ))}
             </div>
-          ) : filteredProducts && filteredProducts.length > 0 ? (
+          ) : products && products.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
-              {filteredProducts.map((product) => (
+              {products.map((product) => (
                 <Link
                   key={product.id}
                   to={`/product/${product.slug}`}
@@ -165,6 +182,14 @@ const Shop = () => {
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <p className="text-muted-foreground mb-4">No products found</p>
+              {(searchQuery || activeFiltersCount > 0) && (
+                <button
+                  onClick={handleClearFilters}
+                  className="text-primary hover:underline text-sm"
+                >
+                  Clear all filters
+                </button>
+              )}
             </div>
           )}
         </div>
