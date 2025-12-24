@@ -1,24 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type SortOption = "newest" | "price-asc" | "price-desc" | "rating" | "popular";
+
 interface UseProductsOptions {
   categoryId?: string;
   featured?: boolean;
   limit?: number;
   search?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: SortOption;
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
-  const { categoryId, featured, limit = 20, search } = options;
+  const { categoryId, featured, limit = 20, search, minPrice, maxPrice, sortBy = "newest" } = options;
 
   return useQuery({
-    queryKey: ["products", { categoryId, featured, limit, search }],
+    queryKey: ["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy }],
     queryFn: async () => {
       let query = supabase
         .from("products")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(limit);
+        .select("*");
 
       if (categoryId) {
         query = query.eq("category_id", categoryId);
@@ -31,6 +34,36 @@ export function useProducts(options: UseProductsOptions = {}) {
       if (search) {
         query = query.ilike("name", `%${search}%`);
       }
+
+      if (minPrice !== undefined) {
+        query = query.gte("price", minPrice);
+      }
+
+      if (maxPrice !== undefined) {
+        query = query.lte("price", maxPrice);
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case "price-asc":
+          query = query.order("price", { ascending: true });
+          break;
+        case "price-desc":
+          query = query.order("price", { ascending: false });
+          break;
+        case "rating":
+          query = query.order("rating", { ascending: false });
+          break;
+        case "popular":
+          query = query.order("review_count", { ascending: false });
+          break;
+        case "newest":
+        default:
+          query = query.order("created_at", { ascending: false });
+          break;
+      }
+
+      query = query.limit(limit);
 
       const { data, error } = await query;
 
@@ -48,7 +81,7 @@ export function useProduct(slug: string) {
         .from("products")
         .select("*")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
