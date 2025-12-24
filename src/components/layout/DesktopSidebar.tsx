@@ -84,11 +84,19 @@ function NavItem({ icon: Icon, label, href, isActive, isCollapsed, badge }: NavI
 
 interface DesktopSidebarProps {
   className?: string;
+  isCollapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
-export function DesktopSidebar({ className }: DesktopSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export function DesktopSidebar({ 
+  className, 
+  isCollapsed: controlledIsCollapsed,
+  onCollapsedChange 
+}: DesktopSidebarProps) {
+  const [internalIsCollapsed, setInternalIsCollapsed] = useState(false);
   const location = useLocation();
+  const isCollapsed = controlledIsCollapsed ?? internalIsCollapsed;
+  const setIsCollapsed = onCollapsedChange ?? setInternalIsCollapsed;
 
   const mainNavItems = [
     { icon: Home, label: "Home", href: "/" },

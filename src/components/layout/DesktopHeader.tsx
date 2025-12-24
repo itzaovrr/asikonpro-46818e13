@@ -12,13 +12,24 @@ import { NavigationMenu } from "./NavigationMenu";
 interface DesktopHeaderProps {
   showTrustStrip?: boolean;
   cartCount?: number;
+  isSidebarCollapsed?: boolean;
 }
 
-export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopHeaderProps) {
+export function DesktopHeader({ 
+  showTrustStrip = true, 
+  cartCount = 0,
+  isSidebarCollapsed = false 
+}: DesktopHeaderProps) {
   const { isScrolled } = useScrollDirection();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40">
+    <header 
+      className={cn(
+        "fixed top-0 z-40 transition-all duration-300",
+        isSidebarCollapsed ? "left-16 right-0" : "left-60 right-0",
+        "lg:left-0 lg:right-0" // Full width on mobile/tablet
+      )}
+    >
       {/* Trust Strip */}
       <TrustStrip show={showTrustStrip && !isScrolled} />
 
@@ -29,7 +40,12 @@ export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopH
           isScrolled ? "py-2" : "py-3"
         )}
       >
-        <div className="container mx-auto px-4 flex items-center gap-6">
+        <div 
+          className={cn(
+            "mx-auto px-4 flex items-center gap-6 transition-all duration-300",
+            isSidebarCollapsed ? "max-w-7xl" : "container"
+          )}
+        >
           {/* Left - Logo */}
           <Link to="/" className="flex-shrink-0">
             <h1 className={cn(
@@ -41,15 +57,15 @@ export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopH
           </Link>
 
           {/* Center - Search */}
-          <SmartSearch className="flex-1 max-w-xl mx-auto" />
+          <SmartSearch className="flex-1 max-w-2xl mx-auto" />
 
           {/* Right - Icons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative" title="Cart">
+              <Button variant="ghost" size="icon" className="relative h-10 w-10" title="Cart">
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
@@ -68,7 +84,12 @@ export function DesktopHeader({ showTrustStrip = true, cartCount = 0 }: DesktopH
           isScrolled ? "h-0 overflow-hidden opacity-0" : "py-2"
         )}
       >
-        <div className="container mx-auto px-4">
+        <div 
+          className={cn(
+            "mx-auto px-4 flex justify-center transition-all duration-300",
+            isSidebarCollapsed ? "max-w-7xl" : "container"
+          )}
+        >
           <NavigationMenu />
         </div>
       </div>
