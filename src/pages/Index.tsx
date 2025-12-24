@@ -1,11 +1,12 @@
 import { ChevronRight, Gift } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { ProductCard } from "@/components/shop/ProductCard";
 import { PostCard } from "@/components/community/PostCard";
 import { HeroCarousel, ProductCarousel, StoryCarousel } from "@/components/carousels";
-import { mockProducts, mockStories, mockPosts } from "@/lib/mock-data";
+import { mockStories, mockPosts } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
 import heroFashion from "@/assets/hero-fashion-1.jpg";
 
 const heroSlides = [
@@ -32,7 +33,25 @@ const heroSlides = [
   },
 ];
 
+// Transform database product to carousel product format
+const transformProduct = (p: any) => ({
+  id: p.id,
+  name: p.name,
+  brand: "StyleHub",
+  price: p.price,
+  originalPrice: p.original_price || undefined,
+  image: p.image_url || "/placeholder.svg",
+  rating: p.rating || 0,
+  reviews: p.review_count || 0,
+  isNew: false,
+  isTrending: p.is_featured || false,
+  slug: p.slug,
+});
+
 const Index = () => {
+  const { data: products, isLoading: productsLoading } = useProducts({ limit: 20 });
+  const { data: featuredProducts, isLoading: featuredLoading } = useFeaturedProducts(10);
+
   return (
     <AppLayout>
       <div className="space-y-6 lg:space-y-8 pb-4">
@@ -72,11 +91,26 @@ const Index = () => {
 
         {/* Trending Products Carousel */}
         <section>
-          <ProductCarousel 
-            products={[...mockProducts, ...mockProducts]} 
-            title="Trending Now" 
-            viewAllHref="/shop?filter=trending"
-          />
+          {featuredLoading ? (
+            <div className="px-4 lg:px-0">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <div className="flex gap-4 overflow-hidden">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex-shrink-0 w-40">
+                    <Skeleton className="aspect-square rounded-xl mb-2" />
+                    <Skeleton className="h-4 w-full mb-1" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <ProductCarousel
+              products={featuredProducts?.map(transformProduct) || []}
+              title="Trending Now"
+              viewAllHref="/shop?filter=trending"
+            />
+          )}
         </section>
 
         {/* Trending in Community */}
@@ -100,20 +134,84 @@ const Index = () => {
               See All <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
-            {[...mockProducts, ...mockProducts].slice(0, 10).map((product, index) => (
-              <ProductCard key={`${product.id}-${index}`} product={product} />
-            ))}
-          </div>
+          {productsLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+                <div key={i}>
+                  <Skeleton className="aspect-square rounded-xl mb-2" />
+                  <Skeleton className="h-4 w-full mb-1" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
+              {products?.slice(0, 10).map((product) => (
+                <Link
+                  key={product.id}
+                  to={`/product/${product.slug}`}
+                  className="group relative bg-card rounded-xl overflow-hidden border border-border/50 hover:border-primary/30 transition-all duration-300"
+                >
+                  <div className="relative aspect-square overflow-hidden">
+                    <img
+                      src={product.image_url || "/placeholder.svg"}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {product.is_featured && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 text-xs font-medium rounded-full gradient-primary text-foreground">
+                        HOT
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      StyleHub
+                    </p>
+                    <h3 className="font-medium text-sm line-clamp-2 mb-2">{product.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-foreground">${product.price}</span>
+                        {product.original_price && (
+                          <span className="text-xs text-muted-foreground line-through">
+                            ${product.original_price}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <span className="text-amber-400">★</span>
+                        <span>{product.rating || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* New Arrivals Carousel */}
         <section>
-          <ProductCarousel 
-            products={[...mockProducts].reverse()} 
-            title="New Arrivals" 
-            viewAllHref="/shop?filter=new"
-          />
+          {productsLoading ? (
+            <div className="px-4 lg:px-0">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <div className="flex gap-4 overflow-hidden">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex-shrink-0 w-40">
+                    <Skeleton className="aspect-square rounded-xl mb-2" />
+                    <Skeleton className="h-4 w-full mb-1" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <ProductCarousel
+              products={products?.slice().reverse().map(transformProduct) || []}
+              title="New Arrivals"
+              viewAllHref="/shop?filter=new"
+            />
+          )}
         </section>
       </div>
     </AppLayout>
