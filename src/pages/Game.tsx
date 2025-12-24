@@ -1,6 +1,5 @@
-import { ArrowLeft, Trophy, History, BookOpen, UserPlus, ChevronRight, Coins } from "lucide-react";
-import { Link } from "react-router-dom";
-import { MobileLayout } from "@/components/layout/MobileLayout";
+import { Trophy, History, BookOpen, UserPlus, ChevronRight, Coins } from "lucide-react";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { mockChallenges, mockUser } from "@/lib/mock-data";
@@ -35,18 +34,12 @@ const Game = () => {
   const levelProgress = 65;
 
   return (
-    <MobileLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm">
-          <div className="flex items-center justify-between px-4 py-3">
-            <Link to="/" className="p-2 -ml-2 rounded-full hover:bg-secondary transition-colors">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-lg font-bold">Game & Rewards Hub</h1>
-            <div className="w-9" />
-          </div>
-        </header>
+    <AppLayout>
+      <div className="space-y-6 pb-4">
+        {/* Page Title */}
+        <div className="px-4 pt-4">
+          <h1 className="text-xl font-bold">Game & Rewards Hub</h1>
+        </div>
 
         {/* Balance Card */}
         <div className="mx-4">
@@ -125,7 +118,7 @@ const Game = () => {
         </section>
 
         {/* Hot Rewards */}
-        <section className="px-4 pb-4">
+        <section className="px-4">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Hot Rewards</h2>
             <button className="text-sm text-primary flex items-center gap-1">
@@ -163,7 +156,7 @@ const Game = () => {
           </div>
         </section>
       </div>
-    </MobileLayout>
+    </AppLayout>
   );
 };
 

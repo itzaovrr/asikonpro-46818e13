@@ -1,10 +1,8 @@
-import { ArrowLeft, Search, MoreVertical, Settings, MessageCircle, Share2, Shield, Coins, Award, ChevronRight } from "lucide-react";
+import { Search, MoreVertical, Settings, MessageCircle, Share2, Shield, Coins, Award, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { MobileLayout } from "@/components/layout/MobileLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { TrustBadge } from "@/components/ui/trust-badge";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { mockUser, mockProducts } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -15,7 +13,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("Closet (24)");
 
   return (
-    <MobileLayout>
+    <AppLayout showBottomNav={true}>
       <div>
         {/* Cover & Header */}
         <div className="relative">
@@ -24,19 +22,14 @@ const Profile = () => {
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=800')] bg-cover bg-center opacity-30" />
           </div>
 
-          {/* Navigation */}
-          <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4">
-            <Link to="/" className="p-2 rounded-full bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-colors">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-colors">
-                <Search className="h-5 w-5" />
-              </button>
-              <button className="p-2 rounded-full bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-colors">
-                <MoreVertical className="h-5 w-5" />
-              </button>
-            </div>
+          {/* Quick Actions on Cover */}
+          <div className="absolute top-3 right-3 flex items-center gap-2">
+            <button className="p-2 rounded-full bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-colors">
+              <Search className="h-5 w-5" />
+            </button>
+            <button className="p-2 rounded-full bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-colors">
+              <MoreVertical className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Avatar */}
@@ -142,7 +135,7 @@ const Profile = () => {
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-4 pb-8">
           <div className="grid grid-cols-2 gap-3">
             {mockProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -150,7 +143,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-    </MobileLayout>
+    </AppLayout>
   );
 };
 

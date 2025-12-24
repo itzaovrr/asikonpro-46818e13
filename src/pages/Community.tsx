@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { MobileLayout } from "@/components/layout/MobileLayout";
-import { CommunityHeader } from "@/components/community/CommunityHeader";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { CommunityTabs } from "@/components/community/CommunityTabs";
 import { CreateContentFAB } from "@/components/community/CreateContentFAB";
 import { MyFeedTab } from "@/components/community/tabs/MyFeedTab";
@@ -37,23 +36,22 @@ const Community = () => {
   };
 
   return (
-    <MobileLayout>
+    <AppLayout>
       <div className="min-h-screen">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-          <CommunityHeader />
+        {/* Tabs - Sticky below header */}
+        <div className="sticky top-14 md:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b border-border">
           <CommunityTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        </header>
+        </div>
 
         {/* Tab Content */}
-        <main className="pb-20">
+        <main>
           {renderTabContent()}
         </main>
 
         {/* Create Content FAB */}
         <CreateContentFAB />
       </div>
-    </MobileLayout>
+    </AppLayout>
   );
 };
 

@@ -1,6 +1,6 @@
-import { Search, Bell, SlidersHorizontal, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useState } from "react";
-import { MobileLayout } from "@/components/layout/MobileLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { CategoryPill } from "@/components/home/CategoryPill";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { mockProducts, mockCategories } from "@/lib/mock-data";
@@ -19,37 +19,10 @@ const Shop = () => {
   const [activeBrand, setActiveBrand] = useState("featured");
 
   return (
-    <MobileLayout>
-      <div className="space-y-4">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm">
-          <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-bold">Shop</h1>
-            <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full hover:bg-secondary transition-colors">
-                <Bell className="h-5 w-5" />
-              </button>
-              <button className="p-2 rounded-full hover:bg-secondary transition-colors">
-                <SlidersHorizontal className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Search */}
-          <div className="px-4 pb-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search brands, products..."
-                className="w-full h-10 pl-10 pr-4 rounded-full bg-secondary border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
-          </div>
-        </header>
-
+    <AppLayout>
+      <div className="space-y-4 pb-4">
         {/* Points Progress */}
-        <div className="mx-4 p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
+        <div className="mx-4 mt-4 p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
@@ -112,7 +85,7 @@ const Shop = () => {
           </div>
         </div>
       </div>
-    </MobileLayout>
+    </AppLayout>
   );
 };
 

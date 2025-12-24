@@ -1,7 +1,7 @@
-import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MobileLayout } from "@/components/layout/MobileLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { mockProducts } from "@/lib/mock-data";
@@ -35,18 +35,13 @@ const Cart = () => {
   const total = subtotal + shipping;
 
   return (
-    <MobileLayout>
-      <div className="flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-          <div className="flex items-center gap-3 px-4 py-3">
-            <Link to="/shop" className="p-2 -ml-2 rounded-full hover:bg-secondary transition-colors">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-lg font-bold">Shopping Cart</h1>
-            <span className="text-sm text-muted-foreground">({cartItems.length} items)</span>
-          </div>
-        </header>
+    <AppLayout showBottomNav={false}>
+      <div className="flex flex-col min-h-[calc(100vh-56px)]">
+        {/* Page Title */}
+        <div className="px-4 pt-4 pb-2">
+          <h1 className="text-xl font-bold">Shopping Cart</h1>
+          <p className="text-sm text-muted-foreground">{cartItems.length} items</p>
+        </div>
 
         {/* Cart Items */}
         <div className="flex-1 px-4 py-4 space-y-4">
@@ -118,7 +113,7 @@ const Cart = () => {
 
         {/* Order Summary */}
         {cartItems.length > 0 && (
-          <div className="sticky bottom-16 bg-card border-t border-border p-4 space-y-4">
+          <div className="sticky bottom-0 bg-card border-t border-border p-4 space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
@@ -140,7 +135,7 @@ const Cart = () => {
           </div>
         )}
       </div>
-    </MobileLayout>
+    </AppLayout>
   );
 };
 

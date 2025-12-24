@@ -1,48 +1,17 @@
-import { Search, Bell, ShoppingCart, ChevronRight, Gift } from "lucide-react";
+import { ChevronRight, Gift } from "lucide-react";
 import { Link } from "react-router-dom";
-import { MobileLayout } from "@/components/layout/MobileLayout";
-import { CoinBadge } from "@/components/ui/coin-badge";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { HeroBanner } from "@/components/home/HeroBanner";
 import { StoryCircle } from "@/components/home/StoryCircle";
-import { CategoryPill } from "@/components/home/CategoryPill";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { PostCard } from "@/components/community/PostCard";
-import { mockProducts, mockStories, mockPosts, mockUser } from "@/lib/mock-data";
+import { mockProducts, mockStories, mockPosts } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   return (
-    <MobileLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-          <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-bold text-gradient">StyleVerse</h1>
-            <div className="flex items-center gap-3">
-              <CoinBadge amount={mockUser.coins} />
-              <button className="relative p-2 rounded-full hover:bg-secondary transition-colors">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
-              </button>
-              <Link to="/cart" className="p-2 rounded-full hover:bg-secondary transition-colors">
-                <ShoppingCart className="h-5 w-5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="px-4 pb-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Find brands, items..."
-                className="w-full h-10 pl-10 pr-4 rounded-full bg-secondary border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
-          </div>
-        </header>
-
+    <AppLayout>
+      <div className="space-y-6 pb-4">
         {/* Hero Banner */}
         <HeroBanner />
 
@@ -105,7 +74,7 @@ const Index = () => {
           </div>
         </section>
       </div>
-    </MobileLayout>
+    </AppLayout>
   );
 };
 
