@@ -1,5 +1,6 @@
 import { Home, ShoppingBag, Gamepad2, Users, User } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -10,11 +11,11 @@ const navItems = [
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
-export function BottomNav() {
+export const BottomNav = forwardRef<HTMLElement, object>((_, ref) => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border">
+    <nav ref={ref} className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -35,4 +36,6 @@ export function BottomNav() {
       </div>
     </nav>
   );
-}
+});
+
+BottomNav.displayName = "BottomNav";
