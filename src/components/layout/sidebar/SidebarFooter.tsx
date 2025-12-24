@@ -2,6 +2,9 @@ import { Moon, Sun, Globe, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface SidebarFooterProps {
   onClose?: () => void;
@@ -9,11 +12,19 @@ interface SidebarFooterProps {
 
 export function SidebarFooter({ onClose }: SidebarFooterProps) {
   const { theme, setTheme } = useTheme();
+  const { signOut, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const isDark = theme === 'dark';
 
-  const handleLogout = () => {
-    // TODO: Implement logout
-    onClose?.();
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success("Logged out successfully");
+      onClose?.();
+      navigate("/");
+    } catch (error) {
+      toast.error("Failed to logout");
+    }
   };
 
   return (
@@ -60,14 +71,16 @@ export function SidebarFooter({ onClose }: SidebarFooterProps) {
       </div>
 
       {/* Logout */}
-      <Button 
-        variant="ghost" 
-        className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-        onClick={handleLogout}
-      >
-        <LogOut className="w-4 h-4 mr-2" />
-        Logout
-      </Button>
+      {isLoggedIn && (
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Logout
+        </Button>
+      )}
     </div>
   );
 }
