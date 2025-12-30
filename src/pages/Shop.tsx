@@ -1,4 +1,4 @@
-import { Sparkles, Heart } from "lucide-react";
+import { Sparkles, Heart, Palette } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -8,14 +8,20 @@ import { useProducts, SortOption } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PodHeroBanner } from "@/components/pod";
 
 const MAX_PRICE = 500;
+
+type ProductMode = "all" | "ready-made" | "custom-pod";
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
+  const [productMode, setProductMode] = useState<ProductMode>("all");
 
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
@@ -27,6 +33,8 @@ const Shop = () => {
   }, [activeCategory, categories]);
 
   // Fetch products with all filters
+  const isPodFilter = productMode === "custom-pod" ? true : productMode === "ready-made" ? false : undefined;
+  
   const { data: products, isLoading: productsLoading } = useProducts({
     limit: 50,
     categoryId: activeCategoryId,
@@ -34,6 +42,7 @@ const Shop = () => {
     minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
     maxPrice: priceRange[1] < MAX_PRICE ? priceRange[1] : undefined,
     sortBy,
+    isPod: isPodFilter,
   });
 
   // Transform categories for carousel
@@ -64,8 +73,31 @@ const Shop = () => {
   return (
     <AppLayout>
       <div className="space-y-4 lg:space-y-6 pb-4">
+        {/* POD Banner (shown in custom mode) */}
+        {productMode === "custom-pod" && (
+          <PodHeroBanner variant="compact" />
+        )}
+
+        {/* Product Mode Toggle */}
+        <div className="px-4 lg:px-0">
+          <Tabs value={productMode} onValueChange={(v) => setProductMode(v as ProductMode)}>
+            <TabsList className="grid w-full grid-cols-3 h-auto p-1">
+              <TabsTrigger value="all" className="text-sm py-2">
+                All Products
+              </TabsTrigger>
+              <TabsTrigger value="ready-made" className="text-sm py-2">
+                Ready-Made
+              </TabsTrigger>
+              <TabsTrigger value="custom-pod" className="text-sm py-2 gap-1.5">
+                <Palette className="h-3.5 w-3.5" />
+                Custom POD
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
         {/* Points Progress */}
-        <div className="mx-4 lg:mx-0 mt-4 p-3 lg:p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
+        <div className="mx-4 lg:mx-0 p-3 lg:p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
@@ -156,11 +188,20 @@ const Shop = () => {
                       <Heart className="h-4 w-4 text-foreground group-hover:text-primary transition-colors" />
                     </button>
                     
-                    {product.is_featured && (
-                      <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full gradient-primary text-primary-foreground shadow-lg">
-                        🔥 Hot
-                      </span>
-                    )}
+                    {/* Badges */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                      {product.is_pod && (
+                        <Badge className="text-[10px] px-2 py-0.5 bg-accent/90 backdrop-blur-sm border-0">
+                          <Palette className="h-2.5 w-2.5 mr-1" />
+                          POD
+                        </Badge>
+                      )}
+                      {product.is_featured && (
+                        <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full gradient-primary text-primary-foreground shadow-lg">
+                          🔥 Hot
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="p-4">

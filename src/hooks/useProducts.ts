@@ -11,13 +11,14 @@ interface UseProductsOptions {
   minPrice?: number;
   maxPrice?: number;
   sortBy?: SortOption;
+  isPod?: boolean;
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
-  const { categoryId, featured, limit = 20, search, minPrice, maxPrice, sortBy = "newest" } = options;
+  const { categoryId, featured, limit = 20, search, minPrice, maxPrice, sortBy = "newest", isPod } = options;
 
   return useQuery({
-    queryKey: ["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy }],
+    queryKey: ["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy, isPod }],
     queryFn: async () => {
       let query = supabase
         .from("products")
@@ -29,6 +30,10 @@ export function useProducts(options: UseProductsOptions = {}) {
 
       if (featured !== undefined) {
         query = query.eq("is_featured", featured);
+      }
+
+      if (isPod !== undefined) {
+        query = query.eq("is_pod", isPod);
       }
 
       if (search) {

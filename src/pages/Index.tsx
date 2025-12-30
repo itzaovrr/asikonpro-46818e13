@@ -7,6 +7,12 @@ import { mockStories, mockPosts } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
+import { 
+  PodHeroBanner, 
+  TrendingDesignsCarousel, 
+  CreatorSpotlight, 
+  LimitedDrops 
+} from "@/components/pod";
 import heroFashion from "@/assets/hero-fashion-1.jpg";
 
 const heroSlides = [
@@ -78,24 +84,14 @@ const Index = () => {
           </div>
         </section>
 
-        {/* POD Banner */}
-        <section className="px-4 lg:px-0">
-          <Link 
-            to="/pod"
-            className="block relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/20 via-accent/10 to-primary/20 border border-primary/20 p-4 hover:border-primary/40 transition-colors"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl">👕</span>
-              </div>
-              <div className="flex-1">
-                <p className="font-bold">Design Your Own T-Shirt</p>
-                <p className="text-sm text-muted-foreground">Upload artwork or browse designs • Print-on-Demand</p>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
-            </div>
-          </Link>
-        </section>
+        {/* POD Hero Banner */}
+        <PodHeroBanner variant="full" />
+
+        {/* Trending Custom Designs */}
+        <TrendingDesignsCarousel />
+
+        {/* Limited POD Drops */}
+        <LimitedDrops />
 
         {/* Shorts & Stories Carousel */}
         <section>
@@ -131,6 +127,9 @@ const Index = () => {
             />
           )}
         </section>
+
+        {/* Creator Spotlight */}
+        <CreatorSpotlight />
 
         {/* Trending in Community */}
         <section>
