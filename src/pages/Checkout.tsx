@@ -64,7 +64,6 @@ const Checkout = () => {
 
     createOrder.mutate(
       {
-        total,
         paymentMethod,
         shippingAddress: address,
         items: cartItems || [],
