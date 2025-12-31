@@ -67,7 +67,6 @@ interface CartItem {
 }
 
 interface CreateOrderParams {
-  total: number;
   paymentMethod: string;
   shippingAddress: Record<string, string>;
   items: CartItem[];
@@ -78,15 +77,15 @@ export function useCreateOrder() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ total, paymentMethod, shippingAddress, items }: CreateOrderParams) => {
+    mutationFn: async ({ paymentMethod, shippingAddress, items }: CreateOrderParams) => {
       if (!user) throw new Error("Not authenticated");
 
-      // Create order
+      // Create order - total is calculated server-side by trigger for security
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
           user_id: user.id,
-          total,
+          total: 0, // Server-side trigger sets real total from order_items
           payment_method: paymentMethod,
           shipping_address: shippingAddress as unknown as Json,
           status: "pending",

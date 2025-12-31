@@ -1067,6 +1067,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_order_total_from_items: {
+        Args: { _order_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
