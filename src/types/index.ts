@@ -9,6 +9,7 @@ export interface Product {
   reviews: number;
   isAuthentic?: boolean;
   isTrending?: boolean;
+  isNew?: boolean;
 }
 
 export interface User {

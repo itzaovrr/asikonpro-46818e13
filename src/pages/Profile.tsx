@@ -19,9 +19,12 @@ import {
   AvatarViewer,
   type ProfileTabType,
 } from "@/components/profile";
+import { MessagingDrawer } from "@/components/messaging";
 import { useProfile, useUpdateProfile, useFollowers, useFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useProfile";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
+import { useCreateOrGetChat } from "@/hooks/useMessages";
+import { useToast } from "@/hooks/use-toast";
 import { mockProducts } from "@/lib/mock-data";
 
 const Profile = () => {
@@ -43,6 +46,32 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<ProfileTabType>("feed");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAvatarViewer, setShowAvatarViewer] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  
+  const createOrGetChat = useCreateOrGetChat();
+  const { toast } = useToast();
+
+  const handleMessage = async () => {
+    if (!targetUserId || !user) {
+      toast({
+        title: "Please login",
+        description: "You need to be logged in to send messages.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      await createOrGetChat.mutateAsync(targetUserId);
+      setShowMessages(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to start conversation.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Check if current user is following this profile
   const isFollowing = followers?.some(f => f.follower_id === user?.id) || false;
@@ -211,7 +240,7 @@ const Profile = () => {
               navigator.share({ title: displayProfile.name, url: window.location.href });
             }
           }}
-          onMessage={() => console.log("Message user")}
+          onMessage={handleMessage}
           onReport={() => console.log("Report user")}
           onBlock={() => console.log("Block user")}
         />
@@ -256,6 +285,12 @@ const Profile = () => {
           onClose={() => setShowAvatarViewer(false)}
           imageUrl={displayProfile.avatar}
           userName={displayProfile.name}
+        />
+
+        {/* Messaging Drawer */}
+        <MessagingDrawer
+          open={showMessages}
+          onOpenChange={setShowMessages}
         />
       </div>
     </AppLayout>
