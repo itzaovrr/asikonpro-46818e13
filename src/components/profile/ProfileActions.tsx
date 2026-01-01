@@ -17,6 +17,7 @@ interface ProfileActionsProps {
   onShare?: () => void;
   onReport?: () => void;
   onBlock?: () => void;
+  onEditProfile?: () => void;
 }
 
 export function ProfileActions({
@@ -27,6 +28,7 @@ export function ProfileActions({
   onShare,
   onReport,
   onBlock,
+  onEditProfile,
 }: ProfileActionsProps) {
   const [following, setFollowing] = useState(isFollowing);
 
@@ -39,7 +41,7 @@ export function ProfileActions({
     return (
       <div className="px-4 sm:px-6 pb-4">
         <div className="flex items-center gap-3">
-          <Button variant="secondary" className="flex-1">
+          <Button variant="secondary" className="flex-1" onClick={onEditProfile}>
             Edit Profile
           </Button>
           <Button variant="secondary" size="icon" onClick={onShare}>

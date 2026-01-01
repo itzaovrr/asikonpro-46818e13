@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import {
   ProfileHeader,
@@ -14,124 +15,147 @@ import {
   ProfileMediaTab,
   ProfileDesignsTab,
   ProfileActivityTab,
+  ProfileEditModal,
+  AvatarViewer,
   type ProfileTabType,
 } from "@/components/profile";
-import { mockUser, mockProducts, mockPosts } from "@/lib/mock-data";
-
-// Extended mock data for profile
-const profileData = {
-  ...mockUser,
-  bio: mockUser.bio || "Fashion enthusiast & style curator",
-  isVerified: mockUser.isVerified ?? true,
-  location: "New York, USA",
-  coverImage: "https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=800",
-  posts: 47,
-  purchases: 23,
-  reviews: 18,
-  badges: ["buyer", "creator", "reviewer", "trusted"],
-};
-
-// Mock feed posts
-const feedPosts = mockPosts.map((post, idx) => ({
-  id: post.id,
-  content: post.content,
-  image: post.image,
-  likes: post.likes,
-  comments: post.comments,
-  shares: post.shares,
-  timestamp: post.timestamp,
-  product: post.product ? {
-    id: post.product.id,
-    name: post.product.name,
-    price: post.product.price,
-    image: post.product.image,
-  } : undefined,
-}));
-
-// Mock shop products
-const shopProducts = mockProducts.map((p, idx) => ({
-  id: p.id,
-  name: p.name,
-  image: p.image,
-  price: p.price,
-  rating: p.rating || 4.5,
-  reviewCount: p.reviews || 0,
-  isPurchased: idx % 2 === 0,
-  isReviewed: idx % 3 === 0,
-  isSold: idx === 0,
-}));
-
-// Mock reviews
-const mockReviews = [
-  {
-    id: "1",
-    productId: "1",
-    productName: "Premium Leather Crossbody",
-    productImage: mockProducts[0].image,
-    rating: 5,
-    title: "Amazing quality!",
-    content: "This bag exceeded my expectations. The leather is genuine and the craftsmanship is impeccable. Highly recommend!",
-    images: [mockProducts[0].image],
-    helpfulCount: 24,
-    isVerifiedPurchase: true,
-    createdAt: "2 days ago",
-  },
-  {
-    id: "2",
-    productId: "2",
-    productName: "Classic White Sneakers",
-    productImage: mockProducts[1].image,
-    rating: 4,
-    content: "Great sneakers, very comfortable. Took a bit to break in but worth it.",
-    helpfulCount: 12,
-    isVerifiedPurchase: true,
-    createdAt: "1 week ago",
-  },
-];
-
-// Mock media
-const mockMedia = [
-  { id: "1", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400", url: "" },
-  { id: "2", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400", url: "", duration: 45, viewCount: 1200 },
-  { id: "3", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400", url: "" },
-  { id: "4", type: "short" as const, thumbnail: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400", url: "", duration: 15, viewCount: 5400 },
-  { id: "5", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=400", url: "" },
-  { id: "6", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=400", url: "", duration: 120 },
-];
-
-// Mock designs
-const mockDesigns = [
-  { id: "1", title: "Urban Streetwear Collection", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400", salesCount: 45, likes: 234, earnings: 450.00 },
-  { id: "2", title: "Minimalist Logo Design", image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=400", salesCount: 12, likes: 89, earnings: 120.00 },
-  { id: "3", title: "Vintage Pattern Pack", image: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=400", salesCount: 28, likes: 156, earnings: 280.00 },
-];
-
-// Mock activities
-const mockActivities = [
-  { id: "1", type: "purchase" as const, title: "Purchased an item", description: "Premium Leather Crossbody", timestamp: "2 hours ago", metadata: { productName: "Premium Leather Crossbody", productImage: mockProducts[0].image } },
-  { id: "2", type: "coins" as const, title: "Earned coins", description: "Review bonus reward", timestamp: "5 hours ago", metadata: { amount: 50 } },
-  { id: "3", type: "review" as const, title: "Wrote a review", description: "5-star review for Classic White Sneakers", timestamp: "1 day ago", metadata: { productName: "Classic White Sneakers", productImage: mockProducts[1].image } },
-  { id: "4", type: "levelup" as const, title: "Level up!", description: "Reached Gold status", timestamp: "3 days ago", metadata: { level: "Gold" } },
-  { id: "5", type: "achievement" as const, title: "Achievement unlocked", description: "Top Reviewer badge earned", timestamp: "1 week ago" },
-];
+import { useProfile, useUpdateProfile, useFollowers, useFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useProfile";
+import { usePosts } from "@/hooks/usePosts";
+import { useAuth } from "@/hooks/useAuth";
+import { mockProducts } from "@/lib/mock-data";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { userId } = useParams<{ userId?: string }>();
+  const { user } = useAuth();
+  
+  const targetUserId = userId || user?.id;
+  const isOwnProfile = !userId || userId === user?.id;
+  
+  const { data: profile, isLoading: profileLoading } = useProfile(targetUserId);
+  const { data: followers } = useFollowers(targetUserId || "");
+  const { data: following } = useFollowing(targetUserId || "");
+  const { data: userPosts } = usePosts({ userId: targetUserId, limit: 20 });
+  const updateProfile = useUpdateProfile();
+  const followUser = useFollowUser();
+  const unfollowUser = useUnfollowUser();
+
   const [activeTab, setActiveTab] = useState<ProfileTabType>("feed");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAvatarViewer, setShowAvatarViewer] = useState(false);
+
+  // Check if current user is following this profile
+  const isFollowing = followers?.some(f => f.follower_id === user?.id) || false;
+
+  const handleFollow = async () => {
+    if (!targetUserId || !user) return;
+    try {
+      if (isFollowing) {
+        await unfollowUser.mutateAsync(targetUserId);
+      } else {
+        await followUser.mutateAsync(targetUserId);
+      }
+    } catch (error) {
+      console.error("Follow action failed:", error);
+    }
+  };
+
+  const handleSaveProfile = async (updates: {
+    username?: string;
+    full_name?: string;
+    bio?: string;
+    avatar_url?: string;
+    cover_url?: string;
+  }) => {
+    await updateProfile.mutateAsync(updates);
+  };
+
+  if (profileLoading) {
+    return (
+      <AppLayout showBottomNav={true}>
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Fallback data for display
+  const displayProfile = {
+    id: profile?.id || targetUserId || "",
+    name: profile?.full_name || profile?.username || "Anonymous User",
+    username: profile?.username || "user",
+    avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
+    coverImage: profile?.cover_url,
+    bio: profile?.bio || "",
+    location: undefined,
+    isVerified: profile?.is_verified || false,
+    trustScore: profile?.trust_score || 0,
+  };
+
+  // Transform posts for feed tab
+  const feedPosts = (userPosts || []).map((post) => ({
+    id: post.id,
+    content: post.content || "",
+    image: post.images?.[0],
+    video: post.video_url || undefined,
+    likes: post.like_count || 0,
+    comments: post.comment_count || 0,
+    shares: post.share_count || 0,
+    timestamp: new Date(post.created_at || "").toLocaleDateString(),
+    product: undefined,
+  }));
+
+  // Mock data for other tabs (would be replaced with real data)
+  const shopProducts = mockProducts.map((p, idx) => ({
+    id: p.id,
+    name: p.name,
+    image: p.image,
+    price: p.price,
+    rating: p.rating || 4.5,
+    reviewCount: p.reviews || 0,
+    isPurchased: idx % 2 === 0,
+    isReviewed: idx % 3 === 0,
+    isSold: idx === 0,
+  }));
+
+  const mockReviews = [
+    {
+      id: "1",
+      productId: "1",
+      productName: "Premium Leather Crossbody",
+      productImage: mockProducts[0].image,
+      rating: 5,
+      title: "Amazing quality!",
+      content: "This bag exceeded my expectations. Highly recommend!",
+      images: [mockProducts[0].image],
+      helpfulCount: 24,
+      isVerifiedPurchase: true,
+      createdAt: "2 days ago",
+    },
+  ];
+
+  const mockMedia = [
+    { id: "1", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400", url: "" },
+    { id: "2", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400", url: "", duration: 45, viewCount: 1200 },
+  ];
+
+  const mockDesigns = [
+    { id: "1", title: "Urban Streetwear", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400", salesCount: 45, likes: 234, earnings: 450 },
+  ];
+
+  const mockActivities = [
+    { id: "1", type: "coins" as const, title: "Earned coins", description: "Review bonus", timestamp: "2 hours ago", metadata: { amount: 50 } },
+  ];
 
   const handleStatClick = (stat: string) => {
     console.log("Stat clicked:", stat);
-    // Could open a modal or navigate to a list
-  };
-
-  const handleCreateDesign = () => {
-    navigate("/pod/builder");
   };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "feed":
-        return <ProfileFeedTab posts={feedPosts} user={profileData} />;
+        return <ProfileFeedTab posts={feedPosts} user={{ ...displayProfile, isVerified: displayProfile.isVerified }} />;
       case "shop":
         return <ProfileShopTab products={shopProducts} isPodCreator={true} />;
       case "reviews":
@@ -142,8 +166,8 @@ const Profile = () => {
         return (
           <ProfileDesignsTab 
             designs={mockDesigns} 
-            isOwnProfile={true}
-            onCreateDesign={handleCreateDesign}
+            isOwnProfile={isOwnProfile}
+            onCreateDesign={() => navigate("/pod/builder")}
           />
         );
       case "activity":
@@ -158,35 +182,45 @@ const Profile = () => {
       <div className="min-h-screen bg-background">
         {/* Header Section */}
         <ProfileHeader 
-          user={profileData}
-          onAvatarClick={() => console.log("Avatar clicked")}
+          user={displayProfile}
+          onAvatarClick={() => displayProfile.avatar && setShowAvatarViewer(true)}
         />
 
         {/* Stats */}
         <ProfileStats
-          followers={profileData.followers}
-          following={profileData.following}
-          posts={profileData.posts}
-          purchases={profileData.purchases}
-          reviews={profileData.reviews}
-          coins={profileData.coins}
+          followers={followers?.length || 0}
+          following={following?.length || 0}
+          posts={userPosts?.length || 0}
+          purchases={0}
+          reviews={mockReviews.length}
+          coins={0}
           onStatClick={handleStatClick}
         />
 
         {/* Badges */}
-        <ProfileBadges badges={profileData.badges} />
+        <ProfileBadges badges={displayProfile.isVerified ? ["trusted"] : []} />
 
         {/* Action Buttons */}
         <ProfileActions
-          isOwnProfile={true}
-          onShare={() => console.log("Share profile")}
+          isOwnProfile={isOwnProfile}
+          isFollowing={isFollowing}
+          onFollow={handleFollow}
+          onEditProfile={() => setShowEditModal(true)}
+          onShare={() => {
+            if (navigator.share) {
+              navigator.share({ title: displayProfile.name, url: window.location.href });
+            }
+          }}
+          onMessage={() => console.log("Message user")}
+          onReport={() => console.log("Report user")}
+          onBlock={() => console.log("Block user")}
         />
 
         {/* Trust Card */}
         <ProfileTrustCard
-          trustScore={profileData.trustScore}
-          coins={profileData.coins}
-          level={profileData.level}
+          trustScore={displayProfile.trustScore}
+          coins={0}
+          level="Bronze"
           onViewDetails={() => console.log("View trust details")}
         />
 
@@ -195,8 +229,8 @@ const Profile = () => {
           activeTab={activeTab}
           onTabChange={setActiveTab}
           counts={{
-            feed: profileData.posts,
-            reviews: profileData.reviews,
+            feed: userPosts?.length || 0,
+            reviews: mockReviews.length,
             designs: mockDesigns.length,
           }}
         />
@@ -205,6 +239,24 @@ const Profile = () => {
         <div className="pb-20">
           {renderTabContent()}
         </div>
+
+        {/* Edit Modal */}
+        {isOwnProfile && profile && (
+          <ProfileEditModal
+            isOpen={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            profile={profile}
+            onSave={handleSaveProfile}
+          />
+        )}
+
+        {/* Avatar Viewer */}
+        <AvatarViewer
+          isOpen={showAvatarViewer}
+          onClose={() => setShowAvatarViewer(false)}
+          imageUrl={displayProfile.avatar}
+          userName={displayProfile.name}
+        />
       </div>
     </AppLayout>
   );

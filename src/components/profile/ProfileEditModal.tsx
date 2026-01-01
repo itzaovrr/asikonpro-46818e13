@@ -1,0 +1,264 @@
+import { useState, useRef } from "react";
+import { X, Camera, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface ProfileEditModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  profile: {
+    id: string;
+    username?: string | null;
+    full_name?: string | null;
+    bio?: string | null;
+    avatar_url?: string | null;
+    cover_url?: string | null;
+  };
+  onSave: (updates: {
+    username?: string;
+    full_name?: string;
+    bio?: string;
+    avatar_url?: string;
+    cover_url?: string;
+  }) => Promise<void>;
+}
+
+export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEditModalProps) {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    username: profile.username || "",
+    full_name: profile.full_name || "",
+    bio: profile.bio || "",
+    avatar_url: profile.avatar_url || "",
+    cover_url: profile.cover_url || "",
+  });
+
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadImage = async (file: File, type: "avatar" | "cover"): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${profile.id}/${type}-${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(fileName, file, { upsert: true });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(data.path);
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: "Could not upload image. Please try again.",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAvatar(true);
+    const url = await uploadImage(file, "avatar");
+    if (url) {
+      setFormData(prev => ({ ...prev, avatar_url: url }));
+    }
+    setUploadingAvatar(false);
+  };
+
+  const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingCover(true);
+    const url = await uploadImage(file, "cover");
+    if (url) {
+      setFormData(prev => ({ ...prev, cover_url: url }));
+    }
+    setUploadingCover(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      await onSave(formData);
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Update failed",
+        description: "Could not update profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="glass-strong max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Edit Profile</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Cover Image */}
+          <div className="space-y-2">
+            <Label>Cover Image</Label>
+            <div 
+              className="relative h-24 rounded-xl bg-secondary overflow-hidden cursor-pointer group"
+              onClick={() => coverInputRef.current?.click()}
+            >
+              {formData.cover_url ? (
+                <img 
+                  src={formData.cover_url} 
+                  alt="Cover" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Camera className="h-6 w-6 text-muted-foreground" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                {uploadingCover ? (
+                  <Loader2 className="h-6 w-6 animate-spin text-white" />
+                ) : (
+                  <Camera className="h-6 w-6 text-white" />
+                )}
+              </div>
+            </div>
+            <input
+              ref={coverInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleCoverChange}
+              className="hidden"
+            />
+          </div>
+
+          {/* Avatar */}
+          <div className="space-y-2">
+            <Label>Profile Photo</Label>
+            <div className="flex items-center gap-4">
+              <div 
+                className="relative cursor-pointer group"
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={formData.avatar_url} />
+                  <AvatarFallback className="text-xl">
+                    {formData.full_name?.[0] || formData.username?.[0] || "?"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  {uploadingAvatar ? (
+                    <Loader2 className="h-5 w-5 animate-spin text-white" />
+                  ) : (
+                    <Camera className="h-5 w-5 text-white" />
+                  )}
+                </div>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Click to change your profile photo
+              </div>
+            </div>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+          </div>
+
+          {/* Full Name */}
+          <div className="space-y-2">
+            <Label htmlFor="full_name">Full Name</Label>
+            <Input
+              id="full_name"
+              value={formData.full_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+              placeholder="Your full name"
+            />
+          </div>
+
+          {/* Username */}
+          <div className="space-y-2">
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              value={formData.username}
+              onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+              placeholder="username"
+            />
+          </div>
+
+          {/* Bio */}
+          <div className="space-y-2">
+            <Label htmlFor="bio">Bio</Label>
+            <Textarea
+              id="bio"
+              value={formData.bio}
+              onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+              placeholder="Tell us about yourself..."
+              rows={3}
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-4">
+            <Button 
+              type="button" 
+              variant="secondary" 
+              className="flex-1"
+              onClick={onClose}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              className="flex-1 gradient-primary border-0"
+              disabled={loading || uploadingAvatar || uploadingCover}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
