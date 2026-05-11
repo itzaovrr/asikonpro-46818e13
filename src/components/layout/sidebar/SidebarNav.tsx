@@ -6,17 +6,16 @@ import {
   Film, 
   Radio, 
   Star, 
-  ShoppingBag, 
-  Shirt, 
-  TrendingUp, 
+  Library, 
+  GraduationCap, 
+  BookOpen, 
   Sparkles, 
-  Zap,
+  Wand2,
   ChevronDown,
-  Palette,
-  Flag,
-  Flame,
-  Quote,
-  GraduationCap
+  Package,
+  Bot,
+  Laptop,
+  Brain,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
