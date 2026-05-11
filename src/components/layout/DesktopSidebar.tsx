@@ -168,11 +168,11 @@ export function DesktopSidebar({
 
           <Separator className="mx-3" />
 
-          {/* Shop Categories */}
+          {/* Library Categories */}
           <div className="space-y-1">
             {!isCollapsed && (
               <p className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Shop
+                Library
               </p>
             )}
             {shopNavItems.map((item) => (
