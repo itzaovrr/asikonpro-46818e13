@@ -15,4 +15,22 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Split heavy vendor deps into separate cacheable chunks to reduce initial JS parse cost
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (!id.includes("node_modules")) return;
+          if (id.includes("react-dom") || id.includes("/react/") || id.includes("scheduler")) return "react-vendor";
+          if (id.includes("@radix-ui")) return "radix-vendor";
+          if (id.includes("@supabase")) return "supabase-vendor";
+          if (id.includes("@tanstack")) return "query-vendor";
+          if (id.includes("embla-carousel")) return "carousel-vendor";
+          if (id.includes("lucide-react")) return "icons-vendor";
+          if (id.includes("recharts") || id.includes("d3-")) return "charts-vendor";
+          return "vendor";
+        },
+      },
+    },
+  },
 }));
