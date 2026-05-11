@@ -168,7 +168,7 @@ const Shop = () => {
             {productsLoading ? (
               <Skeleton className="h-4 w-24 inline-block" />
             ) : (
-              `${filteredProducts?.length || 0} products found`
+              `${filteredProducts?.length || 0} learning resources found`
             )}
           </p>
         </div>
