@@ -1,4 +1,4 @@
-import { Sparkles, Heart, Palette } from "lucide-react";
+import { Sparkles, Heart, GraduationCap, BookOpen, Package, Wand2, LayoutGrid } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -9,19 +9,35 @@ import { useCategories } from "@/hooks/useCategories";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PodHeroBanner } from "@/components/pod";
+import { cn } from "@/lib/utils";
 
 const MAX_PRICE = 500;
 
-type ProductMode = "all" | "ready-made" | "custom-pod";
+type ProductType = "all" | "courses" | "books" | "kits" | "prompts";
+
+const TYPE_FILTERS: { id: ProductType; label: string; icon: typeof LayoutGrid }[] = [
+  { id: "all", label: "All", icon: LayoutGrid },
+  { id: "courses", label: "Courses", icon: GraduationCap },
+  { id: "books", label: "Books", icon: BookOpen },
+  { id: "kits", label: "Kits", icon: Package },
+  { id: "prompts", label: "Prompt Library", icon: Wand2 },
+];
+
+function detectProductType(name: string): ProductType {
+  const n = name.toLowerCase();
+  if (/\bprompt|prompts\b/.test(n)) return "prompts";
+  if (/\bbook|hardcover|paperback|ebook|novel\b/.test(n)) return "books";
+  if (/\bkit|bundle|stationery|notebook|essentials\b/.test(n)) return "kits";
+  if (/\bcourse|masterclass|bootcamp|training|class|tutorial\b/.test(n)) return "courses";
+  return "courses";
+}
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
-  const [productMode, setProductMode] = useState<ProductMode>("all");
+  const [productType, setProductType] = useState<ProductType>("all");
 
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
@@ -33,8 +49,6 @@ const Shop = () => {
   }, [activeCategory, categories]);
 
   // Fetch products with all filters
-  const isPodFilter = productMode === "custom-pod" ? true : productMode === "ready-made" ? false : undefined;
-  
   const { data: products, isLoading: productsLoading } = useProducts({
     limit: 50,
     categoryId: activeCategoryId,
@@ -42,8 +56,14 @@ const Shop = () => {
     minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
     maxPrice: priceRange[1] < MAX_PRICE ? priceRange[1] : undefined,
     sortBy,
-    isPod: isPodFilter,
   });
+
+  // Apply type filter client-side
+  const filteredProducts = useMemo(() => {
+    if (!products) return products;
+    if (productType === "all") return products;
+    return products.filter((p) => detectProductType(p.name) === productType);
+  }, [products, productType]);
 
   // Transform categories for carousel
   const categoryItems = [
@@ -60,8 +80,9 @@ const Shop = () => {
   const activeFiltersCount = useMemo(() => {
     let count = 0;
     if (priceRange[0] > 0 || priceRange[1] < MAX_PRICE) count++;
+    if (productType !== "all") count++;
     return count;
-  }, [priceRange]);
+  }, [priceRange, productType]);
 
   const handleClearFilters = () => {
     setSearchQuery("");
@@ -73,27 +94,29 @@ const Shop = () => {
   return (
     <AppLayout>
       <div className="space-y-4 lg:space-y-6 pb-4">
-        {/* POD Banner (shown in custom mode) */}
-        {productMode === "custom-pod" && (
-          <PodHeroBanner variant="compact" />
-        )}
-
-        {/* Product Mode Toggle */}
+        {/* Product Type Filter */}
         <div className="px-4 lg:px-0">
-          <Tabs value={productMode} onValueChange={(v) => setProductMode(v as ProductMode)}>
-            <TabsList className="grid w-full grid-cols-3 h-auto p-1">
-              <TabsTrigger value="all" className="text-sm py-2">
-                All Products
-              </TabsTrigger>
-              <TabsTrigger value="ready-made" className="text-sm py-2">
-                Ready-Made
-              </TabsTrigger>
-              <TabsTrigger value="custom-pod" className="text-sm py-2 gap-1.5">
-                <Palette className="h-3.5 w-3.5" />
-                Custom POD
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1 py-1">
+            {TYPE_FILTERS.map((t) => {
+              const Icon = t.icon;
+              const isActive = productType === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setProductType(t.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap border transition-all",
+                    isActive
+                      ? "gradient-primary text-primary-foreground border-transparent shadow-md glow-primary"
+                      : "bg-card text-foreground border-border hover:border-primary/40"
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Points Progress */}
@@ -145,7 +168,7 @@ const Shop = () => {
             {productsLoading ? (
               <Skeleton className="h-4 w-24 inline-block" />
             ) : (
-              `${products?.length || 0} products found`
+              `${filteredProducts?.length || 0} products found`
             )}
           </p>
         </div>
@@ -163,9 +186,9 @@ const Shop = () => {
                 </div>
               ))}
             </div>
-          ) : products && products.length > 0 ? (
+          ) : filteredProducts && filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
                   to={`/product/${product.slug}`}
@@ -192,8 +215,7 @@ const Shop = () => {
                     <div className="absolute top-3 left-3 flex flex-col gap-1.5">
                       {product.is_pod && (
                         <Badge className="text-[10px] px-2 py-0.5 bg-accent/90 backdrop-blur-sm border-0">
-                          <Palette className="h-2.5 w-2.5 mr-1" />
-                          POD
+                          Custom
                         </Badge>
                       )}
                       {product.is_featured && (
