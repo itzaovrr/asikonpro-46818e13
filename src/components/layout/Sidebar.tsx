@@ -17,7 +17,7 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
         side="left" 
-        className="w-[280px] p-0 bg-background/95 backdrop-blur-xl border-r border-border"
+        className="w-[280px] p-0 bg-background/95 backdrop-blur-xl border-r border-border h-[100dvh] overflow-hidden overscroll-contain"
       >
         <SheetHeader className="sr-only">
           <SheetTitle>Navigation Menu</SheetTitle>
