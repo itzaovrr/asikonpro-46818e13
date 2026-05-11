@@ -217,7 +217,7 @@ const Game = () => {
 
         {/* Quick Actions - Responsive */}
         <div className="px-4 lg:px-0">
-          <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
             {quickActions.map((action) => (
               <button
                 key={action.label}
