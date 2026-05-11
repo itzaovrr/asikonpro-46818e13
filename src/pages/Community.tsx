@@ -11,9 +11,13 @@ import { LiveTab } from "@/components/community/tabs/LiveTab";
 import { OffersTab } from "@/components/community/tabs/OffersTab";
 import { GalleryTab } from "@/components/community/tabs/GalleryTab";
 import { CommunityTab } from "@/types/community";
+import { useScrollDirection } from "@/hooks/use-scroll-direction";
+import { cn } from "@/lib/utils";
 
 const Community = () => {
   const [activeTab, setActiveTab] = useState<CommunityTab>("my-feed");
+  const { scrollDirection, isScrolled } = useScrollDirection();
+  const headerHidden = scrollDirection === "down" && isScrolled;
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -41,15 +45,19 @@ const Community = () => {
   return (
     <AppLayout>
       <div className="min-h-screen">
-        {/* Tabs - Sticky below header */}
-        <div className="sticky top-14 md:top-[120px] z-30 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
+        {/* Sticky tab bar — follows the header. Stays flush with header on scroll up,
+            slides up to top:0 when the mobile header hides on scroll down. */}
+        <div
+          className={cn(
+            "sticky z-30 bg-background/95 backdrop-blur-md border-b border-border shadow-sm transition-[top] duration-300 ease-out",
+            headerHidden ? "top-0 md:top-0" : "top-14 md:top-[120px]"
+          )}
+        >
           <CommunityTabs activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
         {/* Tab Content */}
-        <main>
-          {renderTabContent()}
-        </main>
+        <main>{renderTabContent()}</main>
 
         {/* Create Content FAB */}
         <CreateContentFAB />
@@ -59,3 +67,4 @@ const Community = () => {
 };
 
 export default Community;
+
