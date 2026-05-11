@@ -61,32 +61,32 @@ export function ShopFilters({
 
   return (
     <div className="space-y-3">
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Search products..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 pr-10 h-11 bg-secondary/50 border-border/50 focus:border-primary/50"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => onSearchChange("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded-full"
-          >
-            <X className="h-4 w-4 text-muted-foreground" />
-          </button>
-        )}
-      </div>
-
-      {/* Sort & Filter Row */}
+      {/* Search + Sort + Filter Row */}
       <div className="flex items-center gap-2">
+        {/* Search Bar */}
+        <div className="relative flex-1 min-w-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9 pr-8 h-9 bg-secondary/50 border-border/50 focus:border-primary/50"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => onSearchChange("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded-full"
+            >
+              <X className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
+          )}
+        </div>
+
         {/* Sort Dropdown */}
         <Select value={sortBy} onValueChange={(v) => onSortChange(v as SortOption)}>
-          <SelectTrigger className="w-[160px] h-9 bg-secondary/50 border-border/50">
-            <SelectValue placeholder="Sort by" />
+          <SelectTrigger className="w-[110px] sm:w-[160px] h-9 bg-secondary/50 border-border/50 flex-shrink-0">
+            <SelectValue placeholder="Sort" />
           </SelectTrigger>
           <SelectContent>
             {sortOptions.map((option) => (
@@ -97,14 +97,22 @@ export function ShopFilters({
           </SelectContent>
         </Select>
 
-        {/* Filters Sheet (Mobile-friendly) */}
+        {/* Filters Sheet — icon-only on mobile */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="h-9 gap-2 bg-secondary/50 border-border/50">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Filters"
+              className="h-9 w-9 sm:w-auto sm:px-3 sm:gap-2 bg-secondary/50 border-border/50 flex-shrink-0 relative"
+            >
               <SlidersHorizontal className="h-4 w-4" />
-              <span>Filters</span>
+              <span className="hidden sm:inline">Filters</span>
               {activeFiltersCount > 0 && (
-                <Badge variant="secondary" className="h-5 w-5 p-0 flex items-center justify-center text-xs gradient-primary text-foreground">
+                <Badge
+                  variant="secondary"
+                  className="absolute -top-1.5 -right-1.5 sm:static h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center text-[10px] sm:text-xs gradient-primary text-foreground"
+                >
                   {activeFiltersCount}
                 </Badge>
               )}
@@ -149,19 +157,6 @@ export function ShopFilters({
             </div>
           </SheetContent>
         </Sheet>
-
-        {/* Active Filters */}
-        {activeFiltersCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearFilters}
-            className="h-9 text-muted-foreground hover:text-foreground"
-          >
-            <X className="h-4 w-4 mr-1" />
-            Clear
-          </Button>
-        )}
       </div>
 
       {/* Active Filter Tags */}
