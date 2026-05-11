@@ -14,10 +14,6 @@ interface MobileHeaderProps {
 }
 
 export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: MobileHeaderProps) {
-  const { scrollDirection, isScrolled } = useScrollDirection();
-  // Hide on scroll-down (after the user has actually started scrolling),
-  // reveal again on scroll-up. Always visible at the top of the page.
-  const isHidden = scrollDirection === "down" && isScrolled;
   const ref = useRef<HTMLElement>(null);
   useMeasuredHeaderHeight(ref);
 
@@ -26,8 +22,7 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
       ref={ref}
       data-app-header
       className={cn(
-        "fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border transition-transform duration-300 will-change-transform",
-        isHidden && "-translate-y-full"
+        "fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border"
       )}
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
