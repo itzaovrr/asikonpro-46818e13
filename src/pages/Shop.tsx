@@ -1,4 +1,4 @@
-import { Sparkles, Heart, GraduationCap, BookOpen, Package, Wand2, LayoutGrid } from "lucide-react";
+import { Sparkles, Heart } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -14,14 +14,6 @@ import { cn } from "@/lib/utils";
 const MAX_PRICE = 500;
 
 type ProductType = "all" | "courses" | "books" | "kits" | "prompts";
-
-const TYPE_FILTERS: { id: ProductType; label: string; icon: typeof LayoutGrid }[] = [
-  { id: "all", label: "All", icon: LayoutGrid },
-  { id: "courses", label: "Courses", icon: GraduationCap },
-  { id: "books", label: "Books", icon: BookOpen },
-  { id: "kits", label: "Kits", icon: Package },
-  { id: "prompts", label: "Prompt Library", icon: Wand2 },
-];
 
 function detectProductType(name: string): ProductType {
   const n = name.toLowerCase();
