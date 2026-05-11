@@ -89,6 +89,37 @@ export function useProducts(options: UseProductsOptions = {}) {
 
       const { data, error } = await query;
 
+      if (error || !data || data.length === 0) {
+        // Apply equivalent client-side filters to fallback
+        let list = [...fallbackProducts];
+        if (search) list = list.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+        if (minPrice !== undefined) list = list.filter((p) => p.price >= minPrice);
+        if (maxPrice !== undefined) list = list.filter((p) => p.price <= maxPrice);
+        if (featured !== undefined) list = list.filter((p) => p.is_featured === featured);
+        switch (sortBy) {
+          case "price-asc": list.sort((a, b) => a.price - b.price); break;
+          case "price-desc": list.sort((a, b) => b.price - a.price); break;
+          case "rating": list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)); break;
+          case "popular": list.sort((a, b) => (b.review_count ?? 0) - (a.review_count ?? 0)); break;
+        }
+        return list.slice(0, limit);
+      }
+      return data;
+    },
+    retry: 1,
+  });
+}
+
+export function useProduct(slug: string) {
+  return useQuery({
+    queryKey: ["product", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+
       if (error) throw error;
       return data;
     },
