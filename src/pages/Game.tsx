@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { mockChallenges, mockUser } from "@/lib/mock-data";
 import productSneakers from "@/assets/product-sneakers.jpg";
 import productBag from "@/assets/product-bag.jpg";
+import { ProgressCharts } from "@/components/learning/ProgressCharts";
 
 const quickActions = [
   { icon: Trophy, label: "Rank", color: "text-amber-400" },
@@ -210,6 +211,9 @@ const Game = () => {
             })}
           </div>
         </section>
+
+        {/* Progress Trend Charts */}
+        <ProgressCharts />
 
         {/* Quick Actions - Responsive */}
         <div className="px-4 lg:px-0">
