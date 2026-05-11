@@ -13,7 +13,7 @@ const createMockUser = (id: string, name: string, username: string, avatar: stri
 export const mockVideos: Video[] = [
   {
     id: "v1",
-    user: createMockUser("v1u", "Asikon Academy", "asikon_academy", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop", true),
+    user: createMockUser("v1u", "Asikon Academy", "asikon_academy", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop", true),
     title: "How to Learn AI in 30 Days — Full Roadmap",
     description: "A practical roadmap for students starting with AI and Machine Learning",
     thumbnailUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop",
@@ -28,7 +28,7 @@ export const mockVideos: Video[] = [
   },
   {
     id: "v2",
-    user: createMockUser("v2u", "Code With Rafi", "code_with_rafi", "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop", true),
+    user: createMockUser("v2u", "Code With Rafi", "code_with_rafi", "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=80&h=80&fit=crop", true),
     title: "Python for Beginners — Build Your First Project",
     description: "Step by step Python project tutorial using the Asikon course",
     thumbnailUrl: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=400&h=300&fit=crop",
@@ -42,7 +42,7 @@ export const mockVideos: Video[] = [
   },
   {
     id: "v3",
-    user: createMockUser("v3u", "Study Smart BD", "studysmart_bd", "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop"),
+    user: createMockUser("v3u", "Study Smart BD", "studysmart_bd", "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop"),
     title: "How I Use the AI Tutor to Crack HSC Physics",
     description: "My exact study workflow with Asikon AI Tutor",
     thumbnailUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop",
@@ -60,7 +60,7 @@ export const mockVideos: Video[] = [
 export const mockShorts: Short[] = [
   {
     id: "s1",
-    user: createMockUser("s1u", "Quick Learn", "quick_learn", "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop", true),
+    user: createMockUser("s1u", "Quick Learn", "quick_learn", "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop", true),
     videoUrl: "",
     thumbnailUrl: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=300&h=500&fit=crop",
     description: "60-sec hack: master a topic with the AI tutor 🤖 #studytips #ai",
@@ -73,7 +73,7 @@ export const mockShorts: Short[] = [
   },
   {
     id: "s2",
-    user: createMockUser("s2u", "Notes Daily", "notes_daily", "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=150&h=150&fit=crop"),
+    user: createMockUser("s2u", "Notes Daily", "notes_daily", "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=80&h=80&fit=crop"),
     videoUrl: "",
     thumbnailUrl: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=300&h=500&fit=crop",
     description: "Cornell notes template for serious students ✍️ #studygram",
@@ -85,7 +85,7 @@ export const mockShorts: Short[] = [
   },
   {
     id: "s3",
-    user: createMockUser("s3u", "Prompt Pro", "prompt_pro", "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop", true),
+    user: createMockUser("s3u", "Prompt Pro", "prompt_pro", "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop", true),
     videoUrl: "",
     thumbnailUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=300&h=500&fit=crop",
     description: "1 prompt that writes your essay outline 🚀 #chatgpt #ai",
@@ -98,7 +98,7 @@ export const mockShorts: Short[] = [
   },
   {
     id: "s4",
-    user: createMockUser("s4u", "Book Worm", "book_worm", "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=150&h=150&fit=crop"),
+    user: createMockUser("s4u", "Book Worm", "book_worm", "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=80&h=80&fit=crop"),
     videoUrl: "",
     thumbnailUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&h=500&fit=crop",
     description: "3 books every student must read 📚 #booktok #learning",
@@ -112,7 +112,7 @@ export const mockShorts: Short[] = [
 export const mockReviews: Review[] = [
   {
     id: "r1",
-    user: createMockUser("r1u", "Emily Chen", "emily_c", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop", true),
+    user: createMockUser("r1u", "Emily Chen", "emily_c", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop", true),
     product: mockProducts[0],
     rating: 5,
     title: "Best AI course I have ever taken!",
@@ -127,7 +127,7 @@ export const mockReviews: Review[] = [
   },
   {
     id: "r2",
-    user: createMockUser("r2u", "Marcus Williams", "marcus_w", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"),
+    user: createMockUser("r2u", "Marcus Williams", "marcus_w", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop"),
     product: mockProducts[1],
     rating: 4,
     title: "Solid Python course, great projects",
@@ -141,7 +141,7 @@ export const mockReviews: Review[] = [
   },
   {
     id: "r3",
-    user: createMockUser("r3u", "Sofia Martinez", "sofia_m", "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop", true),
+    user: createMockUser("r3u", "Sofia Martinez", "sofia_m", "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop", true),
     product: mockProducts[2],
     rating: 5,
     title: "Atomic Habits changed my study routine",
@@ -156,7 +156,7 @@ export const mockReviews: Review[] = [
 export const mockLiveSessions: LiveSession[] = [
   {
     id: "l1",
-    host: createMockUser("l1u", "Asikon Academy", "asikon_academy", "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop", true),
+    host: createMockUser("l1u", "Asikon Academy", "asikon_academy", "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop", true),
     title: "Live: AI for Students — Q&A with Mentors 🤖",
     thumbnailUrl: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=300&fit=crop",
     viewerCount: 2245,
@@ -166,7 +166,7 @@ export const mockLiveSessions: LiveSession[] = [
   },
   {
     id: "l2",
-    host: createMockUser("l2u", "Code With Rafi", "code_with_rafi", "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop", true),
+    host: createMockUser("l2u", "Code With Rafi", "code_with_rafi", "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=80&h=80&fit=crop", true),
     title: "Live: Build a Web App in 1 Hour",
     thumbnailUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
     viewerCount: 4420,
@@ -176,7 +176,7 @@ export const mockLiveSessions: LiveSession[] = [
   },
   {
     id: "l3",
-    host: createMockUser("l3u", "IELTS Hub", "ielts_hub", "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop", true),
+    host: createMockUser("l3u", "IELTS Hub", "ielts_hub", "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop", true),
     title: "Workshop: Crack IELTS Speaking 7+",
     thumbnailUrl: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop",
     viewerCount: 0,
@@ -187,7 +187,7 @@ export const mockLiveSessions: LiveSession[] = [
   },
   {
     id: "l4",
-    host: createMockUser("l4u", "Productivity Lab", "productivity_lab", "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=150&h=150&fit=crop", true),
+    host: createMockUser("l4u", "Productivity Lab", "productivity_lab", "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=80&h=80&fit=crop", true),
     title: "Deep Work Habits — Live Session",
     thumbnailUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop",
     viewerCount: 0,
