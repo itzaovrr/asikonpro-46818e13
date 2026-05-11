@@ -287,6 +287,12 @@ const Profile = () => {
           userName={displayProfile.name}
         />
 
+        {/* About Asikon */}
+        <section className="px-4 lg:px-0 pt-2">
+          <h2 className="font-semibold text-lg mb-3">About ASIKON</h2>
+          <MissionVision />
+        </section>
+
         {/* Messaging Drawer */}
         <MessagingDrawer
           open={showMessages}
