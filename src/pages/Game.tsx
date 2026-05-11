@@ -273,7 +273,7 @@ const Game = () => {
               View All <ChevronRight className="h-4 w-4" />
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
             {rewards.map((reward) => (
               <div
                 key={reward.id}
