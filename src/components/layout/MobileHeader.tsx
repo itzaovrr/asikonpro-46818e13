@@ -28,7 +28,8 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
         </Button>
 
         {/* Center - Logo */}
-        <Link to="/" className="absolute left-1/2 -translate-x-1/2">
+        <Link to="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+          <img src={logo} alt="Keyzet logo" className="w-7 h-7" />
           <h1 className="text-xl font-bold text-gradient">KEYZET</h1>
         </Link>
 
