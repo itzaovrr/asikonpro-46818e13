@@ -22,12 +22,13 @@ export function PageTransition({ children }: PageTransitionProps) {
   }, [location.pathname, children]);
 
   return (
+    // NOTE: Do NOT use `transform` / `translate-*` here. A transformed ancestor
+    // becomes the containing block for `position: fixed` descendants (the
+    // desktop sidebar), which would make them scroll with the page.
     <div
       className={cn(
-        "transition-all duration-300 ease-out",
-        isAnimating 
-          ? "opacity-0 translate-y-2" 
-          : "opacity-100 translate-y-0"
+        "transition-opacity duration-300 ease-out",
+        isAnimating ? "opacity-0" : "opacity-100"
       )}
     >
       {displayChildren}
