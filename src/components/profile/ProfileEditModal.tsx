@@ -207,7 +207,7 @@ export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEd
             <input
               ref={coverInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/gif,image/webp"
               onChange={handleCoverChange}
               className="hidden"
             />
@@ -242,7 +242,7 @@ export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEd
             <input
               ref={avatarInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/gif,image/webp"
               onChange={handleAvatarChange}
               className="hidden"
             />
