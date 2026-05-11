@@ -10,7 +10,7 @@ import {
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Shop", href: "/shop" },
+  { label: "Library", href: "/shop" },
   { label: "Community", href: "/community" },
   { label: "Game", href: "/game" },
   { label: "Trending", href: "/shop?filter=trending" },
@@ -18,12 +18,12 @@ const navItems = [
 ];
 
 const categories = [
-  { label: "T-Shirts", href: "/shop?category=tshirts", icon: "👕" },
-  { label: "Hoodies", href: "/shop?category=hoodies", icon: "🧥" },
-  { label: "Sneakers", href: "/shop?category=sneakers", icon: "👟" },
-  { label: "Bags", href: "/shop?category=bags", icon: "👜" },
-  { label: "Jackets", href: "/shop?category=jackets", icon: "🧥" },
-  { label: "Accessories", href: "/shop?category=accessories", icon: "💎" },
+  { label: "Courses", href: "/shop?type=courses", icon: "🎓" },
+  { label: "Books", href: "/shop?type=books", icon: "📚" },
+  { label: "Student Kits", href: "/shop?type=kits", icon: "🎒" },
+  { label: "Prompt Library", href: "/shop?type=prompts", icon: "🪄" },
+  { label: "AI Tutor", href: "/shop?category=ai-tutor", icon: "🤖" },
+  { label: "Gadgets", href: "/shop?category=gadgets", icon: "💻" },
 ];
 
 export function NavigationMenu() {
