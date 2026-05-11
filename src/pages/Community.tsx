@@ -16,10 +16,10 @@ import { StickyLayoutDebugger } from "@/components/dev/StickyLayoutDebugger";
 
 const Community = () => {
   const [activeTab, setActiveTab] = useState<CommunityTab>("my-feed");
-  const { isScrolled } = useScrollDirection();
-  // Mirror header behavior: only docked under header at the top of the page.
-  // Once scrolled, header hides and the tabs become the only sticky strip.
-  const headerHidden = isScrolled;
+  const { scrollDirection, isScrolled } = useScrollDirection();
+  // Mirror the mobile header: docked under header at top & on scroll-up,
+  // slides flush to top:0 when the header hides on scroll-down.
+  const headerHidden = scrollDirection === "down" && isScrolled;
 
   const renderTabContent = () => {
     switch (activeTab) {
