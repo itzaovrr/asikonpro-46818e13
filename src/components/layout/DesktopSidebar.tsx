@@ -193,7 +193,7 @@ export function DesktopSidebar({
         )}
       </Button>
 
-      <ScrollArea className="flex-1 py-4">
+      <ScrollArea className="flex-1 py-4 [&>[data-radix-scroll-area-viewport]]:overscroll-contain">
         <div className="space-y-6 px-3">
           {/* Main Navigation */}
           <div className="space-y-1">
