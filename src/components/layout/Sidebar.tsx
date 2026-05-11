@@ -28,7 +28,7 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
           <SidebarUser onClose={handleClose} />
           
           {/* Scrollable Content */}
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 overscroll-contain [&>[data-radix-scroll-area-viewport]]:overscroll-contain [&>[data-radix-scroll-area-viewport]]:touch-pan-y">
             {/* Primary Navigation */}
             <SidebarNav onClose={handleClose} />
             
