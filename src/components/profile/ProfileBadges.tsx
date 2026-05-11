@@ -14,12 +14,12 @@ interface ProfileBadgesProps {
 }
 
 const allBadges: Badge[] = [
-  { id: "buyer", name: "Buyer", icon: <ShoppingBag className="h-3.5 w-3.5" />, color: "text-blue-400 bg-blue-400/10 border-blue-400/20", earned: false },
+  { id: "buyer", name: "Learner", icon: <ShoppingBag className="h-3.5 w-3.5" />, color: "text-blue-400 bg-blue-400/10 border-blue-400/20", earned: false },
   { id: "creator", name: "Creator", icon: <Sparkles className="h-3.5 w-3.5" />, color: "text-purple-400 bg-purple-400/10 border-purple-400/20", earned: false },
-  { id: "designer", name: "Designer", icon: <Palette className="h-3.5 w-3.5" />, color: "text-pink-400 bg-pink-400/10 border-pink-400/20", earned: false },
+  { id: "designer", name: "Note Maker", icon: <Palette className="h-3.5 w-3.5" />, color: "text-pink-400 bg-pink-400/10 border-pink-400/20", earned: false },
   { id: "reviewer", name: "Top Reviewer", icon: <Star className="h-3.5 w-3.5" />, color: "text-amber-400 bg-amber-400/10 border-amber-400/20", earned: false },
-  { id: "trusted", name: "Trusted", icon: <Shield className="h-3.5 w-3.5" />, color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20", earned: false },
-  { id: "elite", name: "Elite", icon: <Award className="h-3.5 w-3.5" />, color: "text-primary bg-primary/10 border-primary/20", earned: false },
+  { id: "trusted", name: "Verified Student", icon: <Shield className="h-3.5 w-3.5" />, color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20", earned: false },
+  { id: "elite", name: "Scholar", icon: <Award className="h-3.5 w-3.5" />, color: "text-primary bg-primary/10 border-primary/20", earned: false },
 ];
 
 export function ProfileBadges({ badges }: ProfileBadgesProps) {

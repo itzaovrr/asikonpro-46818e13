@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, Share2, ShoppingCart, Star, ChevronLeft, ChevronRight, Truck, Clock, ShieldCheck } from "lucide-react";
+import { Heart, Share2, ShoppingCart, Star, ChevronLeft, ChevronRight, Truck, Clock, ShieldCheck, BookOpen, Play, CheckCircle2, GraduationCap, Award, Users, Globe, Infinity as InfinityIcon } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,15 +22,39 @@ const colors = [
 ];
 
 const mockReviews = [
-  { id: "1", userName: "Sarah M.", rating: 5, title: "Perfect fit!", content: "Amazing quality and fits exactly as described.", isVerifiedPurchase: true, helpfulCount: 24, createdAt: "2 days ago" },
-  { id: "2", userName: "Alex T.", rating: 4, title: "Great product", content: "Love the material, shipping was fast.", isVerifiedPurchase: true, helpfulCount: 12, createdAt: "1 week ago" },
+  { id: "1", userName: "Sarah M.", rating: 5, title: "AI tutor is a game changer", content: "Cleared every doubt I had. Felt like a personal mentor was beside me.", isVerifiedPurchase: true, helpfulCount: 124, createdAt: "2 days ago" },
+  { id: "2", userName: "Alex T.", rating: 5, title: "Worth every taka", content: "Projects are practical, instructor explains clearly, and lifetime access is amazing.", isVerifiedPurchase: true, helpfulCount: 88, createdAt: "1 week ago" },
 ];
 
-const faqs = [
-  { question: "What sizes are available?", answer: "We offer sizes XS through XXL. Check our size guide for measurements." },
-  { question: "How long does delivery take?", answer: "Standard delivery takes 3-5 business days. Express shipping available." },
-  { question: "What is your return policy?", answer: "30-day easy returns for size exchanges. Items must be unworn with tags." },
-  { question: "Is this product print-on-demand?", answer: "Yes, each item is printed after order to ensure freshness and quality." },
+const courseFaqs = [
+  { question: "Do I get lifetime access?", answer: "Yes — once enrolled, you keep lifetime access to all lessons, projects, and future updates." },
+  { question: "Is there a certificate?", answer: "Yes, you receive a verified ASIKON certificate of completion you can share on LinkedIn or your CV." },
+  { question: "Can I ask questions during the course?", answer: "Absolutely. The ASIKON AI Tutor is available 24/7, and our human mentors reply in the community within hours." },
+  { question: "Is this beginner friendly?", answer: "Yes. Every course starts from the fundamentals and builds up to real, project-based learning." },
+];
+
+const productFaqs = [
+  { question: "Is this product authentic?", answer: "Yes, every product on ASIKON is verified and shipped from trusted sellers." },
+  { question: "How long does delivery take?", answer: "Standard delivery takes 3-5 business days inside Bangladesh. Cash on delivery available." },
+  { question: "What is your return policy?", answer: "7-day easy returns. Items must be unused and in original packaging." },
+  { question: "Do you ship outside Bangladesh?", answer: "International shipping is rolling out soon — stay tuned!" },
+];
+
+const courseCurriculum = [
+  { module: "Module 1 — Foundations", lessons: 8, duration: "1h 45m" },
+  { module: "Module 2 — Core Concepts", lessons: 12, duration: "3h 20m" },
+  { module: "Module 3 — Hands-on Projects", lessons: 10, duration: "4h 10m" },
+  { module: "Module 4 — Real-World Case Studies", lessons: 6, duration: "2h 30m" },
+  { module: "Module 5 — Final Project & Certification", lessons: 4, duration: "2h 00m" },
+];
+
+const courseLearnings = [
+  "Build real projects from day one",
+  "Master fundamentals with simple, visual explanations",
+  "Get unstuck instantly with the ASIKON AI Tutor",
+  "Earn a verified certificate of completion",
+  "Join a community of motivated learners",
+  "Lifetime access with future updates included",
 ];
 
 const ProductDetail = () => {
@@ -97,6 +121,11 @@ const ProductDetail = () => {
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0;
 
+  const name = product.name || "";
+  const isCourse = /course|masterclass|bootcamp|specialization|class|prep/i.test(name);
+  const isBook = /book|hardcover|edition/i.test(name);
+  const isDigital = isCourse || /prompt|library|subscription|tutor/i.test(name);
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-6 max-w-6xl space-y-8">
@@ -151,14 +180,27 @@ const ProductDetail = () => {
 
             <TrustIndicators />
             <Separator />
-            <ColorSelector colors={colors} selectedColor={selectedColor} onSelectColor={setSelectedColor} />
-            <SizeSelector sizes={sizes} selectedSize={selectedSize} onSelectSize={setSelectedSize} />
-            <QuantitySelector quantity={quantity} onIncrease={() => setQuantity((q) => q + 1)} onDecrease={() => setQuantity((q) => Math.max(1, q - 1))} />
+            {isCourse ? (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><InfinityIcon className="h-4 w-4 text-primary" /><span>Lifetime access</span></div>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><Award className="h-4 w-4 text-primary" /><span>Verified certificate</span></div>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><Globe className="h-4 w-4 text-primary" /><span>Bangla + English</span></div>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><Users className="h-4 w-4 text-primary" /><span>24/7 AI Tutor</span></div>
+              </div>
+            ) : isBook ? (
+              <QuantitySelector quantity={quantity} onIncrease={() => setQuantity((q) => q + 1)} onDecrease={() => setQuantity((q) => Math.max(1, q - 1))} />
+            ) : (
+              <>
+                <ColorSelector colors={colors} selectedColor={selectedColor} onSelectColor={setSelectedColor} />
+                <SizeSelector sizes={sizes} selectedSize={selectedSize} onSelectSize={setSelectedSize} />
+                <QuantitySelector quantity={quantity} onIncrease={() => setQuantity((q) => q + 1)} onDecrease={() => setQuantity((q) => Math.max(1, q - 1))} />
+              </>
+            )}
             <Separator />
 
             <div className="flex gap-3">
               <Button className="flex-1 gradient-primary border-0" size="lg" onClick={handleAddToCart} disabled={addToCart.isPending}>
-                <ShoppingCart className="h-5 w-5 mr-2" />{addToCart.isPending ? "Adding..." : "Add to Cart"}
+                <ShoppingCart className="h-5 w-5 mr-2" />{addToCart.isPending ? "Adding..." : isCourse ? "Enroll Now" : "Add to Cart"}
               </Button>
               <Button variant="outline" size="lg"><Heart className="h-5 w-5" /></Button>
               <Button variant="outline" size="lg"><Share2 className="h-5 w-5" /></Button>
@@ -166,26 +208,88 @@ const ProductDetail = () => {
 
             {product.description && (
               <div className="p-4 rounded-xl bg-secondary/30 border border-border/50">
-                <h3 className="font-semibold mb-2">About This Product</h3>
+                <h3 className="font-semibold mb-2">{isCourse ? "About This Course" : isBook ? "About This Book" : "About This Product"}</h3>
                 <p className="text-sm text-muted-foreground">{product.description}</p>
                 <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1.5">
                   <ShieldCheck className="h-3.5 w-3.5 text-success" />
-                  Printed on demand to ensure freshness and quality
+                  {isDigital ? "Instant access after purchase. Lifetime updates included." : "Authentic, verified by ASIKON. Cash on delivery available."}
                 </p>
               </div>
             )}
           </div>
         </div>
 
+        {/* Course-specific sections */}
+        {isCourse && (
+          <>
+            <section className="rounded-2xl border border-border/50 bg-secondary/20 p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold">What you will learn</h2>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {courseLearnings.map((item) => (
+                  <div key={item} className="flex items-start gap-2 text-sm">
+                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-success flex-shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-border/50 bg-secondary/20 p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold">Curriculum</h2>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  {courseCurriculum.reduce((s, m) => s + m.lessons, 0)} lessons · ~14h
+                </span>
+              </div>
+              <div className="space-y-2">
+                {courseCurriculum.map((m, i) => (
+                  <div key={m.module} className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
+                    <div className="w-8 h-8 rounded-full gradient-primary text-primary-foreground flex items-center justify-center text-sm font-bold flex-shrink-0">
+                      {i + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{m.module}</p>
+                      <p className="text-xs text-muted-foreground">{m.lessons} lessons · {m.duration}</p>
+                    </div>
+                    <Play className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-border/50 bg-secondary/20 p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold">Your Instructor</h2>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&q=80"
+                  alt="Instructor"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-primary/30"
+                />
+                <div className="flex-1">
+                  <p className="font-semibold">ASIKON Mentor Team</p>
+                  <p className="text-xs text-muted-foreground">Engineers, educators, and AI researchers helping students learn smarter, faster, and stay motivated every day.</p>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
+
         {/* Reviews */}
         <ProductReviews reviews={mockReviews} averageRating={product.rating || 4.5} totalReviews={product.review_count || 36} ratingDistribution={[{ stars: 5, count: 24 }, { stars: 4, count: 8 }, { stars: 3, count: 3 }, { stars: 2, count: 1 }, { stars: 1, count: 0 }]} />
 
         {/* FAQ */}
-        <ProductFAQ faqs={faqs} />
+        <ProductFAQ faqs={isCourse ? courseFaqs : productFaqs} />
 
         {/* Related Products */}
         {relatedProducts && relatedProducts.length > 0 && (
-          <ProductCarousel title="You May Also Like" products={relatedProducts.filter((p) => p.id !== product.id).slice(0, 8).map((p) => ({ id: p.id, name: p.name, brand: "StyleHub", price: p.price, originalPrice: p.original_price || undefined, image: p.image_url || "/placeholder.svg", rating: p.rating || 0, reviews: p.review_count || 0, isTrending: p.is_featured || false }))} />
+          <ProductCarousel title={isCourse ? "Continue Learning" : "You May Also Like"} products={relatedProducts.filter((p) => p.id !== product.id).slice(0, 8).map((p) => ({ id: p.id, name: p.name, brand: "ASIKON", price: p.price, originalPrice: p.original_price || undefined, image: p.image_url || "/placeholder.svg", rating: p.rating || 0, reviews: p.review_count || 0, isTrending: p.is_featured || false }))} />
         )}
       </div>
 
@@ -197,7 +301,7 @@ const ProductDetail = () => {
             {product.original_price && <span className="text-sm text-muted-foreground line-through ml-2">${product.original_price}</span>}
           </div>
           <Button className="gradient-primary border-0 px-8" size="lg" onClick={handleAddToCart} disabled={addToCart.isPending}>
-            <ShoppingCart className="h-5 w-5 mr-2" />Buy Now
+            <ShoppingCart className="h-5 w-5 mr-2" />{isCourse ? "Enroll" : "Buy Now"}
           </Button>
         </div>
       </div>

@@ -152,30 +152,43 @@ const Profile = () => {
   const mockReviews = [
     {
       id: "1",
-      productId: "1",
-      productName: "Premium Leather Crossbody",
+      productId: mockProducts[0].id,
+      productName: mockProducts[0].name,
       productImage: mockProducts[0].image,
       rating: 5,
-      title: "Amazing quality!",
-      content: "This bag exceeded my expectations. Highly recommend!",
+      title: "This course changed how I learn AI",
+      content: "The AI tutor explains tough concepts in seconds. Projects feel real and the community is super supportive.",
       images: [mockProducts[0].image],
-      helpfulCount: 24,
+      helpfulCount: 87,
       isVerifiedPurchase: true,
       createdAt: "2 days ago",
+    },
+    {
+      id: "2",
+      productId: mockProducts[2].id,
+      productName: mockProducts[2].name,
+      productImage: mockProducts[2].image,
+      rating: 5,
+      title: "Must-read for every student",
+      content: "Atomic Habits paired with the Asikon planner totally rebuilt my study routine.",
+      images: [],
+      helpfulCount: 52,
+      isVerifiedPurchase: true,
+      createdAt: "1 week ago",
     },
   ];
 
   const mockMedia = [
-    { id: "1", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400", url: "" },
-    { id: "2", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400", url: "", duration: 45, viewCount: 1200 },
+    { id: "1", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400", url: "" },
+    { id: "2", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400", url: "", duration: 45, viewCount: 1200 },
   ];
 
   const mockDesigns = [
-    { id: "1", title: "Urban Streetwear", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400", salesCount: 45, likes: 234, earnings: 450 },
+    { id: "1", title: "AI Study Notes Template", image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400", salesCount: 45, likes: 234, earnings: 450 },
   ];
 
   const mockActivities = [
-    { id: "1", type: "coins" as const, title: "Earned coins", description: "Review bonus", timestamp: "2 hours ago", metadata: { amount: 50 } },
+    { id: "1", type: "coins" as const, title: "Earned coins", description: "Lesson completion bonus", timestamp: "2 hours ago", metadata: { amount: 50 } },
   ];
 
   const handleStatClick = (stat: string) => {

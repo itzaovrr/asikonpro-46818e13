@@ -3,7 +3,10 @@ import { Search, Bell } from "lucide-react";
 export function CommunityHeader() {
   return (
     <div className="flex items-center justify-between px-4 py-3">
-      <h1 className="text-xl font-bold text-gradient">Community</h1>
+      <div>
+        <h1 className="text-xl font-bold text-gradient leading-none">ASIKON Community</h1>
+        <p className="text-[11px] text-muted-foreground mt-0.5">Learn together. Grow faster.</p>
+      </div>
       <div className="flex items-center gap-2">
         <button className="p-2 rounded-full hover:bg-secondary transition-colors">
           <Search className="h-5 w-5" />
