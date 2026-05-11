@@ -63,13 +63,17 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
     >
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">
-          {slides.map((slide) => (
+          {slides.map((slide, index) => (
             <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative">
               <div className="relative aspect-[16/9] md:aspect-[21/9]">
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="w-full h-full object-cover"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding={index === 0 ? "sync" : "async"}
+                  // @ts-expect-error fetchpriority is a valid HTML attribute, React 18 types lag behind
+                  fetchpriority={index === 0 ? "high" : "low"}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
