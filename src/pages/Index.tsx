@@ -188,11 +188,7 @@ const Index = () => {
           {productsLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                <div key={i}>
-                  <Skeleton className="aspect-square rounded-xl mb-2" />
-                  <Skeleton className="h-4 w-full mb-1" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
+                <ProductCardSkeleton key={i} />
               ))}
             </div>
           ) : (
