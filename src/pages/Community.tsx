@@ -12,7 +12,7 @@ import { OffersTab } from "@/components/community/tabs/OffersTab";
 import { GalleryTab } from "@/components/community/tabs/GalleryTab";
 import { CommunityTab } from "@/types/community";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
-
+import { StickyLayoutDebugger } from "@/components/dev/StickyLayoutDebugger";
 
 const Community = () => {
   const [activeTab, setActiveTab] = useState<CommunityTab>("my-feed");
@@ -52,6 +52,7 @@ const Community = () => {
             slides flush to the top when the mobile header hides on scroll-down.
             Sticky keeps its slot in document flow → no layout shift. */}
         <div
+          data-sticky-tabs
           className="sticky z-30 bg-background/95 backdrop-blur-md border-b border-border shadow-sm transition-[top] duration-300 ease-out will-change-[top]"
           style={{ top: headerHidden ? 0 : "var(--app-header-h)" }}
         >
@@ -59,10 +60,13 @@ const Community = () => {
         </div>
 
         {/* Tab Content */}
-        <main>{renderTabContent()}</main>
+        <main data-feed-root>{renderTabContent()}</main>
 
         {/* Create Content FAB */}
         <CreateContentFAB />
+
+        {/* Dev-only overlay verifying the sticky tab never overlaps the feed */}
+        <StickyLayoutDebugger />
       </div>
     </AppLayout>
   );

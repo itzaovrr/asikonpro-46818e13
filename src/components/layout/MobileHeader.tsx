@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import { Menu, ShoppingCart, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
+import { useMeasuredHeaderHeight } from "@/hooks/use-measured-header-height";
 import logo from "@/assets/logo.png";
 
 interface MobileHeaderProps {
@@ -16,9 +18,13 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
   // Header is the "first tab": visible only at the very top. Once the user
   // scrolls, it slides away so the page tabs (second bar) become the sticky top.
   const isHidden = isScrolled;
+  const ref = useRef<HTMLElement>(null);
+  useMeasuredHeaderHeight(ref);
 
   return (
     <header
+      ref={ref}
+      data-app-header
       className={cn(
         "fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border transition-transform duration-300 will-change-transform",
         isHidden && "-translate-y-full"

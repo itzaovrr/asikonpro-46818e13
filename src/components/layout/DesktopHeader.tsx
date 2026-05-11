@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
+import { useMeasuredHeaderHeight } from "@/hooks/use-measured-header-height";
 import { SmartSearch } from "@/components/search/SmartSearch";
 import { UserMenu } from "./UserMenu";
 import { NotificationsMenu } from "./NotificationsMenu";
@@ -22,9 +24,13 @@ export function DesktopHeader({
   isSidebarCollapsed = false 
 }: DesktopHeaderProps) {
   const { isScrolled } = useScrollDirection();
+  const ref = useRef<HTMLElement>(null);
+  useMeasuredHeaderHeight(ref);
 
   return (
     <header 
+      ref={ref}
+      data-app-header
       className={cn(
         "fixed top-0 z-40 transition-all duration-300",
         isSidebarCollapsed ? "left-16 right-0" : "left-60 right-0",
