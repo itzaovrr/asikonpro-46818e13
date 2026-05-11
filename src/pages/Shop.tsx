@@ -168,7 +168,7 @@ const Shop = () => {
             {productsLoading ? (
               <Skeleton className="h-4 w-24 inline-block" />
             ) : (
-              `${products?.length || 0} products found`
+              `${filteredProducts?.length || 0} products found`
             )}
           </p>
         </div>
@@ -186,9 +186,9 @@ const Shop = () => {
                 </div>
               ))}
             </div>
-          ) : products && products.length > 0 ? (
+          ) : filteredProducts && filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
                   to={`/product/${product.slug}`}
