@@ -39,6 +39,10 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
   const [productType, setProductType] = useState<ProductType>("all");
+  const [minRating, setMinRating] = useState(0);
+  const [onSaleOnly, setOnSaleOnly] = useState(false);
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [podOnly, setPodOnly] = useState(false);
 
   // Sync URL params (?type=courses, ?filter=trending|new|deals) → state
   useEffect(() => {
@@ -49,7 +53,10 @@ const Shop = () => {
     const filter = searchParams.get("filter");
     if (filter === "trending" || filter === "popular") setSortBy("popular");
     else if (filter === "new") setSortBy("newest");
-    else if (filter === "deals") setSortBy("price-asc");
+    else if (filter === "deals") {
+      setSortBy("price-asc");
+      setOnSaleOnly(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -80,12 +87,18 @@ const Shop = () => {
     sortBy,
   });
 
-  // Apply type filter client-side
+  // Apply remaining filters client-side
   const filteredProducts = useMemo(() => {
     if (!products) return products;
-    if (productType === "all") return products;
-    return products.filter((p) => detectProductType(p.name) === productType);
-  }, [products, productType]);
+    return products.filter((p) => {
+      if (productType !== "all" && detectProductType(p.name) !== productType) return false;
+      if (minRating > 0 && (p.rating ?? 0) < minRating) return false;
+      if (onSaleOnly && !(p.original_price && p.original_price > p.price)) return false;
+      if (featuredOnly && !p.is_featured) return false;
+      if (podOnly && !p.is_pod) return false;
+      return true;
+    });
+  }, [products, productType, minRating, onSaleOnly, featuredOnly, podOnly]);
 
   // Transform categories for carousel
   const categoryItems = [
@@ -103,14 +116,23 @@ const Shop = () => {
     let count = 0;
     if (priceRange[0] > 0 || priceRange[1] < MAX_PRICE) count++;
     if (productType !== "all") count++;
+    if (minRating > 0) count++;
+    if (onSaleOnly) count++;
+    if (featuredOnly) count++;
+    if (podOnly) count++;
     return count;
-  }, [priceRange, productType]);
+  }, [priceRange, productType, minRating, onSaleOnly, featuredOnly, podOnly]);
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setPriceRange([0, MAX_PRICE]);
     setSortBy("newest");
     setActiveCategory("All");
+    setProductType("all");
+    setMinRating(0);
+    setOnSaleOnly(false);
+    setFeaturedOnly(false);
+    setPodOnly(false);
   };
 
   return (
@@ -141,6 +163,16 @@ const Shop = () => {
             maxPriceLimit={MAX_PRICE}
             activeFiltersCount={activeFiltersCount}
             onClearFilters={handleClearFilters}
+            productType={productType}
+            onProductTypeChange={handleTypeChange}
+            minRating={minRating}
+            onMinRatingChange={setMinRating}
+            onSaleOnly={onSaleOnly}
+            onOnSaleChange={setOnSaleOnly}
+            featuredOnly={featuredOnly}
+            onFeaturedChange={setFeaturedOnly}
+            podOnly={podOnly}
+            onPodChange={setPodOnly}
           />
         </div>
 
