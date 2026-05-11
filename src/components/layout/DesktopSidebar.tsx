@@ -127,8 +127,9 @@ export function DesktopSidebar({
 
   return (
     <aside
+      style={{ top: "var(--app-header-h)" }}
       className={cn(
-        "fixed left-0 top-[120px] bottom-0 z-30 hidden lg:flex flex-col border-r border-border bg-background/95 backdrop-blur-md transition-all duration-300",
+        "fixed left-0 bottom-0 z-30 hidden lg:flex flex-col border-r border-border bg-background/95 backdrop-blur-md transition-all duration-300 will-change-transform",
         isCollapsed ? "w-16" : "w-60",
         className
       )}

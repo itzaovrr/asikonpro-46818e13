@@ -93,10 +93,13 @@
     @apply border-border;
   }
 
-  html, body {
+  html {
+    /* Do NOT set overflow-x:hidden here — it breaks position:fixed children */
+  }
+
+  body {
     /* Kill any horizontal scroll caused by stray children */
     overflow-x: hidden;
-    max-width: 100vw;
   }
 
   body {
