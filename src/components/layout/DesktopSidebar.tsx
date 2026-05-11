@@ -33,24 +33,38 @@ interface NavItemProps {
   label: string;
   href: string;
   isActive: boolean;
+  /** True when only icons are visible (collapsed AND not hovered open) */
+  iconOnly: boolean;
+  /** True when collapsed (used to enable tooltips even while hover-expanded settles) */
   isCollapsed: boolean;
   badge?: string;
+  innerRef?: React.Ref<HTMLAnchorElement>;
 }
 
-function NavItem({ icon: Icon, label, href, isActive, isCollapsed, badge }: NavItemProps) {
+function NavItem({ icon: Icon, label, href, isActive, iconOnly, isCollapsed, badge, innerRef }: NavItemProps) {
   const content = (
     <Link
+      ref={innerRef}
       to={href}
+      aria-current={isActive ? "page" : undefined}
       className={cn(
-        "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+        "group/navitem relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
         isActive
           ? "bg-primary/10 text-primary font-medium"
           : "text-muted-foreground hover:text-foreground hover:bg-secondary/50",
-        isCollapsed && "justify-center px-2"
+        iconOnly && "justify-center px-2"
       )}
     >
+      {/* Active indicator bar */}
+      <span
+        className={cn(
+          "absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-r-full bg-primary transition-opacity",
+          isActive ? "opacity-100" : "opacity-0"
+        )}
+        aria-hidden
+      />
       <Icon className={cn("h-5 w-5 flex-shrink-0", isActive && "text-primary")} />
-      {!isCollapsed && (
+      {!iconOnly && (
         <>
           <span className="flex-1 truncate">{label}</span>
           {badge && (
@@ -63,7 +77,8 @@ function NavItem({ icon: Icon, label, href, isActive, isCollapsed, badge }: NavI
     </Link>
   );
 
-  if (isCollapsed) {
+  // Show tooltips only when truly icon-only (collapsed and not hover-expanded)
+  if (iconOnly && isCollapsed) {
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>{content}</TooltipTrigger>
