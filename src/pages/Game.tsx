@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { mockChallenges, mockUser } from "@/lib/mock-data";
 import productSneakers from "@/assets/product-sneakers.jpg";
 import productBag from "@/assets/product-bag.jpg";
+import { ProgressCharts } from "@/components/learning/ProgressCharts";
 
 const quickActions = [
   { icon: Trophy, label: "Rank", color: "text-amber-400" },
