@@ -159,43 +159,71 @@
 
 @layer utilities {
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(233, 80%, 54%) 0%, hsl(220, 90%, 65%) 100%);
+    background: var(--gradient-primary);
   }
-  
+
+  .gradient-primary-soft {
+    background: var(--gradient-primary-soft);
+  }
+
   .gradient-card {
     background: linear-gradient(145deg, hsl(225, 15%, 10%) 0%, hsl(225, 15%, 7%) 100%);
   }
-  
+
   .gradient-dark {
     background: linear-gradient(180deg, hsl(225, 15%, 8%) 0%, hsl(225, 18%, 4%) 100%);
   }
 
+  /* === Refined liquid glass v2 ===
+     A subtle inset highlight + soft shadow gives a tactile, layered feel
+     while keeping content fully readable on top. */
   .glass {
-    background: rgba(18, 20, 26, 0.6);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(30, 33, 42, 0.5);
+    position: relative;
+    background:
+      var(--gradient-sheen),
+      hsl(var(--glass-bg) / 0.55);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid hsl(var(--glass-border) / 0.55);
+    box-shadow:
+      var(--shadow-md),
+      inset 0 1px 0 hsl(var(--glass-highlight) / 0.06);
   }
 
   .glass-strong {
-    background: rgba(22, 24, 32, 0.85);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(35, 38, 48, 0.6);
+    position: relative;
+    background:
+      var(--gradient-sheen),
+      hsl(var(--glass-bg) / 0.82);
+    backdrop-filter: blur(28px) saturate(150%);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    border: 1px solid hsl(var(--glass-border) / 0.7);
+    box-shadow:
+      var(--shadow-lg),
+      inset 0 1px 0 hsl(var(--glass-highlight) / 0.08);
   }
-  
+
+  .glass-subtle {
+    background: hsl(var(--glass-bg) / 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--glass-border) / 0.4);
+  }
+
   .glow-primary {
-    box-shadow: 0 0 40px rgba(44, 60, 230, 0.3), 0 0 80px rgba(44, 60, 230, 0.12);
+    box-shadow: var(--shadow-glow);
   }
 
   .glow-accent {
-    box-shadow: 0 0 40px rgba(70, 120, 255, 0.3), 0 0 80px rgba(70, 120, 255, 0.12);
+    box-shadow: 0 0 40px hsl(220 90% 65% / 0.3), 0 0 80px hsl(220 90% 65% / 0.12);
   }
 
   .glow-gold {
-    box-shadow: 0 0 30px rgba(234, 179, 8, 0.3);
+    box-shadow: 0 0 30px hsl(45 95% 55% / 0.3);
   }
-  
+
   .text-gradient {
-    background: linear-gradient(135deg, hsl(233, 85%, 58%) 0%, hsl(220, 90%, 65%) 100%);
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -208,32 +236,56 @@
     background-clip: text;
   }
 
+  /* Unified motion */
+  .transition-base {
+    transition: all var(--duration-base) var(--ease-out-soft);
+  }
+
   .hover-scale {
-    @apply transition-transform duration-300 hover:scale-105;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+  .hover-scale:hover {
+    transform: scale(1.04);
   }
 
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+    transition: transform var(--duration-base) var(--ease-out-soft),
+                box-shadow var(--duration-base) var(--ease-out-soft),
+                border-color var(--duration-base) var(--ease-out-soft);
   }
-  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
 
   .card-hover {
-    @apply relative overflow-hidden transition-all duration-300;
+    @apply relative overflow-hidden;
+    transition: transform var(--duration-base) var(--ease-out-soft),
+                box-shadow var(--duration-base) var(--ease-out-soft),
+                border-color var(--duration-base) var(--ease-out-soft);
   }
 
   .card-hover:hover {
-    @apply border-primary/30 shadow-lg;
+    @apply border-primary/30;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
 
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Consistent focus ring across the app */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 }
