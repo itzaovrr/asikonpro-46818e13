@@ -12,7 +12,7 @@ import { OffersTab } from "@/components/community/tabs/OffersTab";
 import { GalleryTab } from "@/components/community/tabs/GalleryTab";
 import { CommunityTab } from "@/types/community";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
-import { cn } from "@/lib/utils";
+
 
 const Community = () => {
   const [activeTab, setActiveTab] = useState<CommunityTab>("my-feed");
