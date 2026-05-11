@@ -1,8 +1,9 @@
 import { Product, User, Post, Story, Challenge, Category } from "@/types";
-import productBag from "@/assets/product-bag.jpg";
-import productSneakers from "@/assets/product-sneakers.jpg";
-import productJacket from "@/assets/product-jacket.jpg";
-import productHoodie from "@/assets/product-hoodie.jpg";
+import courseAiMl from "@/assets/course-ai-ml.jpg";
+import coursePython from "@/assets/course-python.jpg";
+import bookHardcover from "@/assets/book-hardcover.jpg";
+import studentKit from "@/assets/student-kit.jpg";
+import promptLibrary from "@/assets/prompt-library.jpg";
 import heroFashion from "@/assets/hero-fashion-1.jpg";
 
 export const mockProducts: Product[] = [
@@ -11,7 +12,7 @@ export const mockProducts: Product[] = [
     name: "AI & Machine Learning Masterclass",
     price: 49,
     originalPrice: 120,
-    image: productBag,
+    image: courseAiMl,
     brand: "Asikon Academy",
     rating: 4.9,
     reviews: 1842,
@@ -22,7 +23,7 @@ export const mockProducts: Product[] = [
     id: "2",
     name: "Complete Python for Data Science (Course)",
     price: 39,
-    image: productSneakers,
+    image: coursePython,
     brand: "Asikon Academy",
     rating: 4.8,
     reviews: 2512,
@@ -33,7 +34,7 @@ export const mockProducts: Product[] = [
     name: "Atomic Habits — Hardcover Book",
     price: 18,
     originalPrice: 25,
-    image: productJacket,
+    image: bookHardcover,
     brand: "Bestseller",
     rating: 4.9,
     reviews: 9189,
@@ -43,10 +44,22 @@ export const mockProducts: Product[] = [
     id: "4",
     name: "Student Essentials Kit (Notebook + Stationery)",
     price: 22,
-    image: productHoodie,
+    image: studentKit,
     brand: "StudyGear",
     rating: 4.7,
     reviews: 467,
+    isTrending: true,
+  },
+  {
+    id: "5",
+    name: "1000+ AI Prompt Library (Lifetime)",
+    price: 29,
+    originalPrice: 79,
+    image: promptLibrary,
+    brand: "Asikon AI",
+    rating: 4.9,
+    reviews: 3204,
+    isAuthentic: true,
     isTrending: true,
   },
 ];
@@ -120,7 +133,7 @@ export const mockPosts: Post[] = [
     id: "2",
     user: mockUser,
     content: "My weekly study haul: new books + the Python course. Asikon recommended all of these for my goals 📚💫",
-    image: productJacket,
+    image: bookHardcover,
     likes: 1850,
     comments: 89,
     shares: 34,

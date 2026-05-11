@@ -3,8 +3,8 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { mockChallenges, mockUser } from "@/lib/mock-data";
-import productSneakers from "@/assets/product-sneakers.jpg";
-import productBag from "@/assets/product-bag.jpg";
+import coursePython from "@/assets/course-python.jpg";
+import courseAiMl from "@/assets/course-ai-ml.jpg";
 import { ProgressCharts } from "@/components/learning/ProgressCharts";
 
 const quickActions = [
@@ -20,14 +20,14 @@ const rewards = [
     title: "$10 Off Next Course",
     type: "Voucher",
     coins: 1000,
-    image: productBag,
+    image: courseAiMl,
   },
   {
     id: "2",
     title: "1-on-1 AI Tutor Session",
     type: "Access",
     coins: 5000,
-    image: productSneakers,
+    image: coursePython,
   },
 ];
 
@@ -36,7 +36,7 @@ const enrolledCourses = [
     id: "c1",
     title: "AI & Machine Learning Masterclass",
     instructor: "Dr. Aisha Khan",
-    cover: productBag,
+    cover: courseAiMl,
     completed: 18,
     total: 32,
     nextLesson: "Lesson 19 · Neural Networks Intro",
@@ -45,7 +45,7 @@ const enrolledCourses = [
     id: "c2",
     title: "Complete Python for Data Science",
     instructor: "Marcus Lee",
-    cover: productSneakers,
+    cover: coursePython,
     completed: 9,
     total: 24,
     nextLesson: "Lesson 10 · Pandas DataFrames",
