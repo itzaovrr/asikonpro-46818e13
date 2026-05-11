@@ -74,13 +74,13 @@ const Game = () => {
     <AppLayout>
       <div className="space-y-6 pb-4">
         {/* Page Title */}
-        <div className="px-4 pt-4">
+        <div className="px-4 lg:px-0 pt-4">
           <h1 className="text-xl font-bold">Learning Hub</h1>
           <p className="text-sm text-muted-foreground">Track your progress, streak, and rewards</p>
         </div>
 
         {/* Balance Card */}
-        <div className="mx-4">
+        <div className="mx-4 lg:mx-0">
           <div className="p-5 rounded-2xl bg-gradient-to-br from-card to-secondary/50 border border-border">
             <p className="text-sm text-muted-foreground mb-1">TOTAL BALANCE</p>
             <div className="flex items-baseline gap-2 mb-4">
@@ -106,7 +106,7 @@ const Game = () => {
         </div>
 
         {/* Streak + Stats */}
-        <section className="px-4">
+        <section className="px-4 lg:px-0">
           <div className="grid grid-cols-2 gap-3">
             {/* Streak Card */}
             <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-500/15 to-amber-500/5 border border-orange-500/20">
@@ -164,7 +164,7 @@ const Game = () => {
         </section>
 
         {/* Course Progress */}
-        <section className="px-4">
+        <section className="px-4 lg:px-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">My Courses</h2>
             <button className="text-sm text-primary flex items-center gap-1">
@@ -231,7 +231,7 @@ const Game = () => {
         </div>
 
         {/* Daily Challenges */}
-        <section className="px-4">
+        <section className="px-4 lg:px-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Daily Challenges</h2>
             <span className="text-xs text-primary">Resets in 4h</span>
@@ -266,7 +266,7 @@ const Game = () => {
         </section>
 
         {/* Hot Rewards */}
-        <section className="px-4">
+        <section className="px-4 lg:px-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Hot Rewards</h2>
             <button className="text-sm text-primary flex items-center gap-1">
