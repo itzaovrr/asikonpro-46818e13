@@ -8,7 +8,10 @@ import { ThemeProvider } from "next-themes";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { installFetchTimer, logRoute } from "@/lib/perf";
 import Index from "./pages/Index";
+
+installFetchTimer();
 
 // Lazy-load non-initial routes to reduce initial JS bundle.
 // Module references are kept so we can warm them on idle for instant nav.
@@ -96,6 +99,7 @@ function PersistentMobileShell() {
 function AnimatedRoutes() {
   const location = useLocation();
   useIdlePrefetch();
+  useEffect(() => { logRoute(location.pathname); }, [location.pathname]);
 
   return (
     <PageTransition key={location.pathname}>

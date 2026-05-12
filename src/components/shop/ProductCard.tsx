@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SmartImage } from "@/components/ui/smart-image";
 import { ProductQuickView } from "./ProductQuickView";
 
 interface ProductCardProps {
@@ -42,10 +43,9 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
             isCompact ? "aspect-square" : "aspect-[4/5]",
             isFeatured && "lg:w-1/2 lg:aspect-auto lg:h-full"
           )}>
-            <img
+            <SmartImage
               src={product.image}
               alt={product.name}
-              loading="lazy"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             

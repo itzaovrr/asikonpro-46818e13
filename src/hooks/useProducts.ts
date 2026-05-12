@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { mockProducts } from "@/lib/mock-data";
+import { readCache, writeCache, cacheKey } from "@/lib/query-cache";
 
 // Fallback products shaped to match the Supabase `products` table
 const fallbackProducts = mockProducts.map((p, i) => ({
@@ -34,8 +35,10 @@ interface UseProductsOptions {
 export function useProducts(options: UseProductsOptions = {}) {
   const { categoryId, featured, limit = 20, search, minPrice, maxPrice, sortBy = "newest", isPod } = options;
 
+  const ck = cacheKey(["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy, isPod }]);
   return useQuery({
     queryKey: ["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy, isPod }],
+    initialData: () => readCache<any[]>(ck),
     queryFn: async () => {
       let query = supabase
         .from("products")
@@ -111,8 +114,11 @@ export function useProducts(options: UseProductsOptions = {}) {
           case "rating": list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)); break;
           case "popular": list.sort((a, b) => (b.review_count ?? 0) - (a.review_count ?? 0)); break;
         }
-        return list.slice(0, limit);
+        const out = list.slice(0, limit);
+        writeCache(ck, out);
+        return out;
       }
+      writeCache(ck, data);
       return data;
     },
     retry: 0,

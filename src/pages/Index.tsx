@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/transitions/Reveal";
+import { SmartImage } from "@/components/ui/smart-image";
 import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
 import courseAiMl from "@/assets/course-ai-ml.jpg";
 import coursePython from "@/assets/course-python.jpg";
@@ -224,11 +225,9 @@ const Index = () => {
                     className="group relative bg-card rounded-2xl overflow-hidden border border-border/60 hover-lift focus-ring flex flex-col h-full"
                   >
                     <div className="relative aspect-square overflow-hidden bg-muted">
-                      <img
+                      <SmartImage
                         src={product.image_url || "/placeholder.svg"}
                         alt={product.name}
-                        loading="lazy"
-                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                       />
                       {product.is_featured && (

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Post } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { SmartImage } from "@/components/ui/smart-image";
 
 interface PostCardProps {
   post: Post;
@@ -45,7 +46,7 @@ export function PostCard({ post }: PostCardProps) {
       {/* Image */}
       {post.image && (
         <div className="relative">
-          <img
+          <SmartImage
             src={post.image}
             alt="Post content"
             className="w-full aspect-[4/5] object-cover"
