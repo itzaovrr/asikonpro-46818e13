@@ -34,6 +34,7 @@ const PodUploadMod = () => import("./pages/PodUpload");
 const LearnMod = () => import("./pages/Learn");
 const NotFoundMod = () => import("./pages/NotFound");
 const ResetPasswordMod = () => import("./pages/ResetPassword");
+const AboutMod = () => import("./pages/About");
 
 const Shop = lazy(ShopMod);
 const Community = lazy(CommunityMod);
@@ -54,6 +55,7 @@ const PodDesigns = lazy(PodDesignsMod);
 const PodUpload = lazy(PodUploadMod);
 const Learn = lazy(LearnMod);
 const NotFound = lazy(NotFoundMod);
+const About = lazy(AboutMod);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -127,6 +129,7 @@ function AnimatedRoutes() {
           <Route path="/pod/upload" element={<PodUpload />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:threadId" element={<Learn />} />
+          <Route path="/about" element={<About />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

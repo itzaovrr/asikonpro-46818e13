@@ -2,7 +2,7 @@ import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight } from "lu
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { MissionVision } from "@/components/about/MissionVision";
+
 import { PostCard } from "@/components/community/PostCard";
 import { HeroCarousel, ProductCarousel } from "@/components/carousels";
 import { mockPosts } from "@/lib/mock-data";
@@ -278,15 +278,6 @@ const Index = () => {
           )}
         </Reveal>
 
-        {/* Mission & Vision */}
-        <Reveal as="section" className="section-x">
-          <SectionHeader
-            eyebrow="Why ASIKON"
-            title="Built for every Bangladeshi learner"
-            subtitle="Simple, smart, and accessible — by design."
-          />
-          <MissionVision />
-        </Reveal>
       </div>
     </AppLayout>
   );

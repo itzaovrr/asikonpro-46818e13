@@ -136,6 +136,7 @@ export function DesktopSidebar({
   ];
 
   const bottomNavItems = [
+    { icon: Sparkles, label: "About ASIKON", href: "/about" },
     { icon: Settings, label: "Settings", href: "/settings" },
     { icon: HelpCircle, label: "Help & Support", href: "/help" },
   ];

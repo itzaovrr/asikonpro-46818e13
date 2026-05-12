@@ -94,6 +94,13 @@ export function SidebarNav({ onClose }: SidebarNavProps) {
           isActive={location.pathname.startsWith("/learn")}
           onClick={onClose}
         />
+        <NavItem
+          icon={<Sparkles className="w-5 h-5" />}
+          label="About ASIKON"
+          href="/about"
+          isActive={location.pathname === "/about"}
+          onClick={onClose}
+        />
       </div>
 
       {/* Community Section */}
