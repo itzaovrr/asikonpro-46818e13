@@ -286,6 +286,8 @@
 
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   /* One-frame, non-blocking page enter — no blank flash, no JS timer */
   .page-enter { opacity: 0.001; }
   .page-enter-active {
@@ -297,7 +299,6 @@
     .page-enter, .page-enter-active { opacity: 1 !important; transition: none !important; }
     .pressable, .hover-lift, .hover-scale { transition: none !important; }
   }
-}
 
   /* Consistent focus ring across the app */
   .focus-ring {
