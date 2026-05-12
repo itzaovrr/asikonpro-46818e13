@@ -86,8 +86,11 @@ function useIdlePrefetch() {
 
 function PersistentMobileShell() {
   const isMobile = useIsMobile();
-  // Persistent across route changes — mounted once, never re-rendered by route swaps.
-  return isMobile ? <BottomNav /> : null;
+  const { pathname } = useLocation();
+  // Hide nav on auth/onboarding-style routes; otherwise keep mounted permanently.
+  const hideOn = ["/auth"];
+  if (!isMobile || hideOn.some((p) => pathname.startsWith(p))) return null;
+  return <BottomNav />;
 }
 
 function AnimatedRoutes() {
