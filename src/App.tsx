@@ -33,6 +33,7 @@ const PodDesignsMod = () => import("./pages/PodDesigns");
 const PodUploadMod = () => import("./pages/PodUpload");
 const LearnMod = () => import("./pages/Learn");
 const NotFoundMod = () => import("./pages/NotFound");
+const ResetPasswordMod = () => import("./pages/ResetPassword");
 
 const Shop = lazy(ShopMod);
 const Community = lazy(CommunityMod);
@@ -40,6 +41,7 @@ const Game = lazy(GameMod);
 const Profile = lazy(ProfileMod);
 const Cart = lazy(CartMod);
 const Auth = lazy(AuthMod);
+const ResetPassword = lazy(ResetPasswordMod);
 const ProductDetail = lazy(ProductDetailMod);
 const Checkout = lazy(CheckoutMod);
 const Orders = lazy(OrdersMod);
@@ -112,6 +114,7 @@ function AnimatedRoutes() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
