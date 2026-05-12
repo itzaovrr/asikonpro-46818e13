@@ -247,23 +247,23 @@ const Shop = () => {
                     </div>
                   </div>
                   
-                  <div className="p-4">
-                    <p className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-1.5">
-                      StyleHub
+                  <div className="p-3 sm:p-4">
+                    <p className="text-[10px] font-semibold text-primary/80 uppercase tracking-[0.14em] mb-1.5">
+                      ASIKON Academy
                     </p>
-                    <h3 className="font-medium text-sm line-clamp-2 mb-3 group-hover:text-primary transition-colors">
+                    <h3 className="font-medium text-sm line-clamp-2 mb-3 min-h-[2.5rem] group-hover:text-primary transition-colors">
                       {product.name}
                     </h3>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-bold text-lg">${product.price}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-baseline gap-1.5 min-w-0">
+                        <span className="font-bold text-base sm:text-lg tracking-tight">${product.price}</span>
                         {product.original_price && (
-                          <span className="text-xs text-muted-foreground line-through">
+                          <span className="text-[11px] text-muted-foreground line-through">
                             ${product.original_price}
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary/50">
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/60 shrink-0">
                         <span className="text-amber-400 text-xs">★</span>
                         <span className="text-xs font-medium">{product.rating || 0}</span>
                       </div>

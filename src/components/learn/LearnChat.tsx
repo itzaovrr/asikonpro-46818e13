@@ -163,18 +163,26 @@ export function LearnChat({ threadId }: Props) {
 
 function EmptyState({ onPick }: { onPick: (s: string) => void }) {
   return (
-    <div className="max-w-2xl mx-auto text-center py-8 px-2">
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl glass mb-4">
-        <Sparkles className="w-7 h-7 text-primary" />
+    <div className="max-w-2xl mx-auto text-center py-10 px-2">
+      <div
+        className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5 shadow-[var(--shadow-glow)]"
+        style={{ background: "var(--gradient-primary)" }}
+      >
+        <Sparkles className="w-8 h-8 text-primary-foreground" />
       </div>
-      <h1 className="text-2xl font-bold mb-1 text-gradient">তোমার AI শিক্ষক</h1>
-      <p className="text-muted-foreground text-sm mb-6">SSC, HSC, Math, Physics, English — যেকোনো প্রশ্ন করো। Bangla ও English দুটোতেই উত্তর দিবো।</p>
+      <h1 className="text-2xl font-bold mb-1.5 text-gradient">তোমার AI শিক্ষক</h1>
+      <p className="text-muted-foreground text-sm mb-7 max-w-md mx-auto leading-relaxed">
+        SSC, HSC, Math, Physics, English — যেকোনো প্রশ্ন করো। Bangla ও English দুটোতেই উত্তর দিবো।
+      </p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground/80 mb-3">
+        Try one of these
+      </p>
       <div className="flex flex-wrap gap-2 justify-center">
         {QUICK_PROMPTS.map((q) => (
           <button
             key={q.label}
             onClick={() => onPick(q.prompt)}
-            className="px-3 py-2 rounded-full text-sm bg-secondary/60 hover:bg-secondary text-foreground border border-border transition"
+            className="pressable focus-ring px-3.5 py-2 rounded-full text-sm bg-secondary/60 hover:bg-secondary text-foreground border border-border/70 hover:border-primary/40"
           >
             {q.label}
           </button>

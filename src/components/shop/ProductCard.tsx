@@ -142,7 +142,7 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
           )}>
             {/* Brand */}
             {product.brand && (
-              <p className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-1.5">
+              <p className="text-[10px] font-semibold text-primary/80 uppercase tracking-[0.14em] mb-1.5">
                 {product.brand}
               </p>
             )}
@@ -150,7 +150,7 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
             {/* Title */}
             <h3 className={cn(
               "font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors",
-              isCompact ? "text-sm" : "text-base",
+              isCompact ? "text-sm" : "text-[15px]",
               isFeatured && "lg:text-xl lg:line-clamp-3"
             )}>
               {product.name}
@@ -158,13 +158,13 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
             
             {/* Rating */}
             <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/50">
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/60">
                 <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                 <span className="text-xs font-medium">{product.rating}</span>
               </div>
               {product.reviews > 0 && (
                 <span className="text-xs text-muted-foreground">
-                  ({product.reviews} reviews)
+                  ({product.reviews})
                 </span>
               )}
             </div>
