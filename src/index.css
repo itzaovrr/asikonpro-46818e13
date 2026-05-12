@@ -177,6 +177,28 @@
       min-height: 40px;
     }
   }
+
+  /* Unified Lucide icon styling — consistent stroke + smooth color transitions */
+  svg.lucide {
+    stroke-width: 1.75;
+    transition: color var(--duration-base) var(--ease-out-soft),
+                transform var(--duration-base) var(--ease-out-soft),
+                opacity var(--duration-base) var(--ease-out-soft);
+  }
+
+  /* Active nav / selected state icon tint */
+  [data-active="true"] svg.lucide,
+  [aria-current="page"] svg.lucide,
+  [data-state="active"] svg.lucide,
+  [data-state="checked"] svg.lucide,
+  [data-state="on"] svg.lucide {
+    color: hsl(var(--primary));
+  }
+
+  /* Strong focus outline visibility on glass surfaces */
+  :focus-visible {
+    outline: none;
+  }
 }
 
 @layer utilities {
