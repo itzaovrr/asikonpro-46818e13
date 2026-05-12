@@ -282,24 +282,20 @@ const Auth = () => {
       <div className="relative z-10 w-full max-w-[420px] flex flex-col items-center">
         {/* Brand hero */}
         <header className="flex flex-col items-center mb-8 group">
-          <div className="relative w-20 h-20 mb-5">
-            <div className="absolute inset-0 rounded-2xl rotate-6 group-hover:rotate-12 transition-transform duration-500 shadow-[0_0_40px_hsl(var(--primary)/0.35)] gradient-primary" />
-            <div className="absolute inset-0 rounded-2xl border border-white/10 bg-background/80 backdrop-blur-sm flex items-center justify-center">
-              <div className="flex flex-col items-center gap-1">
-                <span className="block w-8 h-1 rounded-full bg-primary" />
-                <span className="block w-6 h-1 rounded-full bg-primary/60" />
-                <span className="block w-4 h-1 rounded-full bg-primary/30" />
-              </div>
+          <div className="relative w-16 h-16 mb-4">
+            <div className="absolute inset-0 rounded-2xl rotate-3 group-hover:rotate-6 transition-transform duration-500 shadow-[0_0_40px_hsl(var(--primary)/0.35)] gradient-primary" />
+            <div className="absolute inset-[3px] rounded-[14px] bg-background/85 backdrop-blur-sm flex items-center justify-center">
+              <span className="text-2xl font-bold text-gradient" style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}>A</span>
             </div>
           </div>
           <h1
-            className="text-[2.75rem] leading-none font-bold italic tracking-tighter text-foreground"
+            className="text-3xl font-bold tracking-tight text-gradient"
             style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
           >
-            ASIKON<span className="text-primary">.</span>
+            Asikon
           </h1>
-          <p className="text-foreground/40 text-[10px] mt-2 uppercase tracking-[0.4em] font-semibold">
-            Neural Learning Engine
+          <p className="text-muted-foreground text-sm mt-2">
+            Learn AI with Asikon
           </p>
         </header>
 
@@ -384,13 +380,13 @@ const Auth = () => {
                         clearErrors();
                       }}
                       className={cn(
-                        "flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all focus-ring",
+                        "flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all focus-ring",
                         active
-                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-                          : "text-foreground/40 hover:text-foreground/70",
+                          ? "gradient-primary text-primary-foreground shadow-lg shadow-primary/30"
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                     >
-                      {v === "login" ? "Sign in" : "Register"}
+                      {v === "login" ? "Sign in" : "Create account"}
                     </button>
                   );
                 })}
@@ -443,7 +439,7 @@ const Auth = () => {
                     }
                   />
                   <PrimaryCta loading={loading}>
-                    {loading ? "Signing in…" : "Initialize session"}
+                    {loading ? "Signing in…" : "Sign in"}
                   </PrimaryCta>
                 </form>
               ) : (
@@ -526,8 +522,8 @@ const Auth = () => {
             <span className="w-1 h-1 rounded-full bg-primary/40" />
             <span className="w-1 h-1 rounded-full bg-primary/15" />
           </div>
-          <p className="text-foreground/30 text-[10px] uppercase tracking-[0.25em] font-medium">
-            © {new Date().getFullYear()} ASIKON Technologies
+          <p className="text-muted-foreground text-xs">
+            © {new Date().getFullYear()} Asikon — Master AI, ML & Python
           </p>
         </footer>
       </div>
