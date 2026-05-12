@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
+import asikonLogo from "@/assets/logo.png";
 
 // ---- Validation -----------------------------------------------------------
 const loginSchema = z.object({
@@ -368,8 +369,8 @@ const Auth = () => {
           />
 
           <div className="relative z-10 flex items-center gap-3 text-primary-foreground">
-            <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center">
-              <Sparkles className="h-5 w-5" />
+            <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center p-1.5">
+              <img src={asikonLogo} alt="Asikon" className="w-full h-full object-contain" />
             </div>
             <div>
               <p
@@ -453,14 +454,14 @@ const Auth = () => {
         </aside>
 
         {/* ============== Form pane ============== */}
-        <section className="relative flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
-          <div className="w-full max-w-[440px] animate-fade-in">
+        <section className="relative flex flex-col px-5 sm:px-8 pt-8 pb-6 lg:py-14 min-h-screen lg:items-center lg:justify-center">
+          <div className="w-full max-w-[440px] mx-auto animate-fade-in flex-1 flex flex-col lg:block">
             {/* Mobile brand */}
-            <div className="lg:hidden flex flex-col items-center mb-8">
-              <div className="relative w-14 h-14 mb-3">
-                <div className="absolute inset-0 rounded-2xl rotate-3 gradient-primary shadow-[0_0_30px_hsl(var(--primary)/0.4)]" />
-                <div className="absolute inset-[3px] rounded-[14px] bg-background flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-primary" />
+            <div className="lg:hidden flex flex-col items-center mb-7">
+              <div className="relative w-16 h-16 mb-3 group">
+                <div className="absolute inset-0 rounded-[20px] rotate-3 gradient-primary shadow-[0_0_40px_hsl(var(--primary)/0.45)] group-hover:rotate-6 transition-transform duration-500" />
+                <div className="absolute inset-[3px] rounded-[17px] bg-background flex items-center justify-center p-2">
+                  <img src={asikonLogo} alt="Asikon" className="w-full h-full object-contain" />
                 </div>
               </div>
               <h1
