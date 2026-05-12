@@ -1,37 +1,38 @@
-import { useEffect, useState, ReactNode } from "react";
-import { useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { ReactNode, useEffect, useRef } from "react";
 
 interface PageTransitionProps {
   children: ReactNode;
 }
 
+/**
+ * Lightweight, non-blocking page transition.
+ *
+ * The previous implementation introduced a 150ms blank-screen delay on every
+ * route change (state-based double-render with `setTimeout`). That hurt
+ * perceived performance more than it helped polish.
+ *
+ * This version mounts children synchronously and triggers a one-frame
+ * CSS fade-in via a class swap. No JS animation, no layout thrash, no
+ * blocking timeout — feels instant on mobile.
+ */
 export function PageTransition({ children }: PageTransitionProps) {
-  const location = useLocation();
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [displayChildren, setDisplayChildren] = useState(children);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsAnimating(true);
-    const timeout = setTimeout(() => {
-      setDisplayChildren(children);
-      setIsAnimating(false);
-    }, 150);
-
-    return () => clearTimeout(timeout);
-  }, [location.pathname, children]);
+    const el = ref.current;
+    if (!el) return;
+    el.classList.remove("page-enter-active");
+    // force reflow so the transition replays
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    void el.offsetWidth;
+    el.classList.add("page-enter-active");
+  });
 
   return (
-    // NOTE: Do NOT use `transform` / `translate-*` here. A transformed ancestor
-    // becomes the containing block for `position: fixed` descendants (the
-    // desktop sidebar), which would make them scroll with the page.
-    <div
-      className={cn(
-        "transition-opacity duration-300 ease-out",
-        isAnimating ? "opacity-0" : "opacity-100"
-      )}
-    >
-      {displayChildren}
+    // NOTE: Do NOT use `transform` here — it would create a containing block
+    // for any `position: fixed` descendants (desktop sidebar).
+    <div ref={ref} className="page-enter page-enter-active">
+      {children}
     </div>
   );
 }
