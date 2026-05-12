@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useMeasuredHeaderHeight } from "@/hooks/use-measured-header-height";
+import { CurrencyToggle } from "@/components/ui/currency-toggle";
 import logo from "@/assets/logo.png";
 
 interface MobileHeaderProps {
@@ -38,8 +39,9 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
           <h1 className="text-xl font-bold text-gradient leading-none">Asikon</h1>
         </button>
 
-        {/* Right - Search & Cart */}
+        {/* Right - Currency toggle, Search & Cart */}
         <div className="flex items-center gap-1">
+          <CurrencyToggle />
           <Button variant="ghost" size="icon" onClick={onSearchClick}>
             <Search className="w-5 h-5" />
           </Button>

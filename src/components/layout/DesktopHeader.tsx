@@ -10,6 +10,7 @@ import { UserMenu } from "./UserMenu";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { TrustStrip } from "./TrustStrip";
 import { NavigationMenu } from "./NavigationMenu";
+import { CurrencyToggle } from "@/components/ui/currency-toggle";
 import logo from "@/assets/logo.png";
 
 interface DesktopHeaderProps {
@@ -69,6 +70,7 @@ export function DesktopHeader({
 
           {/* Right - Icons */}
           <div className="flex items-center gap-3">
+            <CurrencyToggle />
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative h-10 w-10" title="Cart">
                 <ShoppingCart className="w-5 h-5" />
