@@ -1,13 +1,6 @@
 import { Users, UserPlus, FileText, ShoppingBag, Star, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface StatItem {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-  onClick?: () => void;
-}
-
 interface ProfileStatsProps {
   followers: number;
   following: number;
@@ -28,38 +21,41 @@ export function ProfileStats({
   onStatClick,
 }: ProfileStatsProps) {
   const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
     return num.toString();
   };
 
-  const stats: StatItem[] = [
-    { label: "Followers", value: formatNumber(followers), icon: <Users className="h-4 w-4" /> },
-    { label: "Following", value: formatNumber(following), icon: <UserPlus className="h-4 w-4" /> },
-    { label: "Posts", value: formatNumber(posts), icon: <FileText className="h-4 w-4" /> },
-    { label: "Purchases", value: formatNumber(purchases), icon: <ShoppingBag className="h-4 w-4" /> },
-    { label: "Reviews", value: formatNumber(reviews), icon: <Star className="h-4 w-4" /> },
-    { label: "Coins", value: formatNumber(coins), icon: <Coins className="h-4 w-4 text-amber-400" /> },
+  const stats = [
+    { key: "Followers", value: followers, icon: Users },
+    { key: "Following", value: following, icon: UserPlus },
+    { key: "Posts", value: posts, icon: FileText },
+    { key: "Purchases", value: purchases, icon: ShoppingBag },
+    { key: "Reviews", value: reviews, icon: Star },
+    { key: "Coins", value: coins, icon: Coins },
   ];
 
   return (
     <div className="px-4 sm:px-6 py-4">
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-        {stats.map((stat) => (
+        {stats.map(({ key, value, icon: Icon }) => (
           <button
-            key={stat.label}
-            onClick={() => onStatClick?.(stat.label)}
+            key={key}
+            onClick={() => onStatClick?.(key)}
             className={cn(
-              "flex flex-col items-center gap-1 p-3 rounded-xl",
-              "glass hover:bg-secondary/50 transition-all duration-200",
-              "hover:scale-105 active:scale-95"
+              "group relative flex flex-col items-center justify-center gap-0.5 p-3 rounded-2xl",
+              "border border-border/40 bg-card/40 backdrop-blur-md",
+              "transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "hover:bg-card/70 hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-md",
+              "active:scale-[0.97]",
             )}
+            aria-label={`${value} ${key}`}
           >
-            <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">{stat.icon}</span>
-              <span className="text-lg font-bold text-foreground">{stat.value}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">{stat.label}</span>
+            <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-base font-bold tracking-tight text-foreground tabular-nums">
+              {formatNumber(value)}
+            </span>
+            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{key}</span>
           </button>
         ))}
       </div>

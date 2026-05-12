@@ -1,4 +1,4 @@
-import { MessageCircle, Share2, UserPlus, UserMinus, Flag, Ban } from "lucide-react";
+import { MessageCircle, Share2, UserPlus, UserCheck, Flag, Ban, Link2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,12 +7,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
 
 interface ProfileActionsProps {
   isFollowing?: boolean;
   isOwnProfile?: boolean;
   onFollow?: () => void;
+  onConnect?: () => void;
   onMessage?: () => void;
   onShare?: () => void;
   onReport?: () => void;
@@ -24,27 +24,26 @@ export function ProfileActions({
   isFollowing = false,
   isOwnProfile = false,
   onFollow,
+  onConnect,
   onMessage,
   onShare,
   onReport,
   onBlock,
   onEditProfile,
 }: ProfileActionsProps) {
-  const [following, setFollowing] = useState(isFollowing);
-
-  const handleFollow = () => {
-    setFollowing(!following);
-    onFollow?.();
-  };
-
   if (isOwnProfile) {
     return (
       <div className="px-4 sm:px-6 pb-4">
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" className="flex-1" onClick={onEditProfile}>
+        <div className="flex items-center gap-2.5">
+          <Button
+            onClick={onEditProfile}
+            className="flex-1 gradient-primary border-0 shadow-md"
+            aria-label="Edit profile"
+          >
+            <Pencil className="h-4 w-4 mr-2" />
             Edit Profile
           </Button>
-          <Button variant="secondary" size="icon" onClick={onShare}>
+          <Button variant="secondary" size="icon" onClick={onShare} aria-label="Share profile">
             <Share2 className="h-4 w-4" />
           </Button>
         </div>
@@ -54,14 +53,19 @@ export function ProfileActions({
 
   return (
     <div className="px-4 sm:px-6 pb-4">
-      <div className="flex items-center gap-3">
-        <Button 
-          onClick={handleFollow}
-          className={following ? "flex-1 bg-secondary hover:bg-secondary/80" : "flex-1 gradient-primary border-0"}
+      <div className="flex items-center gap-2.5">
+        <Button
+          onClick={onFollow}
+          className={
+            isFollowing
+              ? "flex-1 bg-secondary hover:bg-secondary/80 text-foreground"
+              : "flex-1 gradient-primary border-0 shadow-md"
+          }
+          aria-pressed={isFollowing}
         >
-          {following ? (
+          {isFollowing ? (
             <>
-              <UserMinus className="h-4 w-4 mr-2" />
+              <UserCheck className="h-4 w-4 mr-2" />
               Following
             </>
           ) : (
@@ -71,15 +75,30 @@ export function ProfileActions({
             </>
           )}
         </Button>
-        
-        <Button variant="secondary" className="flex-1" onClick={onMessage}>
+
+        <Button
+          variant="secondary"
+          className="flex-1"
+          onClick={onMessage}
+          aria-label="Send message"
+        >
           <MessageCircle className="h-4 w-4 mr-2" />
           Message
         </Button>
-        
+
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onConnect}
+          aria-label="Connect"
+          title="Connect"
+        >
+          <Link2 className="h-4 w-4" />
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon">
+            <Button variant="secondary" size="icon" aria-label="More options">
               <Share2 className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
