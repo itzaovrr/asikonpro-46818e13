@@ -62,8 +62,6 @@ const Community = () => {
         {/* Create Content FAB */}
         <CreateContentFAB />
 
-        {/* Dev-only overlay verifying the sticky tab never overlaps the feed */}
-        <StickyLayoutDebugger />
       </div>
     </AppLayout>
   );
