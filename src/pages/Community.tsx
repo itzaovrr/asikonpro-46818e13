@@ -11,7 +11,7 @@ import { LiveTab } from "@/components/community/tabs/LiveTab";
 import { OffersTab } from "@/components/community/tabs/OffersTab";
 import { GalleryTab } from "@/components/community/tabs/GalleryTab";
 import { CommunityTab } from "@/types/community";
-import { StickyLayoutDebugger } from "@/components/dev/StickyLayoutDebugger";
+
 
 const Community = () => {
   const [activeTab, setActiveTab] = useState<CommunityTab>("my-feed");
