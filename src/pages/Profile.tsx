@@ -123,6 +123,7 @@ const Profile = () => {
     location: undefined,
     isVerified: profile?.is_verified || false,
     trustScore: profile?.trust_score || 0,
+    isOnline: isOwnProfile,
   };
 
   // Transform posts for feed tab
@@ -228,7 +229,12 @@ const Profile = () => {
         {/* Header Section */}
         <ProfileHeader 
           user={displayProfile}
+          isOwnProfile={isOwnProfile}
           onAvatarClick={() => displayProfile.avatar && setShowAvatarViewer(true)}
+          onEditProfile={() => setShowEditModal(true)}
+          onUpdate={async (updates) => {
+            await updateProfile.mutateAsync(updates);
+          }}
         />
 
         {/* Stats */}
@@ -285,7 +291,7 @@ const Profile = () => {
         />
 
         {/* Tab Content */}
-        <div className="pb-20">
+        <div key={activeTab} className="pb-20 animate-fade-in">
           {renderTabContent()}
         </div>
 
