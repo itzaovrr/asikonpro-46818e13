@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface HeroSlide {
   id: string;
@@ -68,27 +67,13 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
               <div className="relative aspect-[16/9] md:aspect-[21/9]">
                 <img
                   src={slide.image}
-                  alt={slide.title}
+                  alt=""
                   className="w-full h-full object-cover"
                   loading={index === 0 ? "eager" : "lazy"}
                   decoding={index === 0 ? "sync" : "async"}
                   // @ts-expect-error fetchpriority is a valid HTML attribute, React 18 types lag behind
                   fetchpriority={index === 0 ? "high" : "low"}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
-                  <h2 className="text-xl md:text-3xl lg:text-4xl font-bold mb-2">{slide.title}</h2>
-                  {slide.subtitle && (
-                    <p className="text-sm md:text-base text-muted-foreground mb-4 max-w-md">
-                      {slide.subtitle}
-                    </p>
-                  )}
-                  {slide.cta && (
-                    <Button className="gradient-primary border-0">
-                      {slide.cta.label}
-                    </Button>
-                  )}
-                </div>
               </div>
             </div>
           ))}
