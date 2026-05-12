@@ -84,6 +84,12 @@ function useIdlePrefetch() {
   }, []);
 }
 
+function PersistentMobileShell() {
+  const isMobile = useIsMobile();
+  // Persistent across route changes — mounted once, never re-rendered by route swaps.
+  return isMobile ? <BottomNav /> : null;
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   useIdlePrefetch();
