@@ -22,6 +22,7 @@ import {
 } from "@/components/profile";
 import { MessagingDrawer } from "@/components/messaging";
 import { useProfile, useUpdateProfile, useFollowers, useFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useProfile";
+import { useLearnerProgress } from "@/hooks/useLearnerProgress";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreateOrGetChat } from "@/hooks/useMessages";
@@ -37,6 +38,7 @@ const Profile = () => {
   const isOwnProfile = !userId || userId === user?.id;
   
   const { data: profile, isLoading: profileLoading } = useProfile(targetUserId);
+  const { progress: learnerProgress } = useLearnerProgress(targetUserId);
   const { data: followers } = useFollowers(targetUserId || "");
   const { data: following } = useFollowing(targetUserId || "");
   const { data: userPosts } = usePosts({ userId: targetUserId, limit: 20 });
@@ -241,7 +243,11 @@ const Profile = () => {
         />
 
         {/* Badges */}
-        <ProfileBadges badges={displayProfile.isVerified ? ["trusted"] : []} />
+        <ProfileBadges
+          badges={displayProfile.isVerified ? ["trusted"] : []}
+          learnerSessions={learnerProgress.sessions}
+          learnerQuizzes={learnerProgress.quizzes}
+        />
 
         {/* Action Buttons */}
         <ProfileActions

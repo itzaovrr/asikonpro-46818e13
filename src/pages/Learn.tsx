@@ -48,11 +48,11 @@ export default function Learn() {
 
         {/* Chat */}
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="flex items-center gap-2 px-3 py-2 border-b border-border glass-subtle">
+          <header className="flex items-center gap-2 px-3 py-2 border-b border-border glass-subtle sticky top-0 z-10">
             <ThreadListSheet activeId={threadId} />
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="font-semibold text-sm">ASIKON AI</span>
+              <span className="font-semibold text-sm">ASIKON AI Tutor</span>
             </div>
           </header>
           {threadId ? (
