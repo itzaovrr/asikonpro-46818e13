@@ -54,8 +54,10 @@ const Community = () => {
           <CommunityTabs activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
-        {/* Tab Content */}
-        <main data-feed-root>{renderTabContent()}</main>
+        {/* Tab Content — fades in on each tab change */}
+        <main data-feed-root key={activeTab} className="animate-fade-in">
+          {renderTabContent()}
+        </main>
 
         {/* Create Content FAB */}
         <CreateContentFAB />

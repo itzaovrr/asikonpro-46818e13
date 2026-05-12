@@ -185,13 +185,13 @@ const Shop = () => {
 
         {/* Results Count */}
         <div className="px-4 lg:px-0">
-          <p className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground">
             {productsLoading ? (
-              <Skeleton className="h-4 w-24 inline-block" />
+              <Skeleton className="h-4 w-24" />
             ) : (
               `${filteredProducts?.length || 0} learning resources found`
             )}
-          </p>
+          </div>
         </div>
 
         {/* Products Grid */}
