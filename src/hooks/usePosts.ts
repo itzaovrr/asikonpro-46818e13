@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { readCache, writeCache, cacheKey } from "@/lib/query-cache";
 
 interface UsePostsOptions {
   type?: string;
@@ -10,32 +11,35 @@ interface UsePostsOptions {
 
 export function usePosts(options: UsePostsOptions = {}) {
   const { type, userId, limit = 20 } = options;
+  const ck = cacheKey(["posts", { type, userId, limit }]);
 
   return useQuery({
     queryKey: ["posts", { type, userId, limit }],
+    initialData: () => readCache<any[]>(ck),
     queryFn: async () => {
       let query = supabase
         .from("posts")
-        .select(`
-          *,
-          profiles (*)
-        `)
+        .select(`*, profiles (*)`)
         .order("created_at", { ascending: false })
         .limit(limit);
+      if (type) query = query.eq("type", type);
+      if (userId) query = query.eq("user_id", userId);
 
-      if (type) {
-        query = query.eq("type", type);
-      }
-
-      if (userId) {
-        query = query.eq("user_id", userId);
-      }
-
-      const { data, error } = await query;
-
+      // Race against a short timeout so the feed never blocks the UI for long.
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("timeout") }), 3500),
+      );
+      const { data, error } = (await Promise.race([query, timeoutPromise])) as {
+        data: any[] | null;
+        error: any;
+      };
       if (error) throw error;
-      return data;
+      const out = data ?? [];
+      writeCache(ck, out);
+      return out;
     },
+    retry: 0,
+    staleTime: 2 * 60 * 1000,
   });
 }
 
