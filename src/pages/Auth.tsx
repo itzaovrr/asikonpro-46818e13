@@ -289,7 +289,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
       setResetEmailSent(true);
@@ -503,41 +503,7 @@ const Auth = () => {
                   </p>
                 </div>
 
-                {/* Tab switcher */}
-                <div
-                  role="tablist"
-                  className="relative grid grid-cols-2 p-1 mb-6 rounded-2xl bg-muted/60 border border-border"
-                >
-                  <div
-                    aria-hidden
-                    className={cn(
-                      "absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl gradient-primary shadow-md transition-transform duration-300 ease-out",
-                      activeView === "register" ? "translate-x-[calc(100%+4px)]" : "translate-x-0",
-                    )}
-                    style={{ left: 4 }}
-                  />
-                  {(["login", "register"] as const).map((v) => {
-                    const active = activeView === v;
-                    return (
-                      <button
-                        key={v}
-                        type="button"
-                        role="tab"
-                        aria-selected={active}
-                        onClick={() => {
-                          setActiveView(v);
-                          clearErrors();
-                        }}
-                        className={cn(
-                          "relative z-10 py-2.5 text-sm font-semibold rounded-xl transition-colors focus-ring",
-                          active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        {v === "login" ? "Sign in" : "Create account"}
-                      </button>
-                    );
-                  })}
-                </div>
+                {/* No tab switcher — single CTA at the bottom controls account creation */}
 
                 {/* OAuth */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
@@ -739,6 +705,19 @@ const Auth = () => {
                           Privacy Policy
                         </a>
                         .
+                      </p>
+                      <p className="text-center text-xs text-muted-foreground pt-1">
+                        Already have an account?{" "}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveView("login");
+                            clearErrors();
+                          }}
+                          className="font-semibold text-primary hover:underline underline-offset-4"
+                        >
+                          Sign in
+                        </button>
                       </p>
                     </form>
                   )}
