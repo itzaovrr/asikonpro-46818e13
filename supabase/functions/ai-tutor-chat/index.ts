@@ -107,10 +107,9 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     console.error("ai-tutor-chat error:", err);
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "An unexpected error occurred. Please try again." }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   }
 });
