@@ -177,6 +177,41 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_missions: {
+        Row: {
+          completed: boolean
+          created_at: string
+          date: string
+          id: string
+          lesson_id: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          lesson_id?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          lesson_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_missions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       home_sections: {
         Row: {
           created_at: string
@@ -209,6 +244,150 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      learner_profiles: {
+        Row: {
+          active_track_id: string | null
+          created_at: string
+          goal: string | null
+          interests: string[] | null
+          last_active_at: string | null
+          learning_style: string | null
+          level: string | null
+          locale: string
+          onboarded_at: string | null
+          streak_days: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          active_track_id?: string | null
+          created_at?: string
+          goal?: string | null
+          interests?: string[] | null
+          last_active_at?: string | null
+          learning_style?: string | null
+          level?: string | null
+          locale?: string
+          onboarded_at?: string | null
+          streak_days?: number
+          updated_at?: string
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          active_track_id?: string | null
+          created_at?: string
+          goal?: string | null
+          interests?: string[] | null
+          last_active_at?: string | null
+          learning_style?: string | null
+          level?: string | null
+          locale?: string
+          onboarded_at?: string | null
+          streak_days?: number
+          updated_at?: string
+          user_id?: string
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learner_profiles_active_track_id_fkey"
+            columns: ["active_track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          lesson_id: string
+          user_id: string
+          xp_awarded: number
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          lesson_id: string
+          user_id: string
+          xp_awarded?: number
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          lesson_id?: string
+          user_id?: string
+          xp_awarded?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_completions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          content_md: string | null
+          created_at: string
+          duration_min: number
+          id: string
+          is_preview: boolean
+          order: number
+          outcome: string | null
+          pdf_url: string | null
+          title: string
+          track_id: string
+          transcript: string | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          content_md?: string | null
+          created_at?: string
+          duration_min?: number
+          id?: string
+          is_preview?: boolean
+          order?: number
+          outcome?: string | null
+          pdf_url?: string | null
+          title: string
+          track_id: string
+          transcript?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          content_md?: string | null
+          created_at?: string
+          duration_min?: number
+          id?: string
+          is_preview?: boolean
+          order?: number
+          outcome?: string | null
+          pdf_url?: string | null
+          title?: string
+          track_id?: string
+          transcript?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -250,6 +429,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      milestones: {
+        Row: {
+          id: string
+          kind: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          kind: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          kind?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -640,6 +840,42 @@ export type Database = {
         }
         Relationships: []
       }
+      tracks: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_followers: {
         Row: {
           created_at: string
@@ -716,6 +952,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_or_create_today_mission: {
+        Args: never
+        Returns: {
+          completed: boolean
+          date: string
+          id: string
+          lesson_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
