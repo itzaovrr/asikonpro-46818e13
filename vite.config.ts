@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    target: "es2020",
+    cssCodeSplit: true,
     // Split heavy vendor deps into separate cacheable chunks to reduce initial JS parse cost
     rollupOptions: {
       output: {

@@ -4,22 +4,31 @@ import { cn } from "@/lib/utils";
 interface RevealProps extends HTMLAttributes<HTMLElement> {
   as?: ElementType;
   children: ReactNode;
-  /** ms — staggered delay (e.g. index * 60) */
   delay?: number;
-  /** Animation variant */
   variant?: "fade-up" | "fade" | "scale";
-  /** Once revealed, never animate again (default true) */
   once?: boolean;
 }
 
-/**
- * Scroll-triggered reveal using IntersectionObserver. GPU-only
- * (opacity + transform), respects `prefers-reduced-motion`.
- *
- * Usage:
- *   <Reveal><Card /></Reveal>
- *   <Reveal delay={80} variant="scale">...</Reveal>
- */
+/** Shared IntersectionObserver — one per page instead of one per Reveal. */
+type Cb = (visible: boolean) => void;
+const callbacks = new WeakMap<Element, Cb>();
+let sharedIO: IntersectionObserver | null = null;
+
+function getObserver() {
+  if (typeof window === "undefined") return null;
+  if (sharedIO) return sharedIO;
+  sharedIO = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const cb = callbacks.get(entry.target);
+        if (cb) cb(entry.isIntersecting);
+      }
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+  );
+  return sharedIO;
+}
+
 export function Reveal({
   as: Tag = "div",
   children,
@@ -41,21 +50,27 @@ export function Reveal({
       setShown(true);
       return;
     }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setShown(true);
-            if (once) io.disconnect();
-          } else if (!once) {
-            setShown(false);
-          }
+    const io = getObserver();
+    if (!io) {
+      setShown(true);
+      return;
+    }
+    callbacks.set(el, (visible) => {
+      if (visible) {
+        setShown(true);
+        if (once) {
+          io.unobserve(el);
+          callbacks.delete(el);
         }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
-    );
+      } else if (!once) {
+        setShown(false);
+      }
+    });
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      io.unobserve(el);
+      callbacks.delete(el);
+    };
   }, [once]);
 
   const baseHidden =
