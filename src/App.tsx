@@ -47,6 +47,11 @@ const AdminCommunityMod = () => import("./pages/admin/AdminCommunity");
 const AdminPodMod = () => import("./pages/admin/AdminPod");
 const AdminSettingsMod = () => import("./pages/admin/AdminSettings");
 const AdminHomeSectionsMod = () => import("./pages/admin/AdminHomeSections");
+const AdminTracksMod = () => import("./pages/admin/AdminTracks");
+const AdminLessonsMod = () => import("./pages/admin/AdminLessons");
+const OnboardingMod = () => import("./pages/Onboarding");
+const TrackDetailMod = () => import("./pages/TrackDetail");
+const LessonDetailMod = () => import("./pages/LessonDetail");
 
 const Shop = lazy(ShopMod);
 const Community = lazy(CommunityMod);
@@ -79,6 +84,11 @@ const AdminCommunity = lazy(AdminCommunityMod);
 const AdminPod = lazy(AdminPodMod);
 const AdminSettings = lazy(AdminSettingsMod);
 const AdminHomeSections = lazy(AdminHomeSectionsMod);
+const AdminTracks = lazy(AdminTracksMod);
+const AdminLessons = lazy(AdminLessonsMod);
+const Onboarding = lazy(OnboardingMod);
+const TrackDetail = lazy(TrackDetailMod);
+const LessonDetail = lazy(LessonDetailMod);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,7 +128,7 @@ function PersistentMobileShell() {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   // Hide nav on auth/onboarding-style routes; otherwise keep mounted permanently.
-  const hideOn = ["/auth", "/asikonasik"];
+  const hideOn = ["/auth", "/asikonasik", "/onboarding"];
   if (!isMobile || hideOn.some((p) => pathname.startsWith(p))) return null;
   return <BottomNav />;
 }
@@ -154,6 +164,9 @@ function AnimatedRoutes() {
           <Route path="/learn/:threadId" element={<Learn />} />
           <Route path="/about" element={<About />} />
           <Route path="/prompts" element={<Prompts />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/track/:slug" element={<TrackDetail />} />
+          <Route path="/lesson/:id" element={<LessonDetail />} />
           <Route path="/asikonasik" element={<AdminLayout />}>
             <Route index element={<AdminOverview />} />
             <Route path="users" element={<AdminUsers />} />
@@ -164,6 +177,8 @@ function AnimatedRoutes() {
             <Route path="pod" element={<AdminPod />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="home-sections" element={<AdminHomeSections />} />
+            <Route path="tracks" element={<AdminTracks />} />
+            <Route path="lessons" element={<AdminLessons />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

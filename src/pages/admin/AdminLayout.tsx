@@ -14,6 +14,8 @@ import {
   LogOut,
   Search,
   LayoutGrid,
+  GraduationCap,
+  BookOpen,
 } from "lucide-react";
 import { AdminGuard } from "./AdminGuard";
 import { useIsAdmin } from "@/hooks/useUserRole";
@@ -44,6 +46,8 @@ export const adminNavItems = [
   { title: "Community", url: "/asikonasik/community", icon: MessagesSquare },
   { title: "POD Designs", url: "/asikonasik/pod", icon: Palette },
   { title: "Home Sections", url: "/asikonasik/home-sections", icon: LayoutGrid },
+  { title: "Tracks", url: "/asikonasik/tracks", icon: GraduationCap },
+  { title: "Lessons", url: "/asikonasik/lessons", icon: BookOpen },
   { title: "Settings", url: "/asikonasik/settings", icon: SettingsIcon },
 ];
 

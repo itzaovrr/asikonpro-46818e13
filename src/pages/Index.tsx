@@ -1,5 +1,5 @@
 import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight, Compass, Target, Trophy, Users, ShieldCheck, Headphones, Star, HelpCircle, Rocket, PlayCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 
@@ -14,6 +14,12 @@ import { Reveal } from "@/components/transitions/Reveal";
 import { SmartImage } from "@/components/ui/smart-image";
 import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
 import { useHomeSections, HomeSection } from "@/hooks/useHomeSections";
+import { useAuth } from "@/hooks/useAuth";
+import { useLearnerProfile } from "@/hooks/useLearnerProfile";
+import { TodayMissionCard } from "@/features/mission/TodayMissionCard";
+import { TrackProgress } from "@/features/tracks/TrackProgress";
+import { StreakBadge } from "@/features/progress/StreakBadge";
+import { XPBar } from "@/features/progress/XPBar";
 import courseAiMl from "@/assets/course-ai-ml.jpg";
 import coursePython from "@/assets/course-python.jpg";
 import promptLibrary from "@/assets/prompt-library.jpg";
@@ -346,6 +352,8 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
 };
 
 const Index = () => {
+  const { user } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useLearnerProfile();
   const { data: products, isLoading: productsLoading } = useProducts({ limit: 20 });
   const { data: featuredProducts, isLoading: featuredLoading } = useFeaturedProducts(10);
   const { data: sections } = useHomeSections();
@@ -356,9 +364,29 @@ const Index = () => {
 
   const enabledSections = useMemo(() => (sections ?? []).filter((s) => s.enabled), [sections]);
 
+  // Onboarding gate: signed-in users without completed onboarding go to /onboarding
+  if (user && !profileLoading && !profile?.onboarded_at) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
   return (
     <AppLayout>
       <div className="space-y-7 lg:space-y-10 pb-6">
+        {user && (
+          <section className="section-x space-y-3">
+            <TodayMissionCard />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-4">
+                <XPBar xp={profile?.xp ?? 0} />
+                <div className="mt-3">
+                  <StreakBadge days={profile?.streak_days ?? 0} />
+                </div>
+              </div>
+              <TrackProgress />
+            </div>
+          </section>
+        )}
+
         {enabledSections.map((sec) => {
           const render = SECTION_RENDERERS[sec.key];
           if (!render) return null;
