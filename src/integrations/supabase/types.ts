@@ -73,6 +73,24 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -111,6 +129,7 @@ export type Database = {
       categories: {
         Row: {
           created_at: string
+          display_order: number
           icon: string | null
           id: string
           name: string
@@ -118,6 +137,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          display_order?: number
           icon?: string | null
           id?: string
           name: string
@@ -125,6 +145,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          display_order?: number
           icon?: string | null
           id?: string
           name?: string
@@ -438,6 +459,7 @@ export type Database = {
           created_at: string
           id: string
           images: string[] | null
+          is_pinned: boolean
           product_id: string | null
           type: string
           updated_at: string
@@ -449,6 +471,7 @@ export type Database = {
           created_at?: string
           id?: string
           images?: string[] | null
+          is_pinned?: boolean
           product_id?: string | null
           type?: string
           updated_at?: string
@@ -460,6 +483,7 @@ export type Database = {
           created_at?: string
           id?: string
           images?: string[] | null
+          is_pinned?: boolean
           product_id?: string | null
           type?: string
           updated_at?: string
@@ -547,6 +571,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_banned: boolean
           is_verified: boolean
           trust_score: number
           updated_at: string
@@ -560,6 +585,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          is_banned?: boolean
           is_verified?: boolean
           trust_score?: number
           updated_at?: string
@@ -573,6 +599,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_banned?: boolean
           is_verified?: boolean
           trust_score?: number
           updated_at?: string
