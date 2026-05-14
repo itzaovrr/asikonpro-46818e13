@@ -37,6 +37,15 @@ const NotFoundMod = () => import("./pages/NotFound");
 const ResetPasswordMod = () => import("./pages/ResetPassword");
 const AboutMod = () => import("./pages/About");
 const PromptsMod = () => import("./pages/Prompts");
+const AdminLayoutMod = () => import("./pages/admin/AdminLayout");
+const AdminOverviewMod = () => import("./pages/admin/AdminOverview");
+const AdminUsersMod = () => import("./pages/admin/AdminUsers");
+const AdminProductsMod = () => import("./pages/admin/AdminProducts");
+const AdminCategoriesMod = () => import("./pages/admin/AdminCategories");
+const AdminOrdersMod = () => import("./pages/admin/AdminOrders");
+const AdminCommunityMod = () => import("./pages/admin/AdminCommunity");
+const AdminPodMod = () => import("./pages/admin/AdminPod");
+const AdminSettingsMod = () => import("./pages/admin/AdminSettings");
 
 const Shop = lazy(ShopMod);
 const Community = lazy(CommunityMod);
@@ -59,6 +68,15 @@ const Learn = lazy(LearnMod);
 const NotFound = lazy(NotFoundMod);
 const About = lazy(AboutMod);
 const Prompts = lazy(PromptsMod);
+const AdminLayout = lazy(AdminLayoutMod);
+const AdminOverview = lazy(AdminOverviewMod);
+const AdminUsers = lazy(AdminUsersMod);
+const AdminProducts = lazy(AdminProductsMod);
+const AdminCategories = lazy(AdminCategoriesMod);
+const AdminOrders = lazy(AdminOrdersMod);
+const AdminCommunity = lazy(AdminCommunityMod);
+const AdminPod = lazy(AdminPodMod);
+const AdminSettings = lazy(AdminSettingsMod);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -98,7 +116,7 @@ function PersistentMobileShell() {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   // Hide nav on auth/onboarding-style routes; otherwise keep mounted permanently.
-  const hideOn = ["/auth"];
+  const hideOn = ["/auth", "/asikonasik"];
   if (!isMobile || hideOn.some((p) => pathname.startsWith(p))) return null;
   return <BottomNav />;
 }
@@ -134,6 +152,16 @@ function AnimatedRoutes() {
           <Route path="/learn/:threadId" element={<Learn />} />
           <Route path="/about" element={<About />} />
           <Route path="/prompts" element={<Prompts />} />
+          <Route path="/asikonasik" element={<AdminLayout />}>
+            <Route index element={<AdminOverview />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="community" element={<AdminCommunity />} />
+            <Route path="pod" element={<AdminPod />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
