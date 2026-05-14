@@ -138,21 +138,19 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
 
           {/* Content */}
           <div className={cn(
-            "p-4",
-            isFeatured && "lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:p-6"
+            "p-4 flex-1 flex flex-col",
+            isFeatured && "lg:flex-1 lg:justify-center lg:p-6"
           )}>
-            {/* Brand */}
-            {product.brand && (
-              <p className="text-[10px] font-semibold text-primary/80 uppercase tracking-[0.14em] mb-1.5">
-                {product.brand}
-              </p>
-            )}
+            {/* Brand (always reserves space so cards align) */}
+            <p className="text-[10px] font-semibold text-primary/80 uppercase tracking-[0.14em] mb-1.5 min-h-[14px] line-clamp-1">
+              {product.brand || "\u00A0"}
+            </p>
             
-            {/* Title */}
+            {/* Title — always reserves 2 lines */}
             <h3 className={cn(
               "font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors",
-              isCompact ? "text-sm" : "text-[15px]",
-              isFeatured && "lg:text-xl lg:line-clamp-3"
+              isCompact ? "text-sm min-h-[2.5rem]" : "text-[15px] min-h-[2.75rem]",
+              isFeatured && "lg:text-xl lg:line-clamp-3 lg:min-h-0"
             )}>
               {product.name}
             </h3>
@@ -170,8 +168,8 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
               )}
             </div>
             
-            {/* Price */}
-            <div className="flex items-baseline gap-2 flex-wrap">
+            {/* Price — pinned to bottom */}
+            <div className="flex items-baseline gap-2 flex-wrap mt-auto">
               <Price
                 amount={product.price}
                 className={cn(
