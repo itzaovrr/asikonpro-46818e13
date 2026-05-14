@@ -105,7 +105,7 @@ export default function AdminLessons() {
           </Select>
         </div>
         <Button onClick={() => setEditing({
-          track_id: trackFilter || tracks[0]?.id, order: (lessons.at(-1)?.order ?? 0) + 1,
+          track_id: trackFilter || tracks[0]?.id, order: (lessons[lessons.length-1]?.order ?? 0) + 1,
           duration_min: 5, is_preview: false,
         })} disabled={tracks.length === 0}>
           <Plus className="h-4 w-4 mr-1" /> New lesson

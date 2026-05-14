@@ -77,7 +77,7 @@ export default function AdminTracks() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">Learning tracks shown across the app.</p>
-        <Button onClick={() => setEditing({ display_order: (tracks.at(-1)?.display_order ?? 0) + 1, is_active: true })}>
+        <Button onClick={() => setEditing({ display_order: (tracks[tracks.length-1]?.display_order ?? 0) + 1, is_active: true })}>
           <Plus className="h-4 w-4 mr-1" /> New track
         </Button>
       </div>
