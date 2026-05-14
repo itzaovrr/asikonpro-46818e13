@@ -1,4 +1,4 @@
-import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight } from "lucide-react";
+import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight, Compass, Target, Trophy, Users, ShieldCheck, Headphones, Star, HelpCircle, Rocket, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -275,6 +275,132 @@ const Index = () => {
               viewAllHref="/shop?filter=new"
             />
           )}
+        </Reveal>
+
+        {/* How it works — 3-step learner path */}
+        <Reveal as="section" className="section-x">
+          <SectionHeader
+            title="How Asikon helps you grow"
+            subtitle="A simple 3-step path from curious to confident"
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
+            {[
+              { icon: Compass, title: "1. Discover", text: "Browse curated courses, books and prompts hand-picked for your level." },
+              { icon: Target, title: "2. Practice", text: "Learn by doing with the 24/7 AI tutor in Bangla and English." },
+              { icon: Trophy, title: "3. Achieve", text: "Earn XP, unlock badges and ship real projects to your portfolio." },
+            ].map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <Reveal key={step.title} delay={i * 80} variant="scale">
+                  <div className="h-full rounded-2xl glass p-4 lg:p-5 border border-border/60 hover-lift">
+                    <div className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center shadow-[var(--shadow-glow)] mb-3">
+                      <Icon className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{step.text}</p>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </Reveal>
+
+        {/* Why Asikon — trust pillars */}
+        <Reveal as="section" className="section-x">
+          <SectionHeader title="Why learners trust Asikon" subtitle="Real value, real support, real outcomes" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { icon: ShieldCheck, title: "Verified content", text: "Every course reviewed by experts." },
+              { icon: Users, title: "10K+ learners", text: "Active community across BD." },
+              { icon: Headphones, title: "24/7 AI tutor", text: "Doubt-solving in your language." },
+              { icon: Rocket, title: "Job-ready", text: "Projects employers actually want." },
+            ].map((p, i) => {
+              const Icon = p.icon;
+              return (
+                <Reveal key={p.title} delay={i * 60}>
+                  <div className="rounded-2xl border border-border/60 bg-card p-3 lg:p-4 h-full hover-lift">
+                    <Icon className="h-5 w-5 text-primary mb-2" />
+                    <p className="font-semibold text-xs lg:text-sm">{p.title}</p>
+                    <p className="text-[11px] lg:text-xs text-muted-foreground mt-0.5">{p.text}</p>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </Reveal>
+
+        {/* Learner Testimonials */}
+        <Reveal as="section" className="section-x">
+          <SectionHeader title="Loved by learners" subtitle="Stories from the Asikon community" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4">
+            {[
+              { name: "Tanvir H.", role: "Python student", quote: "The AI tutor explained recursion in Bangla — finally clicked after 2 weeks of struggle." },
+              { name: "Ayesha R.", role: "ML beginner", quote: "Bought one course, got a full roadmap. Landed my first freelance gig in 6 weeks." },
+              { name: "Rakib M.", role: "Prompt engineer", quote: "The prompt library alone is worth 10x the price. Saves me hours every day." },
+            ].map((t, i) => (
+              <Reveal key={t.name} delay={i * 70}>
+                <div className="h-full rounded-2xl glass p-4 border border-border/60 flex flex-col">
+                  <div className="flex gap-0.5 mb-2 text-amber-400">
+                    {Array.from({ length: 5 }).map((_, s) => <Star key={s} className="h-3.5 w-3.5 fill-current" />)}
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground/90 flex-1">"{t.quote}"</p>
+                  <div className="mt-3 pt-3 border-t border-border/40">
+                    <p className="font-semibold text-xs">{t.name}</p>
+                    <p className="text-[11px] text-muted-foreground">{t.role}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* FAQ teaser */}
+        <Reveal as="section" className="section-x">
+          <SectionHeader title="Common questions" subtitle="Quick answers before you start" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {[
+              { q: "Do I need prior coding experience?", a: "No. Most courses start from zero and ramp up gradually." },
+              { q: "Is the AI tutor free?", a: "Every signed-up learner gets daily free messages plus bonus coins." },
+              { q: "Can I pay with bKash / Nagad?", a: "Yes — and Cash on Delivery is available for physical books." },
+              { q: "Do I get a certificate?", a: "Yes, completion certificates are issued for every paid course." },
+            ].map((f, i) => (
+              <Reveal key={f.q} delay={i * 50}>
+                <div className="rounded-2xl border border-border/60 bg-card p-4 hover-lift h-full">
+                  <div className="flex items-start gap-2.5">
+                    <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm">{f.q}</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.a}</p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* Final CTA banner */}
+        <Reveal as="section" className="section-x">
+          <div
+            className="relative overflow-hidden rounded-3xl border border-primary/30 p-6 lg:p-8 text-center"
+            style={{ background: "var(--gradient-primary-soft)" }}
+          >
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl gradient-primary shadow-[var(--shadow-glow)] mb-3">
+              <PlayCircle className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <h3 className="text-xl lg:text-2xl font-bold mb-2">Start your first lesson — free</h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
+              Pick a course, ask the AI anything, and earn 100 welcome coins on signup.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Button asChild variant="premium" size="lg">
+                <Link to="/shop?type=courses">Browse courses</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link to="/learn">Try the AI tutor</Link>
+              </Button>
+            </div>
+          </div>
         </Reveal>
 
       </div>
