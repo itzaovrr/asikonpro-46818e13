@@ -117,12 +117,15 @@ const Checkout = () => {
 
   return (
     <AppLayout showBottomNav={false}>
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+      <div className="container-editorial py-6 lg:py-10">
+        <div className="mb-6 lg:mb-10">
+          <p className="eyebrow-bar mb-2">Final step</p>
+          <h1 className="display-2">Checkout</h1>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 lg:gap-12">
           {/* Form Section */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 min-w-0">
             {/* Shipping Address */}
             <div className="bg-card rounded-xl p-6 border border-border">
               <div className="flex items-center gap-2 mb-4">
@@ -242,8 +245,8 @@ const Checkout = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-card rounded-xl p-6 border border-border sticky top-24">
+          <div className="lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
+            <div className="glass rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Truck className="h-5 w-5 text-primary" />
                 <h2 className="font-semibold">Order Summary</h2>
