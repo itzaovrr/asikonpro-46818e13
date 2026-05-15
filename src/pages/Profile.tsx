@@ -226,7 +226,7 @@ const Profile = () => {
   return (
     <AppLayout showBottomNav={true}>
       <div className="min-h-screen bg-background">
-        {/* Header Section */}
+        {/* Header (full-width) */}
         <ProfileHeader 
           user={displayProfile}
           isOwnProfile={isOwnProfile}
@@ -237,62 +237,69 @@ const Profile = () => {
           }}
         />
 
-        {/* Stats */}
-        <ProfileStats
-          followers={followers?.length || 0}
-          following={following?.length || 0}
-          posts={userPosts?.length || 0}
-          purchases={0}
-          reviews={mockReviews.length}
-          coins={0}
-          onStatClick={handleStatClick}
-        />
+        <div className="container-editorial pt-4 lg:pt-8 pb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-12">
+            {/* Left rail — sticky on desktop */}
+            <aside className="space-y-4 lg:space-y-5 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
+              <ProfileStats
+                followers={followers?.length || 0}
+                following={following?.length || 0}
+                posts={userPosts?.length || 0}
+                purchases={0}
+                reviews={mockReviews.length}
+                coins={0}
+                onStatClick={handleStatClick}
+              />
+              <ProfileActions
+                isOwnProfile={isOwnProfile}
+                isFollowing={isFollowing}
+                onFollow={handleFollow}
+                onEditProfile={() => setShowEditModal(true)}
+                onShare={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: displayProfile.name, url: window.location.href });
+                  }
+                }}
+                onMessage={handleMessage}
+                onReport={() => console.log("Report user")}
+                onBlock={() => console.log("Block user")}
+              />
+              <ProfileTrustCard
+                trustScore={displayProfile.trustScore}
+                coins={0}
+                level="Bronze"
+                onViewDetails={() => console.log("View trust details")}
+              />
+              <ProfileBadges
+                badges={displayProfile.isVerified ? ["trusted"] : []}
+                learnerSessions={learnerProgress.sessions}
+                learnerQuizzes={learnerProgress.quizzes}
+              />
+            </aside>
 
-        {/* Badges */}
-        <ProfileBadges
-          badges={displayProfile.isVerified ? ["trusted"] : []}
-          learnerSessions={learnerProgress.sessions}
-          learnerQuizzes={learnerProgress.quizzes}
-        />
+            {/* Right column — tabs + content */}
+            <div className="min-w-0">
+              <ProfileTabs
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                counts={{
+                  feed: userPosts?.length || 0,
+                  reviews: mockReviews.length,
+                  designs: mockDesigns.length,
+                }}
+              />
 
-        {/* Action Buttons */}
-        <ProfileActions
-          isOwnProfile={isOwnProfile}
-          isFollowing={isFollowing}
-          onFollow={handleFollow}
-          onEditProfile={() => setShowEditModal(true)}
-          onShare={() => {
-            if (navigator.share) {
-              navigator.share({ title: displayProfile.name, url: window.location.href });
-            }
-          }}
-          onMessage={handleMessage}
-          onReport={() => console.log("Report user")}
-          onBlock={() => console.log("Block user")}
-        />
+              <div key={activeTab} className="pb-6 animate-fade-in">
+                {renderTabContent()}
+              </div>
 
-        {/* Trust Card */}
-        <ProfileTrustCard
-          trustScore={displayProfile.trustScore}
-          coins={0}
-          level="Bronze"
-          onViewDetails={() => console.log("View trust details")}
-        />
-
-        {/* Tabs */}
-        <ProfileTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          counts={{
-            feed: userPosts?.length || 0,
-            reviews: mockReviews.length,
-            designs: mockDesigns.length,
-          }}
-        />
-
-        {/* Tab Content */}
-        <div key={activeTab} className="pb-20 animate-fade-in">
-          {renderTabContent()}
+              {/* About Asikon */}
+              <section className="pt-4">
+                <h2 className="font-display font-semibold text-lg mb-3">About ASIKON</h2>
+                <MissionVision />
+              </section>
+            </div>
+          </div>
         </div>
 
         {/* Edit Modal */}
@@ -312,12 +319,6 @@ const Profile = () => {
           imageUrl={displayProfile.avatar}
           userName={displayProfile.name}
         />
-
-        {/* About Asikon */}
-        <section className="px-4 lg:px-0 pt-2">
-          <h2 className="font-semibold text-lg mb-3">About ASIKON</h2>
-          <MissionVision />
-        </section>
 
         {/* Messaging Drawer */}
         <MessagingDrawer

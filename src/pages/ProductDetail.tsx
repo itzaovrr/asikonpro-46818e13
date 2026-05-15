@@ -129,25 +129,25 @@ const ProductDetail = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-6 max-w-6xl space-y-8">
+      <div className="container-editorial py-6 lg:py-10 space-y-10 lg:space-y-16 pb-sticky-cta">
         {/* Main Product Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Image Gallery */}
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-6 lg:gap-12">
+          {/* Image Gallery — sticky on desktop */}
+          <div className="space-y-4 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-secondary/30 border border-border/50">
               <img src={images[selectedImage] || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
               {images.length > 1 && (
                 <>
-                  <button onClick={() => setSelectedImage((prev) => (prev > 0 ? prev - 1 : images.length - 1))} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"><ChevronLeft className="h-5 w-5" /></button>
-                  <button onClick={() => setSelectedImage((prev) => (prev < images.length - 1 ? prev + 1 : 0))} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background"><ChevronRight className="h-5 w-5" /></button>
+                  <button onClick={() => setSelectedImage((prev) => (prev > 0 ? prev - 1 : images.length - 1))} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full glass hover:bg-background"><ChevronLeft className="h-5 w-5" /></button>
+                  <button onClick={() => setSelectedImage((prev) => (prev < images.length - 1 ? prev + 1 : 0))} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full glass hover:bg-background"><ChevronRight className="h-5 w-5" /></button>
                 </>
               )}
               {discountPercentage > 0 && <Badge variant="destructive" className="absolute top-3 left-3 font-bold">-{discountPercentage}%</Badge>}
             </div>
             {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
                 {images.map((img, idx) => (
-                  <button key={idx} onClick={() => setSelectedImage(idx)} className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-colors ${selectedImage === idx ? "border-primary" : "border-transparent hover:border-primary/50"}`}>
+                  <button key={idx} onClick={() => setSelectedImage(idx)} className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-colors ${selectedImage === idx ? "border-primary" : "border-transparent hover:border-primary/50"}`}>
                     <img src={img || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -158,7 +158,8 @@ const ProductDetail = () => {
           {/* Product Info */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold mb-2">{product.name}</h1>
+              <p className="eyebrow-bar mb-3">ASIKON Marketplace</p>
+              <h1 className="display-2 mb-3">{product.name}</h1>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
@@ -295,13 +296,16 @@ const ProductDetail = () => {
       </div>
 
       {/* Sticky Mobile CTA */}
-      <div className="fixed bottom-16 left-0 right-0 p-4 bg-background/95 backdrop-blur-lg border-t border-border lg:hidden">
-        <div className="flex items-center gap-3">
-          <div className="flex-1">
+      <div
+        className="fixed bottom-16 left-0 right-0 z-40 glass-strong border-t border-border/40 lg:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
+        <div className="container-editorial py-3 flex items-center gap-3">
+          <div className="flex-1 min-w-0">
             <Price amount={product.price} className="text-xl font-bold" />
             {product.original_price && <Price amount={product.original_price} strike className="text-sm text-muted-foreground ml-2" />}
           </div>
-          <Button className="gradient-primary border-0 px-8" size="lg" onClick={handleAddToCart} disabled={addToCart.isPending}>
+          <Button className="gradient-primary border-0 px-6" size="lg" onClick={handleAddToCart} disabled={addToCart.isPending}>
             <ShoppingCart className="h-5 w-5 mr-2" />{isCourse ? "Enroll" : "Buy Now"}
           </Button>
         </div>

@@ -75,108 +75,137 @@ const Cart = () => {
 
   return (
     <AppLayout showBottomNav={false}>
-      <div className="flex flex-col min-h-[calc(100vh-56px)]">
-        {/* Page Title */}
-        <div className="px-4 pt-4 pb-2">
-          <h1 className="text-xl font-bold">Shopping Cart</h1>
-          <p className="text-sm text-muted-foreground">{cartItems?.length || 0} items</p>
+      <div className="container-editorial py-6 lg:py-10">
+        <div className="mb-6 lg:mb-10">
+          <p className="eyebrow-bar mb-2">Your bag</p>
+          <h1 className="display-2">Shopping Cart</h1>
+          <p className="text-sm text-muted-foreground mt-1">{cartItems?.length || 0} items</p>
         </div>
 
-        {/* Cart Items */}
-        <div className="flex-1 px-4 py-4 space-y-4">
-          {!cartItems || cartItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-muted-foreground mb-4">Your cart is empty</p>
-              <Link to="/shop">
-                <Button className="gradient-primary border-0">Start Shopping</Button>
-              </Link>
-            </div>
-          ) : (
-            cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-4 p-4 rounded-xl bg-card border border-border"
-              >
-                <Link to={`/product/${item.products?.slug}`}>
-                  <img
-                    src={item.products?.image_url || "/placeholder.svg"}
-                    alt={item.products?.name || "Product"}
-                    className="w-20 h-20 rounded-lg object-cover"
-                  />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 lg:gap-12">
+          {/* Cart Items */}
+          <div className="space-y-3 lg:space-y-4">
+            {!cartItems || cartItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center glass rounded-2xl">
+                <p className="text-muted-foreground mb-4">Your cart is empty</p>
+                <Link to="/shop">
+                  <Button className="gradient-primary border-0">Start Shopping</Button>
                 </Link>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase">StyleHub</p>
-                      <Link to={`/product/${item.products?.slug}`}>
-                        <h3 className="font-medium text-sm line-clamp-1 hover:text-primary transition-colors">
-                          {item.products?.name}
-                        </h3>
-                      </Link>
+              </div>
+            ) : (
+              cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex gap-4 p-4 lg:p-5 rounded-2xl glass hover-lift"
+                >
+                  <Link to={`/product/${item.products?.slug}`} className="shrink-0">
+                    <img
+                      src={item.products?.image_url || "/placeholder.svg"}
+                      alt={item.products?.name || "Product"}
+                      className="w-20 h-20 lg:w-28 lg:h-28 rounded-xl object-cover"
+                    />
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary/80">ASIKON</p>
+                        <Link to={`/product/${item.products?.slug}`}>
+                          <h3 className="font-medium text-sm lg:text-base line-clamp-2 hover:text-primary transition-colors">
+                            {item.products?.name}
+                          </h3>
+                        </Link>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+                        disabled={removeFromCart.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
-                      disabled={removeFromCart.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <Price amount={item.products?.price || 0} className="font-bold" />
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, -1)}
-                        className="p-1 rounded-full bg-secondary hover:bg-secondary/80 transition-colors"
-                        disabled={updateCartItem.isPending}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span className="w-8 text-center font-medium">
-                        {item.quantity || 1}
-                      </span>
-                      <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, 1)}
-                        className="p-1 rounded-full bg-secondary hover:bg-secondary/80 transition-colors"
-                        disabled={updateCartItem.isPending}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
+                    <div className="flex items-center justify-between mt-3">
+                      <Price amount={item.products?.price || 0} className="font-bold text-base lg:text-lg" />
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, -1)}
+                          className="p-1.5 rounded-full bg-secondary hover:bg-secondary/80 transition-colors"
+                          disabled={updateCartItem.isPending}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="w-8 text-center font-medium">
+                          {item.quantity || 1}
+                        </span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, 1)}
+                          className="p-1.5 rounded-full bg-secondary hover:bg-secondary/80 transition-colors"
+                          disabled={updateCartItem.isPending}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
 
-        {/* Order Summary */}
-        {cartItems && cartItems.length > 0 && (
-          <div className="sticky bottom-0 bg-card border-t border-border p-4 space-y-4">
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+          {/* Order Summary — sticky on desktop, fixed bottom on mobile */}
+          {cartItems && cartItems.length > 0 && (
+            <div className="lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
+              {/* Desktop card */}
+              <div className="hidden lg:block glass rounded-2xl p-6 space-y-5">
+                <div>
+                  <p className="eyebrow-bar mb-1">Summary</p>
+                  <h2 className="font-display text-xl font-semibold">Order total</h2>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span>${shipping.toFixed(2)}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between font-bold text-base">
+                    <span>Total</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
+                </div>
+                <Button
+                  className="w-full gradient-primary border-0"
+                  size="lg"
+                  onClick={() => navigate("/checkout")}
+                >
+                  Proceed to Checkout
+                </Button>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>${shipping.toFixed(2)}</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between font-bold">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+
+              {/* Mobile fixed bar */}
+              <div
+                className="fixed bottom-0 left-0 right-0 z-40 glass-strong border-t border-border/40 lg:hidden"
+                style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+              >
+                <div className="container-editorial py-3 space-y-3">
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-sm text-muted-foreground">Total</span>
+                    <span className="font-bold text-lg">${total.toFixed(2)}</span>
+                  </div>
+                  <Button
+                    className="w-full gradient-primary border-0"
+                    size="lg"
+                    onClick={() => navigate("/checkout")}
+                  >
+                    Proceed to Checkout
+                  </Button>
+                </div>
               </div>
             </div>
-            <Button
-              className="w-full gradient-primary border-0"
-              size="lg"
-              onClick={() => navigate("/checkout")}
-            >
-              Proceed to Checkout
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </AppLayout>
   );
