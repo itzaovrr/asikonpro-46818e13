@@ -371,18 +371,32 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="space-y-7 lg:space-y-10 pb-6">
+      <div className="space-y-8 lg:space-y-14 pb-10">
         {user && (
-          <section className="section-x space-y-3">
-            <TodayMissionCard />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-border/60 bg-card/60 p-4">
-                <XPBar xp={profile?.xp ?? 0} />
-                <div className="mt-3">
-                  <StreakBadge days={profile?.streak_days ?? 0} />
+          <section className="section-x">
+            <div className="relative aurora-bg rounded-3xl border border-border/60 overflow-hidden p-5 lg:p-8">
+              <p className="eyebrow-bar mb-3">Today at ASIKON</p>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
+                {/* Left — Mission (7 cols) */}
+                <div className="lg:col-span-7 min-w-0">
+                  <TodayMissionCard />
+                </div>
+                {/* Right — XP + Track (5 cols) */}
+                <div className="lg:col-span-5 space-y-4 min-w-0">
+                  <div className="rounded-2xl glass p-4 lg:p-5">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-semibold mb-2">
+                      Your progress
+                    </p>
+                    <XPBar xp={profile?.xp ?? 0} />
+                    <div className="mt-3">
+                      <StreakBadge days={profile?.streak_days ?? 0} />
+                    </div>
+                  </div>
+                  <div className="rounded-2xl glass p-4 lg:p-5">
+                    <TrackProgress />
+                  </div>
                 </div>
               </div>
-              <TrackProgress />
             </div>
           </section>
         )}
