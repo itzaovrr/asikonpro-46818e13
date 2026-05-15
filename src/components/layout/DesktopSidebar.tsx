@@ -48,27 +48,43 @@ function NavItem({ icon: Icon, label, href, isActive, iconOnly, isCollapsed, bad
       to={href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "group/navitem relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+        "group/navitem relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200",
+        "hover:translate-x-[1px]",
         isActive
-          ? "bg-primary/10 text-primary font-medium"
-          : "text-muted-foreground hover:text-foreground hover:bg-secondary/50",
-        iconOnly && "justify-center px-2"
+          ? "text-primary font-semibold"
+          : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
+        iconOnly && "justify-center px-2 hover:translate-x-0"
       )}
+      style={
+        isActive
+          ? { background: "var(--gradient-primary-soft)" }
+          : undefined
+      }
     >
-      {/* Active indicator bar */}
+      {/* Active accent bar */}
       <span
         className={cn(
-          "absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-r-full bg-primary transition-opacity",
+          "absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r-full transition-opacity",
           isActive ? "opacity-100" : "opacity-0"
         )}
+        style={{ background: "var(--gradient-primary)" }}
         aria-hidden
       />
-      <Icon className={cn("h-5 w-5 flex-shrink-0", isActive && "text-primary")} />
+      <span
+        className={cn(
+          "grid place-items-center h-8 w-8 rounded-lg shrink-0 transition-all duration-200",
+          isActive
+            ? "bg-primary/15 text-primary shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.25)]"
+            : "text-current group-hover/navitem:bg-secondary/60"
+        )}
+      >
+        <Icon className="h-[18px] w-[18px]" />
+      </span>
       {!iconOnly && (
         <>
-          <span className="flex-1 truncate">{label}</span>
+          <span className="flex-1 truncate text-[13px] tracking-[-0.005em]">{label}</span>
           {badge && (
-            <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-primary text-primary-foreground">
+            <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-glow)]">
               {badge}
             </span>
           )}
@@ -77,7 +93,6 @@ function NavItem({ icon: Icon, label, href, isActive, iconOnly, isCollapsed, bad
     </Link>
   );
 
-  // Show tooltips only when truly icon-only (collapsed and not hover-expanded)
   if (iconOnly && isCollapsed) {
     return (
       <Tooltip delayDuration={0}>
