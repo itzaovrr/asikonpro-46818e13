@@ -1,81 +1,61 @@
-# Desktop UI Upgrade — Premium Editorial + Glass Motion
+# Community Posts + Home Sections — Desktop Refinement
 
-Goal: make ASIKON feel Awwwards-level on desktop while staying mobile-friendly. Bigger type, more whitespace where it earns it, denser grid where info matters, and consistent liquid-glass surfaces with subtle motion. Mobile gets a light polish but layouts stay intact.
+Make `/community` posts feel like a modern editorial feed on desktop, swap horizontal lists for proper carousels, and tighten the home page section visuals.
 
-## 1. Global shell (header + sidebar)
+## 1. PostCard (`src/components/community/PostCard.tsx`)
 
-`src/components/layout/DesktopHeader.tsx`, `DesktopSidebar.tsx`, `TrustStrip.tsx`, `index.css`
+Currently full-bleed with bottom-only border — looks raw on desktop wide.
 
-- Taller header on desktop (72px), thin gradient hairline border, true glass: `bg-background/60 backdrop-blur-2xl saturate-150` instead of solid.
-- Logo lockup with Space Grotesk wordmark + tiny "AI Learning" eyebrow. Active route gets a pill-glow underline.
-- Search becomes a centered command-style input (`⌘K` hint), expands on focus with soft inner shadow.
-- Sidebar: increase expanded width to 248px, refine collapsed rail to 64px with centered glyphs + tooltip. Section labels in `text-[10px] uppercase tracking-[0.18em] text-muted-foreground`. Active item: gradient chip + left accent bar in primary red.
-- TrustStrip restyled as a slim marquee of 4 trust pills with separators (no boxy background).
+- Wrap as a `glass` card: `rounded-2xl`, soft border, hover-lift, `max-w-[640px]` centered (mobile stays full-bleed via `rounded-none sm:rounded-2xl` + `border sm:border`).
+- Larger avatar (h-11) + display-font username, role/timestamp on a second line with a subtle dot separator.
+- Image: `rounded-xl` inside the card with `aspect-[4/5]` mobile / `aspect-[16/10]` desktop, gradient bottom scrim for the "Shop the look" pill.
+- Action row: icon-only ghost buttons in a glass strip with hover scale; like uses gradient-soft fill when active.
+- Tap target: whole card subtly clickable to open detail (no nav added — just hover state).
 
-## 2. Home page (`src/pages/Index.tsx`)
+## 2. Community page layout (`src/pages/Community.tsx`)
 
-Editorial hero + denser content rails.
+- Desktop two-column: main feed (max 720px, centered) + sticky right rail (320px) with three glass tiles:
+  - "Creators to follow" (3 mini cards)
+  - "Trending tags" (chip cloud)
+  - "Live now" (1–2 LiveCard mini)
+- Sticky tabs: glass treatment + gradient hairline, full-width on mobile, container width on desktop.
 
-- New magazine hero: 12-col grid → left 7 cols big headline (Space Grotesk, clamp 40-72px), kicker eyebrow, dual CTA, trust micro-row; right 5 cols stacked TodayMissionCard + a glass "Live Stats" tile (XP, streak, learners online).
-- Section headers get a left vertical accent bar + small "View all →" with story-link underline.
-- Horizontal carousels: show partial next card (peek) on desktop, snap scroll, gradient fade edges.
-- Add a "Tracks" magazine grid section: 1 large + 2 small bento cards using `bento-grid` style.
-- Footer band: glass strip with mission/vision teaser using `<MissionVision />` (must keep — per project memory).
+## 3. Carousels (`src/components/carousels/ProductCarousel.tsx`, `MyFeedTab.tsx`)
 
-## 3. Shop (`src/pages/Shop.tsx`, `ProductCard.tsx`, `ShopFilters.tsx`)
+- ProductCarousel: real arrows positioned on top edges, gradient edge fades, peek of next slide on desktop, snap, dot pagination on mobile, `eyebrow-bar` style title.
+- Replace ad-hoc horizontal scroll in MyFeedTab "Trending Shorts" and Stories with embla carousels with snap + arrows on desktop.
+- Add a generic `CardCarousel` wrapper (used by shorts/stories/creators) so all rails behave the same.
 
-Denser, more shoppable.
+## 4. Home page top section (`src/pages/Index.tsx`)
 
-- Desktop: persistent left filter rail (240px) + 4-col product grid at xl, 5-col at 2xl. Mobile keeps current sheet.
-- ProductCard polish: rounded-2xl, hover lifts (`translate-y-[-2px]` + soft shadow), image zoom on hover, quick-view button fades in over image, price row pinned bottom (already done).
-- Sticky sub-header with sort + result count + view toggle (grid/list).
+The signed-in mission/XP/track block (lines 375–388) currently looks plain.
 
-## 4. Community (`src/pages/Community.tsx` + tabs)
+- Wrap as a magazine hero: 12-col grid on `lg+`, left 7 = TodayMissionCard with display headline + eyebrow + aurora background; right 5 = stacked XP/Streak glass tile and TrackProgress glass tile with gradient borders.
+- Section dividers: replace plain spacing with `eyebrow-bar` titles + soft hairline before each section.
+- Add gradient edge fades to all home carousels.
 
-- Two-column desktop: main feed (max 720px) + right rail with creators-to-follow, trending tags, live-now strip. Mobile unchanged.
-- Cards become true glass with tighter padding and consistent 16px radius.
+## 5. SectionHeader polish (`src/components/ui/section-header.tsx`)
 
-## 5. Profile (`src/pages/Profile.tsx`)
-
-- Editorial header: large avatar left, name in Space Grotesk display, stats row in a glass strip, action buttons right-aligned.
-- Tabs styled as segmented glass control.
-
-## 6. Design tokens & motion (`src/index.css`, `tailwind.config.ts`)
-
-- Add `--glass-bg`, `--glass-border`, `--glass-shadow` HSL tokens + `.glass`, `.glass-strong`, `.glass-hairline` utility classes.
-- Add `--shadow-elegant`, `--gradient-brand`, `--gradient-aurora` tokens (dark red → ember).
-- Add keyframes: `aurora-shift`, `float-y`, `shimmer`. Wire into hero background and section accents at low intensity (respect `prefers-reduced-motion`).
-- Standardize radius scale: `--radius` 16px, cards 20px, hero 28px.
-
-## 7. Mobile polish (light pass)
-
-- Match header glass treatment (already mostly there).
-- Update section headers to match desktop accent bar.
-- Leave BottomNav, page structures, and tab layouts alone.
+- Use `eyebrow-bar` style for the title's left accent, "View all →" with `story-link` underline animation.
+- Optional kicker eyebrow above the title for editorial feel.
 
 ## Out of scope
-
-- Admin pages (`/asikonasik/*`).
-- Functional/business logic changes — visual & layout only.
-- Onboarding wizard, Lesson/Track detail pages (separate pass).
+- Mobile post layout (kept intact, just gains rounded corners on `sm+`).
+- Adding new routes or backend changes.
+- Other community tabs (videos/shorts/reviews/live) get card polish only if they share components.
 
 ## Technical notes
-
-- All colors via HSL semantic tokens in `index.css` + `tailwind.config.ts` — no raw color classes in components.
-- Reuse existing `embla-carousel-react` carousels; only change styling/peek behavior.
-- Keep `<MissionVision />` import on Home, Auth, Profile, Settings (project memory rule).
-- Keep infinite-loop scrolling behavior in feeds (no "Load more").
-- Preserve route structure and persistent BottomNav shell in `App.tsx`.
+- Reuse existing `embla-carousel-react`, `glass`, `eyebrow-bar`, `display-1/2`, `aurora-bg`, `container-editorial` utilities introduced last turn.
+- Keep infinite-scroll behavior in feeds (project memory).
+- All colors via HSL semantic tokens — no raw color classes.
 
 ```text
-Desktop layout target
-┌──────────────────────────────────────────────────────────┐
-│  glass header  ⌘K search        notifications  avatar    │
-├────────┬─────────────────────────────────────────────────┤
-│ side   │  HERO (7col headline + 5col mission/stats)      │
-│ rail   │  ── tracks bento ──                             │
-│ 248px  │  ── product carousel (peek) ──                  │
-│        │  ── community rail ──                           │
-│        │  ── mission/vision glass band ──                │
-└────────┴─────────────────────────────────────────────────┘
+Desktop /community
+┌───────────────────────────────────────────────┐
+│ glass tabs (sticky)                           │
+├──────────────────────────┬────────────────────┤
+│  PostCard (glass, 640w)  │ Creators to follow │
+│  PostCard                │ Trending tags      │
+│  PostCard                │ Live now           │
+└──────────────────────────┴────────────────────┘
 ```
