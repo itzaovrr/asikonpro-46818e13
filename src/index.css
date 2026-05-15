@@ -462,4 +462,27 @@
   @media (prefers-reduced-motion: reduce) {
     .aurora-bg::before, .animate-float { animation: none !important; }
   }
+
+  /* === Responsive grid presets === */
+  .grid-products {
+    @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6;
+  }
+  .grid-cards {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6;
+  }
+  .grid-bento {
+    @apply grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6;
+  }
+
+  /* Editorial body — slightly larger than base for long-form content. */
+  .body-lg {
+    font-size: clamp(15px, 0.9rem + 0.25vw, 17px);
+    line-height: 1.6;
+  }
+
+  /* Mobile-safe space below sticky CTA bar */
+  .pb-sticky-cta { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); }
+  @media (min-width: 1024px) {
+    .pb-sticky-cta { padding-bottom: 0; }
+  }
 }
