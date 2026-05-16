@@ -231,7 +231,10 @@ export default function AdminLayout() {
             </div>
           </header>
 
-          <main className="flex-1 px-3 md:px-6 py-4 md:py-6 pb-28 md:pb-8 overflow-x-hidden">
+          <main
+            className="flex-1 px-3 md:px-6 py-4 md:py-6 md:pb-8 overflow-x-hidden"
+            style={{ paddingBottom: "calc(7rem + env(safe-area-inset-bottom, 0px))" }}
+          >
             <Reveal>
               <Outlet />
             </Reveal>
