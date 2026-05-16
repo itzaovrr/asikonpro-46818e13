@@ -94,7 +94,46 @@ export default function AdminOrders() {
         })}
       </Reveal>
 
-      <Reveal>
+      {/* Mobile: cards */}
+      <Reveal className="md:hidden space-y-2">
+        {filtered.length === 0 && (
+          <p className="text-center py-8 text-muted-foreground text-sm">No orders.</p>
+        )}
+        {filtered.map((o: any) => (
+          <button
+            key={o.id}
+            onClick={() => setOpenOrder(o)}
+            className="w-full text-left glass rounded-2xl p-3 pressable"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-mono text-[11px] text-muted-foreground">#{o.id.slice(0, 8)}</span>
+              <Badge variant={o.status === "delivered" ? "default" : o.status === "cancelled" ? "destructive" : "secondary"} className="text-[10px]">
+                {o.status}
+              </Badge>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-lg font-display font-semibold">৳{Number(o.total).toFixed(0)}</span>
+              <Badge variant={o.payment_status === "paid" ? "default" : "secondary"} className="text-[10px]">
+                {o.payment_method ?? "—"} · {o.payment_status}
+              </Badge>
+            </div>
+            <div className="mt-1.5 flex items-center justify-between text-[11px] text-muted-foreground">
+              <span>{new Date(o.created_at).toLocaleDateString()}</span>
+              {o.status !== "shipped" && o.status !== "delivered" && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); update.mutate({ id: o.id, status: "shipped" }); }}
+                  className="inline-flex items-center gap-1 text-primary font-medium"
+                >
+                  <Truck className="h-3 w-3" /> Ship
+                </button>
+              )}
+            </div>
+          </button>
+        ))}
+      </Reveal>
+
+      {/* Desktop: table */}
+      <Reveal className="hidden md:block">
         <div className="glass rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
