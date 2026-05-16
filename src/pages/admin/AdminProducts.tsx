@@ -191,19 +191,23 @@ export default function AdminProducts() {
       />
 
       <Reveal className="flex flex-wrap gap-2 items-center">
-        <div className="relative flex-1 min-w-[220px] max-w-md">
+        <div className="relative flex-1 min-w-[180px] sm:max-w-md">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products…" className="pl-9 bg-background/60" />
         </div>
+        <Button onClick={openNew} variant="premium" size="sm" className="h-9 sm:ml-auto sm:order-last">
+          <Plus className="h-4 w-4 sm:mr-1.5" /> <span className="hidden sm:inline">New product</span>
+          <span className="sm:hidden">New</span>
+        </Button>
         <Select value={catFilter} onValueChange={setCatFilter}>
-          <SelectTrigger className="w-44 h-9 bg-background/60"><SelectValue placeholder="All categories" /></SelectTrigger>
+          <SelectTrigger className="flex-1 sm:w-44 sm:flex-none h-9 bg-background/60"><SelectValue placeholder="All categories" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All categories</SelectItem>
             {(categories ?? []).map((c: any) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={setSort}>
-          <SelectTrigger className="w-40 h-9 bg-background/60"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="flex-1 sm:w-40 sm:flex-none h-9 bg-background/60"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="newest">Newest</SelectItem>
             <SelectItem value="price-asc">Price ↑</SelectItem>
@@ -211,9 +215,6 @@ export default function AdminProducts() {
             <SelectItem value="stock">Low stock</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={openNew} variant="premium" className="ml-auto">
-          <Plus className="h-4 w-4 mr-1.5" /> New product
-        </Button>
       </Reveal>
 
       {/* Mobile: cards */}
