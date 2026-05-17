@@ -1,69 +1,70 @@
-# About Page Redesign — ASIKON
+## Problem
 
-Replace the current minimal `/about` page with a full editorial-style About page inspired by Whop's bold, oversized-typography, story-driven layout — adapted to ASIKON's brand (dark red gradient, glass surfaces, Inter + Space Grotesk, AI-powered learning positioning).
+The mobile bottom nav currently shows **Home · Analyze · Food · + · Plans** — labels left over from a fitness/meal template. They don't match ASIKON's actual pages (Learn, Shop, Community, Profile), so taps land users on routes the labels don't describe. This breaks the entire mobile workflow.
 
-## Page sections (top to bottom)
+## Goal
 
-1. **Hero band** (`aurora-bg`, full-width inside `container-editorial`)
-   - Eyebrow: "About ASIKON"
-   - Massive `display-1` headline: "Learning, reimagined for every Bangladeshi student."
-   - Sub-headline (body-lg, muted): one-line positioning.
-   - Two CTAs: "Start learning" → `/onboarding`, "Explore tracks" → `/learn`.
-   - Soft floating glass stat chips (learners, lessons, tracks, AI tutors) layered on aurora.
+Make the bottom nav the single, trustworthy mobile workflow anchor for ASIKON. Every tab maps to a real ASIKON destination, the center FAB does one obvious thing, and back/forward navigation feels predictable.
 
-2. **Mission + Vision** — reuse existing `<MissionVision />` component (per memory rule). Wrapped in a `PageSection` with eyebrow "What drives us".
+## Changes
 
-3. **The story** — 2-column editorial split (`SplitLayout`):
-   - Left: large pull-quote / origin narrative (3 short paragraphs).
-   - Right: sticky glass card with founding year, location (Dhaka, BD), and a signature.
+### 1. Rewire `BottomNav` to ASIKON tabs
+File: `src/components/layout/BottomNav.tsx`
 
-4. **Numbers that matter** — 4-up stat grid on a dark glass band:
-   - Active learners, lessons completed, daily streaks kept, AI conversations.
-   - Each tile = glass card with display-2 number + caption + tiny sparkline-style accent bar.
+New 4 tabs + center FAB:
 
-5. **What we believe** — 6 value cards in a `grid-bento` / 3-col responsive grid:
-   - "Small daily wins beat big bursts."
-   - "AI should teach, not replace teachers."
-   - "Learning must feel calm, not anxious."
-   - "Every learner deserves a guide."
-   - "Mother-tongue first."
-   - "Skills > certificates."
-   - Each card: glass surface, icon (lucide), short title, 1–2 sentence body.
+```text
+[ Home ]  [ Learn ]   ( + Create )   [ Shop ]  [ Profile ]
+   /        /learn                       /shop     /profile
+```
 
-6. **How ASIKON works** — 3-step horizontal flow (numbered glass tiles with hairline connector):
-   - 1. Tell us your goal • 2. Get a daily mission • 3. Learn, build, repeat.
+- Icons: `Home`, `GraduationCap`, `Plus` (FAB), `ShoppingBag`, `User`.
+- FAB → `/create` (already the consolidated content page — matches Core memory).
+- Active-state logic stays (filled primary chip), but uses path prefix match so `/learn/:threadId`, `/shop?...`, `/product/:slug`, `/profile/*` all keep the right tab lit.
+- Add a 5th overflow entry behind a long-press / "More" sheet for `Community`, `Wishlist`, `Orders`, `Pod`, `About` — keeps the bar at 4 + FAB while reaching every page.
 
-7. **The team / built in Bangladesh** — editorial band:
-   - Headline + short paragraph about being built locally for global learners.
-   - Avatar row (placeholder circles for now, using existing avatar component).
+### 2. Sync hide-rules in `App.tsx`
+File: `src/App.tsx` (`PersistentMobileShell`)
 
-8. **Closing CTA band** — aurora gradient strip:
-   - Big display-2: "Your future self starts today."
-   - Single primary CTA → `/onboarding`.
+Extend `hideOn` to also hide the bar on full-screen flows where it gets in the way: `/checkout`, `/lesson`, `/learn/` (chat), `/pod/upload`, `/create`. Keeps the bar on browse/list pages only.
 
-## Files
+### 3. Active-tab + scroll-restore polish
+- `BottomNav`: tapping the already-active tab scrolls the page to top (matches iOS pattern).
+- Add a tiny `useScrollRestore` hook used by `AnimatedRoutes` so back-navigation restores prior scroll on list pages (Shop, Community feeds) instead of jumping to top.
 
-- **Edit** `src/pages/About.tsx` — replace contents with the new layout described above; keep `AppLayout` wrapper, use `Reveal` for scroll-in animation per section.
-- **Create** `src/components/about/AboutHero.tsx` — hero band with stat chips.
-- **Create** `src/components/about/AboutStats.tsx` — 4-up stat grid.
-- **Create** `src/components/about/AboutValues.tsx` — 6 value cards.
-- **Create** `src/components/about/AboutSteps.tsx` — 3-step "how it works".
-- **Create** `src/components/about/AboutCTA.tsx` — closing CTA band.
-- **Reuse** `MissionVision`, `PageSection`, `SectionHeader`, `SplitLayout`, `Reveal`, `Card`, `Button`.
+### 4. Mobile header alignment
+File: `src/components/layout/MobileHeader.tsx`
 
-## Design / technical notes
+- Page title reflects current tab (Home/Learn/Shop/Profile) instead of generic brand on inner pages.
+- Back chevron appears automatically on non-tab routes (`/product/*`, `/orders/*`, `/lesson/*`, `/track/*`, `/checkout`, `/cart`, `/settings`, `/about`) using `useLocation` + `navigate(-1)`.
+- Cart icon stays; search icon stays.
 
-- All colors via existing HSL semantic tokens — no raw colors.
-- Reuse `aurora-bg`, `glass`, `eyebrow-bar`, `display-1`, `display-2`, `body-lg`, `container-editorial`, `hairline-bottom`, `divider-soft`, `hover-lift`.
-- Typography: Space Grotesk for display headlines, Inter for body.
-- Fully responsive: mobile = single-column stacked, `lg+` = magazine/split layouts. Cap content at 1440 via `container-editorial`.
-- Stats and team numbers are static/marketing copy (no backend wiring).
-- SEO: single `<h1>` in hero, descriptive title + meta description, semantic `<section>` per band.
-- Animation: `Reveal` per section, subtle hover-lift on cards. No new dependencies.
+### 5. Route → tab map (single source of truth)
+New `src/lib/nav-map.ts` exporting `getActiveTab(pathname)` and `TAB_ROUTES`. Both `BottomNav` and `MobileHeader` import from it so they never drift again.
+
+```text
+/                 → home
+/learn, /track/*, /lesson/*  → learn
+/shop, /product/*, /cart, /checkout, /orders/*, /wishlist  → shop
+/community, /pod/*  → home (community surfaces via Home feed)
+/profile, /settings, /about  → profile
+/create           → FAB (no tab lit)
+```
+
+### 6. Safe-area + spacing audit
+- Every page already pads `pb-20` via `AppLayout`. Bump to `pb-24` + `env(safe-area-inset-bottom)` so the 68px bar + 12px gap never overlaps content on notched devices.
 
 ## Out of scope
 
-- Backend, CMS, real team data, i18n translations, new routes.
-- Changes to navigation/sidebar (the `/about` route already exists).
+- No new routes, no auth changes, no backend.
+- Desktop sidebar untouched (it already lists the right items).
+- No visual redesign of the bar shape — only labels, icons, routing, and active-state logic change.
 
-Ready to implement on approval.
+## Test checklist (mobile 393px)
+
+1. Tap each tab → lands on correct page, correct tab lit.
+2. Open `/product/abc` from Shop → Shop tab stays lit, back chevron returns to Shop.
+3. Open `/lesson/xyz` → bottom bar hidden, full-screen reading.
+4. Tap FAB on any page → `/create` opens.
+5. Long-press Home → "More" sheet shows Community, Wishlist, Orders, Pod, About.
+6. Scroll Shop, open a product, hit back → scroll position restored.
