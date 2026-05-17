@@ -177,7 +177,7 @@ const Settings = () => {
         </div>
 
         {/* Notifications */}
-        <div className="bg-card rounded-xl p-6 border border-border mb-6">
+        <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <Bell className="h-5 w-5 text-primary" />
             <h2 className="font-semibold">Notifications</h2>
@@ -226,7 +226,7 @@ const Settings = () => {
         </div>
 
         {/* Other Settings */}
-        <div className="bg-card rounded-xl border border-border mb-6 overflow-hidden">
+        <div className="glass rounded-2xl overflow-hidden">
           <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
             <div className="flex items-center gap-3">
               <Lock className="h-5 w-5 text-muted-foreground" />
