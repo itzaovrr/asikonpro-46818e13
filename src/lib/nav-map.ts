@@ -51,7 +51,7 @@ export function getRouteTitle(pathname: string): string {
   if (pathname === "/settings") return "Settings";
   if (pathname === "/about") return "About";
   if (pathname === "/community") return "Community";
-  if (pathname.startsWith("/pod")) return "Print on Demand";
+  if (pathname.startsWith("/mentors")) return "Mentorship";
   if (pathname === "/create") return "Create";
   if (pathname === "/prompts") return "Prompts";
   return "Asikon";
