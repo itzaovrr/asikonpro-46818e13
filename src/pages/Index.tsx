@@ -364,11 +364,6 @@ const Index = () => {
 
   const enabledSections = useMemo(() => (sections ?? []).filter((s) => s.enabled), [sections]);
 
-  // Onboarding gate: signed-in users without completed onboarding go to /onboarding
-  if (user && !profileLoading && !profile?.onboarded_at) {
-    return <Navigate to="/onboarding" replace />;
-  }
-
   return (
     <AppLayout>
       <div className="container-editorial space-y-8 lg:space-y-14 pb-10 pt-2 lg:pt-4">

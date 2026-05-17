@@ -49,7 +49,7 @@ const AdminSettingsMod = () => import("./pages/admin/AdminSettings");
 const AdminHomeSectionsMod = () => import("./pages/admin/AdminHomeSections");
 const AdminTracksMod = () => import("./pages/admin/AdminTracks");
 const AdminLessonsMod = () => import("./pages/admin/AdminLessons");
-const OnboardingMod = () => import("./pages/Onboarding");
+
 const TrackDetailMod = () => import("./pages/TrackDetail");
 const LessonDetailMod = () => import("./pages/LessonDetail");
 
