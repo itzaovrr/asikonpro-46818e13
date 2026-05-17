@@ -42,7 +42,7 @@ const AdminProductsMod = () => import("./pages/admin/AdminProducts");
 const AdminCategoriesMod = () => import("./pages/admin/AdminCategories");
 const AdminOrdersMod = () => import("./pages/admin/AdminOrders");
 const AdminCommunityMod = () => import("./pages/admin/AdminCommunity");
-const AdminPodMod = () => import("./pages/admin/AdminPod");
+const AdminMentorsMod = () => import("./pages/admin/AdminMentors");
 const AdminSettingsMod = () => import("./pages/admin/AdminSettings");
 const AdminHomeSectionsMod = () => import("./pages/admin/AdminHomeSections");
 const AdminTracksMod = () => import("./pages/admin/AdminTracks");
