@@ -44,14 +44,10 @@ export function MobilePage({
         className={cn(
           "container-editorial",
           padded && "px-4 lg:px-8",
-          "pt-3 lg:pt-6",
+          "pt-3 lg:pt-6 pb-6",
           spacing,
           className,
         )}
-        style={{
-          paddingBottom:
-            "calc(var(--mobile-bottomnav-h, 72px) + env(safe-area-inset-bottom, 0px))",
-        }}
       >
         {children}
       </div>

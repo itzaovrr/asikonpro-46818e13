@@ -380,7 +380,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container-editorial space-y-5 lg:space-y-10 pt-3 lg:pt-4" style={{ paddingBottom: "calc(var(--mobile-bottomnav-h, 72px) + env(safe-area-inset-bottom, 0px))" }}>
+      <div className="container-editorial space-y-5 lg:space-y-10 pb-10 pt-3 lg:pt-4">
         {heroSection && renderSection(heroSection)}
 
         {user ? (
