@@ -2,6 +2,7 @@ import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight, Compass, 
 import { Link, Navigate } from "react-router-dom";
 import { useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobilePage } from "@/components/layout/MobilePage";
 
 import { PostCard } from "@/components/community/PostCard";
 import { HeroCarousel, ProductCarousel } from "@/components/carousels";
@@ -380,7 +381,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container-editorial space-y-5 lg:space-y-10 pb-10 pt-3 lg:pt-4">
+      <MobilePage spacing="space-y-5 lg:space-y-10">
         {heroSection && renderSection(heroSection)}
 
         {user ? (
@@ -400,7 +401,7 @@ const Index = () => {
         ) : null}
 
         {restSections.map(renderSection)}
-      </div>
+      </MobilePage>
     </AppLayout>
   );
 };

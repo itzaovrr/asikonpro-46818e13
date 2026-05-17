@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobilePage } from "@/components/layout/MobilePage";
 import { MissionVision } from "@/components/about/MissionVision";
 import {
   ProfileHeader,
@@ -213,79 +214,79 @@ const Profile = () => {
 
   return (
     <AppLayout showBottomNav={true}>
-      <div className="min-h-screen bg-background">
-        {/* Header (full-width) */}
-        <ProfileHeader 
-          user={displayProfile}
-          isOwnProfile={isOwnProfile}
-          onAvatarClick={() => displayProfile.avatar && setShowAvatarViewer(true)}
-          onEditProfile={() => setShowEditModal(true)}
-          onUpdate={async (updates) => {
-            await updateProfile.mutateAsync(updates);
-          }}
-        />
+      <MobilePage
+        bleed={
+          <ProfileHeader
+            user={displayProfile}
+            isOwnProfile={isOwnProfile}
+            onAvatarClick={() => displayProfile.avatar && setShowAvatarViewer(true)}
+            onEditProfile={() => setShowEditModal(true)}
+            onUpdate={async (updates) => {
+              await updateProfile.mutateAsync(updates);
+            }}
+          />
+        }
+        spacing="space-y-4 lg:space-y-6"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-12">
+          {/* Left rail — sticky on desktop */}
+          <aside className="space-y-4 lg:space-y-5 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
+            <ProfileStats
+              followers={followers?.length || 0}
+              following={following?.length || 0}
+              posts={userPosts?.length || 0}
+              purchases={0}
+              reviews={mockReviews.length}
+              coins={0}
+              onStatClick={handleStatClick}
+            />
+            <ProfileActions
+              isOwnProfile={isOwnProfile}
+              isFollowing={isFollowing}
+              onFollow={handleFollow}
+              onEditProfile={() => setShowEditModal(true)}
+              onShare={() => {
+                if (navigator.share) {
+                  navigator.share({ title: displayProfile.name, url: window.location.href });
+                }
+              }}
+              onMessage={handleMessage}
+              onReport={() => console.log("Report user")}
+              onBlock={() => console.log("Block user")}
+            />
+            <ProfileTrustCard
+              trustScore={displayProfile.trustScore}
+              coins={0}
+              level="Bronze"
+              onViewDetails={() => console.log("View trust details")}
+            />
+            <ProfileBadges
+              badges={displayProfile.isVerified ? ["trusted"] : []}
+              learnerSessions={learnerProgress.sessions}
+              learnerQuizzes={learnerProgress.quizzes}
+            />
+          </aside>
 
-        <div className="container-editorial pt-4 lg:pt-8 pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-12">
-            {/* Left rail — sticky on desktop */}
-            <aside className="space-y-4 lg:space-y-5 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
-              <ProfileStats
-                followers={followers?.length || 0}
-                following={following?.length || 0}
-                posts={userPosts?.length || 0}
-                purchases={0}
-                reviews={mockReviews.length}
-                coins={0}
-                onStatClick={handleStatClick}
-              />
-              <ProfileActions
-                isOwnProfile={isOwnProfile}
-                isFollowing={isFollowing}
-                onFollow={handleFollow}
-                onEditProfile={() => setShowEditModal(true)}
-                onShare={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: displayProfile.name, url: window.location.href });
-                  }
-                }}
-                onMessage={handleMessage}
-                onReport={() => console.log("Report user")}
-                onBlock={() => console.log("Block user")}
-              />
-              <ProfileTrustCard
-                trustScore={displayProfile.trustScore}
-                coins={0}
-                level="Bronze"
-                onViewDetails={() => console.log("View trust details")}
-              />
-              <ProfileBadges
-                badges={displayProfile.isVerified ? ["trusted"] : []}
-                learnerSessions={learnerProgress.sessions}
-                learnerQuizzes={learnerProgress.quizzes}
-              />
-            </aside>
+          {/* Right column — tabs + content */}
+          <div className="min-w-0">
+            <ProfileTabs
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              counts={{
+                feed: userPosts?.length || 0,
+                reviews: mockReviews.length,
+              }}
+            />
 
-            {/* Right column — tabs + content */}
-            <div className="min-w-0">
-              <ProfileTabs
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-                counts={{
-                  feed: userPosts?.length || 0,
-                  reviews: mockReviews.length,
-                }}
-              />
-
-              <div key={activeTab} className="pb-6 animate-fade-in">
-                {renderTabContent()}
-              </div>
-
-              {/* About Asikon */}
-              <section className="pt-4">
-                <h2 className="font-display font-semibold text-lg mb-3">About ASIKON</h2>
-                <MissionVision />
-              </section>
+            <div key={activeTab} className="pb-2 animate-fade-in">
+              {renderTabContent()}
             </div>
+
+            {/* About Asikon */}
+            <section className="pt-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3">About ASIKON</p>
+              <MissionVision />
+            </section>
           </div>
         </div>
 
@@ -312,7 +313,7 @@ const Profile = () => {
           open={showMessages}
           onOpenChange={setShowMessages}
         />
-      </div>
+      </MobilePage>
     </AppLayout>
   );
 };

@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Heart, Share2, ShoppingCart, Star, ChevronLeft, ChevronRight, Truck, Clock, ShieldCheck, BookOpen, Play, CheckCircle2, GraduationCap, Award, Users, Globe, Infinity as InfinityIcon } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobilePage } from "@/components/layout/MobilePage";
+import { MobileCard } from "@/components/ui/mobile-card";
+import { MobileSection } from "@/components/ui/mobile-section";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -93,16 +96,16 @@ const ProductDetail = () => {
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="container mx-auto px-4 pt-3 pb-24 max-w-6xl">
+        <MobilePage maxWidth="6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Skeleton className="aspect-square rounded-xl" />
+            <Skeleton className="aspect-square rounded-2xl" />
             <div className="space-y-4">
               <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-6 w-1/4" />
               <Skeleton className="h-24 w-full" />
             </div>
           </div>
-        </div>
+        </MobilePage>
       </AppLayout>
     );
   }
@@ -110,10 +113,12 @@ const ProductDetail = () => {
   if (!product) {
     return (
       <AppLayout>
-        <div className="flex flex-col items-center justify-center min-h-[50vh] px-4">
-          <h1 className="text-xl font-bold mb-2">Product Not Found</h1>
-          <Link to="/shop"><Button>Back to Shop</Button></Link>
-        </div>
+        <MobilePage maxWidth="6xl">
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <h1 className="text-lg font-semibold mb-2">Product Not Found</h1>
+            <Link to="/shop"><Button>Back to Shop</Button></Link>
+          </div>
+        </MobilePage>
       </AppLayout>
     );
   }
@@ -129,11 +134,11 @@ const ProductDetail = () => {
 
   return (
     <AppLayout>
-      <div className="container-editorial py-6 lg:py-10 space-y-10 lg:space-y-16 pb-sticky-cta">
+      <MobilePage maxWidth="6xl" spacing="space-y-8 lg:space-y-12" className="pb-sticky-cta">
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-6 lg:gap-12">
           {/* Image Gallery — sticky on desktop */}
-          <div className="space-y-4 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
+          <div className="space-y-3 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-secondary/30 border border-border/50">
               <img src={images[selectedImage] || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
               {images.length > 1 && (
@@ -145,9 +150,9 @@ const ProductDetail = () => {
               {discountPercentage > 0 && <Badge variant="destructive" className="absolute top-3 left-3 font-bold">-{discountPercentage}%</Badge>}
             </div>
             {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+              <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
                 {images.map((img, idx) => (
-                  <button key={idx} onClick={() => setSelectedImage(idx)} className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-colors ${selectedImage === idx ? "border-primary" : "border-transparent hover:border-primary/50"}`}>
+                  <button key={idx} onClick={() => setSelectedImage(idx)} className={`flex-shrink-0 w-14 h-14 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-colors ${selectedImage === idx ? "border-primary" : "border-transparent hover:border-primary/50"}`}>
                     <img src={img || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -156,38 +161,43 @@ const ProductDetail = () => {
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div>
-              <p className="eyebrow-bar mb-3">ASIKON Marketplace</p>
-              <h1 className="display-2 mb-3">{product.name}</h1>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  <span className="font-medium">{product.rating || 0}</span>
-                  <span className="text-muted-foreground">({product.review_count || 0} reviews)</span>
-                </div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-2">ASIKON Marketplace</p>
+              <h1 className="font-display text-[20px] lg:text-3xl font-semibold tracking-tight leading-snug mb-2">{product.name}</h1>
+              <div className="flex items-center gap-1 text-[13px]">
+                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                <span className="font-medium">{product.rating || 0}</span>
+                <span className="text-muted-foreground">({product.review_count || 0} reviews)</span>
               </div>
             </div>
 
-            <div className="flex items-baseline gap-3">
-              <Price amount={product.price} className="text-3xl font-bold" />
-              {product.original_price && <Price amount={product.original_price} strike className="text-xl text-muted-foreground" />}
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <Price amount={product.price} className="text-2xl lg:text-3xl font-bold" />
+              {product.original_price && <Price amount={product.original_price} strike className="text-base text-muted-foreground" />}
               {discountPercentage > 0 && <Badge variant="secondary" className="text-success">Save {discountPercentage}%</Badge>}
             </div>
 
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4 text-[13px]">
               <div className="flex items-center gap-1.5 text-success"><Truck className="h-4 w-4" /><span>Free Shipping</span></div>
-              <div className="flex items-center gap-1.5 text-muted-foreground"><Clock className="h-4 w-4" /><span>Est. 3-5 days</span></div>
+              <div className="flex items-center gap-1.5 text-muted-foreground"><Clock className="h-4 w-4" /><span>3-5 days</span></div>
             </div>
 
             <TrustIndicators />
-            <Separator />
+
             {isCourse ? (
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><InfinityIcon className="h-4 w-4 text-primary" /><span>Lifetime access</span></div>
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><Award className="h-4 w-4 text-primary" /><span>Verified certificate</span></div>
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><Globe className="h-4 w-4 text-primary" /><span>Bangla + English</span></div>
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-border/50"><Users className="h-4 w-4 text-primary" /><span>24/7 AI Tutor</span></div>
+              <div className="grid grid-cols-2 gap-2 text-[13px]">
+                {[
+                  { icon: InfinityIcon, label: "Lifetime access" },
+                  { icon: Award, label: "Verified certificate" },
+                  { icon: Globe, label: "Bangla + English" },
+                  { icon: Users, label: "24/7 AI Tutor" },
+                ].map(({ icon: Icon, label }) => (
+                  <MobileCard key={label} variant="soft" className="!p-3 flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-primary shrink-0" />
+                    <span>{label}</span>
+                  </MobileCard>
+                ))}
               </div>
             ) : isBook ? (
               <QuantitySelector quantity={quantity} onIncrease={() => setQuantity((q) => q + 1)} onDecrease={() => setQuantity((q) => Math.max(1, q - 1))} />
@@ -198,9 +208,8 @@ const ProductDetail = () => {
                 <QuantitySelector quantity={quantity} onIncrease={() => setQuantity((q) => q + 1)} onDecrease={() => setQuantity((q) => Math.max(1, q - 1))} />
               </>
             )}
-            <Separator />
 
-            <div className="flex gap-3">
+            <div className="hidden lg:flex gap-3">
               <Button className="flex-1 gradient-primary border-0" size="lg" onClick={handleAddToCart} disabled={addToCart.isPending}>
                 <ShoppingCart className="h-5 w-5 mr-2" />{addToCart.isPending ? "Adding..." : isCourse ? "Enroll Now" : "Add to Cart"}
               </Button>
@@ -209,14 +218,14 @@ const ProductDetail = () => {
             </div>
 
             {product.description && (
-              <div className="p-4 rounded-xl bg-secondary/30 border border-border/50">
-                <h3 className="font-semibold mb-2">{isCourse ? "About This Course" : isBook ? "About This Book" : "About This Product"}</h3>
-                <p className="text-sm text-muted-foreground">{product.description}</p>
-                <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1.5">
+              <MobileCard variant="glass">
+                <h3 className="font-semibold text-sm mb-2">{isCourse ? "About this course" : isBook ? "About this book" : "About this product"}</h3>
+                <p className="text-[13px] text-muted-foreground leading-relaxed">{product.description}</p>
+                <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1.5">
                   <ShieldCheck className="h-3.5 w-3.5 text-success" />
-                  {isDigital ? "Instant access after purchase. Lifetime updates included." : "Authentic, verified by ASIKON. Cash on delivery available."}
+                  {isDigital ? "Instant access after purchase. Lifetime updates included." : "Authentic, verified by ASIKON. COD available."}
                 </p>
-              </div>
+              </MobileCard>
             )}
           </div>
         </div>
@@ -224,32 +233,26 @@ const ProductDetail = () => {
         {/* Course-specific sections */}
         {isCourse && (
           <>
-            <section className="rounded-2xl border border-border/50 bg-secondary/20 p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">What you will learn</h2>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {courseLearnings.map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-success flex-shrink-0" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <MobileSection title="What you will learn">
+              <MobileCard variant="glass">
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {courseLearnings.map((item) => (
+                    <div key={item} className="flex items-start gap-2 text-[13px]">
+                      <CheckCircle2 className="h-4 w-4 mt-0.5 text-success flex-shrink-0" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </MobileCard>
+            </MobileSection>
 
-            <section className="rounded-2xl border border-border/50 bg-secondary/20 p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">Curriculum</h2>
-                <span className="ml-auto text-xs text-muted-foreground">
-                  {courseCurriculum.reduce((s, m) => s + m.lessons, 0)} lessons · ~14h
-                </span>
-              </div>
+            <MobileSection
+              title="Curriculum"
+              subtitle={`${courseCurriculum.reduce((s, m) => s + m.lessons, 0)} lessons · ~14h`}
+            >
               <div className="space-y-2">
                 {courseCurriculum.map((m, i) => (
-                  <div key={m.module} className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
+                  <MobileCard key={m.module} variant="glass" className="flex items-center gap-3 !p-3">
                     <div className="w-8 h-8 rounded-full gradient-primary text-primary-foreground flex items-center justify-center text-sm font-bold flex-shrink-0">
                       {i + 1}
                     </div>
@@ -258,28 +261,24 @@ const ProductDetail = () => {
                       <p className="text-xs text-muted-foreground">{m.lessons} lessons · {m.duration}</p>
                     </div>
                     <Play className="h-4 w-4 text-muted-foreground" />
-                  </div>
+                  </MobileCard>
                 ))}
               </div>
-            </section>
+            </MobileSection>
 
-            <section className="rounded-2xl border border-border/50 bg-secondary/20 p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Users className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">Your Instructor</h2>
-              </div>
-              <div className="flex items-center gap-4">
+            <MobileSection title="Your Instructor">
+              <MobileCard variant="glass" className="flex items-center gap-4">
                 <img
                   src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&q=80"
                   alt="Instructor"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-primary/30"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-primary/30 shrink-0"
                 />
-                <div className="flex-1">
-                  <p className="font-semibold">ASIKON Mentor Team</p>
-                  <p className="text-xs text-muted-foreground">Engineers, educators, and AI researchers helping students learn smarter, faster, and stay motivated every day.</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm">ASIKON Mentor Team</p>
+                  <p className="text-[12px] text-muted-foreground leading-relaxed">Engineers, educators, and AI researchers helping students learn smarter and stay motivated.</p>
                 </div>
-              </div>
-            </section>
+              </MobileCard>
+            </MobileSection>
           </>
         )}
 
@@ -293,7 +292,7 @@ const ProductDetail = () => {
         {relatedProducts && relatedProducts.length > 0 && (
           <ProductCarousel title={isCourse ? "Continue Learning" : "You May Also Like"} products={relatedProducts.filter((p) => p.id !== product.id).slice(0, 8).map((p) => ({ id: p.id, name: p.name, brand: "ASIKON", price: p.price, originalPrice: p.original_price || undefined, image: p.image_url || "/placeholder.svg", rating: p.rating || 0, reviews: p.review_count || 0, isTrending: p.is_featured || false }))} />
         )}
-      </div>
+      </MobilePage>
 
       {/* Sticky Mobile CTA */}
       <div
