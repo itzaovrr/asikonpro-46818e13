@@ -44,7 +44,7 @@ export const adminNavItems = [
   { title: "Categories", url: "/asikonasik/categories", icon: Tags },
   { title: "Orders", url: "/asikonasik/orders", icon: ShoppingBag },
   { title: "Community", url: "/asikonasik/community", icon: MessagesSquare },
-  { title: "POD Designs", url: "/asikonasik/pod", icon: Palette },
+  { title: "Mentors", url: "/asikonasik/mentors", icon: GraduationCap },
   { title: "Home Sections", url: "/asikonasik/home-sections", icon: LayoutGrid },
   { title: "Tracks", url: "/asikonasik/tracks", icon: GraduationCap },
   { title: "Lessons", url: "/asikonasik/lessons", icon: BookOpen },
