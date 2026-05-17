@@ -1,59 +1,58 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ReactNode, Children } from "react";
 
-/**
- * Mobile-first horizontal snap scroller.
- * - On mobile: each child snaps with its `itemWidthMobile` (e.g. "85%", "70%").
- * - On md+: falls back to a CSS grid (`gridCols`) for a clean tablet/desktop layout.
- *
- * Hides scrollbars, supports peek-next behavior for an "app-like" feel.
- */
 interface MobileScrollerProps {
-  children: ReactNode[];
+  children: ReactNode;
   /** Mobile basis e.g. "85%" or "20rem" */
   itemWidthMobile?: string;
   /** Tailwind grid columns class for md+ breakpoints */
   gridCols?: string;
   /** Gap between items */
   gap?: string;
-  /** Extra container classes */
   className?: string;
-  /** Optional left padding to peek edge */
-  edgePeek?: boolean;
 }
 
+/**
+ * Mobile-first horizontal snap scroller that collapses to a CSS grid on md+.
+ * Renders two layout DOM trees (hidden via responsive utilities) for clean,
+ * predictable behavior at each breakpoint.
+ */
 export function MobileScroller({
   children,
   itemWidthMobile = "85%",
-  gridCols = "md:grid md:grid-cols-3",
+  gridCols = "md:grid-cols-3",
   gap = "gap-3",
   className,
-  edgePeek = true,
 }: MobileScrollerProps) {
+  const items = Children.toArray(children);
+
   return (
-    <div
-      className={cn(
-        // Mobile: horizontal snap scroll
-        "flex overflow-x-auto snap-x snap-mandatory scrollbar-none -mx-4 px-4",
-        edgePeek && "pr-10",
-        gap,
-        // Desktop: switch to grid (overrides flex)
-        gridCols && `${gridCols} md:overflow-visible md:mx-0 md:px-0 md:pr-0 md:snap-none`,
-        className,
-      )}
-      style={{ scrollbarWidth: "none" }}
-    >
-      {children.map((child, i) => (
-        <div
-          key={i}
-          className="shrink-0 snap-start md:shrink md:w-auto"
-          style={{ flexBasis: itemWidthMobile, width: itemWidthMobile, maxWidth: "100%" }}
-        >
-          <div className="md:!w-auto h-full" style={{ width: "100%" }}>
+    <>
+      {/* Mobile: horizontal snap scroll with edge bleed */}
+      <div
+        className={cn(
+          "md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-none -mx-4 px-4 pr-10",
+          gap,
+          className,
+        )}
+      >
+        {items.map((child, i) => (
+          <div
+            key={i}
+            className="shrink-0 snap-start"
+            style={{ flexBasis: itemWidthMobile, width: itemWidthMobile }}
+          >
             {child}
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      {/* Desktop: grid */}
+      <div className={cn("hidden md:grid", gridCols, gap, className)}>
+        {items.map((child, i) => (
+          <div key={i} className="h-full">{child}</div>
+        ))}
+      </div>
+    </>
   );
 }
