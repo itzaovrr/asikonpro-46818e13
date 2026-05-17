@@ -39,7 +39,7 @@ export default function AdminOverview() {
   const { data: counts, isLoading } = useQuery({
     queryKey: ["admin-counts"],
     queryFn: async () => {
-      const tables = ["profiles", "products", "categories", "orders", "posts", "pod_designs"] as const;
+      const tables = ["profiles", "products", "categories", "orders", "posts", "mentors"] as const;
       const results = await Promise.all(
         tables.map((t) =>
           supabase.from(t as any).select("*", { count: "exact", head: true }).then((r) => r.count ?? 0),
