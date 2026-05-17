@@ -101,7 +101,7 @@ export default function AdminOverview() {
     { table: "categories", label: "Categories", icon: Tags },
     { table: "orders", label: "Orders", icon: ShoppingBag },
     { table: "posts", label: "Posts", icon: MessagesSquare },
-    { table: "pod_designs", label: "Designs", icon: Palette },
+    { table: "mentors", label: "Mentors", icon: Palette },
   ];
 
   return (
