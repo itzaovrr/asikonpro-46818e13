@@ -8,7 +8,7 @@ export { ProfileFeedTab } from "./tabs/ProfileFeedTab";
 export { ProfileShopTab } from "./tabs/ProfileShopTab";
 export { ProfileReviewsTab } from "./tabs/ProfileReviewsTab";
 export { ProfileMediaTab } from "./tabs/ProfileMediaTab";
-export { ProfileDesignsTab } from "./tabs/ProfileDesignsTab";
+
 export { ProfileActivityTab } from "./tabs/ProfileActivityTab";
 export { ProfileEditModal } from "./ProfileEditModal";
 export { AvatarViewer } from "./AvatarViewer";
