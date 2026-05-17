@@ -86,7 +86,6 @@ const AdminSettings = lazy(AdminSettingsMod);
 const AdminHomeSections = lazy(AdminHomeSectionsMod);
 const AdminTracks = lazy(AdminTracksMod);
 const AdminLessons = lazy(AdminLessonsMod);
-const Onboarding = lazy(OnboardingMod);
 const TrackDetail = lazy(TrackDetailMod);
 const LessonDetail = lazy(LessonDetailMod);
 
@@ -128,7 +127,7 @@ function PersistentMobileShell() {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   // Hide nav on auth/onboarding-style routes; otherwise keep mounted permanently.
-  const hideOn = ["/auth", "/asikonasik", "/onboarding", "/checkout", "/lesson", "/pod/upload", "/create", "/reset-password"];
+  const hideOn = ["/auth", "/asikonasik", "/checkout", "/lesson", "/pod/upload", "/create", "/reset-password"];
   // Hide on chat threads (/learn/:threadId) but keep on /learn root
   if (pathname.startsWith("/learn/")) return null;
   if (!isMobile || hideOn.some((p) => pathname.startsWith(p))) return null;
@@ -166,7 +165,7 @@ function AnimatedRoutes() {
           <Route path="/learn/:threadId" element={<Learn />} />
           <Route path="/about" element={<About />} />
           <Route path="/prompts" element={<Prompts />} />
-          <Route path="/onboarding" element={<Onboarding />} />
+          
           <Route path="/track/:slug" element={<TrackDetail />} />
           <Route path="/lesson/:id" element={<LessonDetail />} />
           <Route path="/asikonasik" element={<AdminLayout />}>

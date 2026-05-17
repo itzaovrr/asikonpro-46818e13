@@ -29,7 +29,7 @@ export function TodayMissionCard() {
       <CardShell>
         <h2 className="text-lg lg:text-xl font-bold">{copy.mission.needsTrackTitle}</h2>
         <p className="text-sm text-muted-foreground mt-1 mb-4">{copy.mission.needsTrackSubtitle}</p>
-        <Button asChild variant="premium"><Link to="/onboarding">Pick a track</Link></Button>
+        <Button asChild variant="premium"><Link to="/learn">Browse tracks</Link></Button>
       </CardShell>
     );
   }
@@ -40,7 +40,7 @@ export function TodayMissionCard() {
       <CardShell>
         <h2 className="text-lg lg:text-xl font-bold">{copy.mission.emptyTitle}</h2>
         <p className="text-sm text-muted-foreground mt-1 mb-4">{copy.mission.emptySubtitle}</p>
-        <Button asChild variant="outline"><Link to="/onboarding">Switch track</Link></Button>
+        <Button asChild variant="outline"><Link to="/learn">Browse tracks</Link></Button>
       </CardShell>
     );
   }

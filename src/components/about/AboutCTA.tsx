@@ -18,7 +18,7 @@ export function AboutCTA() {
         </p>
         <div className="mt-8 flex justify-center">
           <Button asChild size="lg" className="rounded-full px-8">
-            <Link to="/onboarding">
+            <Link to="/learn">
               Begin your journey <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </Button>

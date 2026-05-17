@@ -18,7 +18,7 @@ export function TrackProgress() {
           <p className="font-semibold text-sm">No active track</p>
           <p className="text-xs text-muted-foreground">Pick one to start your daily mission.</p>
         </div>
-        <Button asChild variant="outline" size="sm"><Link to="/onboarding">Pick</Link></Button>
+        <Button asChild variant="outline" size="sm"><Link to="/learn">Pick</Link></Button>
       </div>
     );
   }

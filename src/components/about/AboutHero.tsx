@@ -28,7 +28,7 @@ export function AboutHero() {
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild size="lg" className="rounded-full px-6">
-              <Link to="/onboarding">
+              <Link to="/learn">
                 Start learning <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
