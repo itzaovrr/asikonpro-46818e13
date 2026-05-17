@@ -169,7 +169,7 @@ function AnimatedRoutes() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="community" element={<AdminCommunity />} />
-            <Route path="pod" element={<AdminPod />} />
+            <Route path="mentors" element={<AdminMentors />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="home-sections" element={<AdminHomeSections />} />
             <Route path="tracks" element={<AdminTracks />} />
