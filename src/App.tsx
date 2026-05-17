@@ -154,9 +154,7 @@ function AnimatedRoutes() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/create" element={<CreateContent />} />
-          <Route path="/pod" element={<Pod />} />
-          <Route path="/pod/designs" element={<PodDesigns />} />
-          <Route path="/pod/upload" element={<PodUpload />} />
+          <Route path="/mentors" element={<Mentors />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:threadId" element={<Learn />} />
           <Route path="/about" element={<About />} />
