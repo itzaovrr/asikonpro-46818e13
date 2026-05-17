@@ -14,6 +14,7 @@ const FALLBACK: Pick<HomeSection, "key" | "enabled" | "display_order">[] = [
   { key: "hero", enabled: true, display_order: 10 },
   { key: "quick_actions", enabled: true, display_order: 20 },
   { key: "quick_categories", enabled: true, display_order: 30 },
+  { key: "mentorship", enabled: true, display_order: 35 },
   { key: "trending", enabled: true, display_order: 40 },
   { key: "community", enabled: true, display_order: 50 },
   { key: "how_it_works", enabled: true, display_order: 60 },
