@@ -13,6 +13,7 @@ import { Price } from "@/lib/currency";
 import { Reveal } from "@/components/transitions/Reveal";
 import { SmartImage } from "@/components/ui/smart-image";
 import { MobileScroller } from "@/components/ui/mobile-scroller";
+import { MentorshipHomeSection } from "@/components/mentorship/MentorshipHomeSection";
 import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
 import { useHomeSections, HomeSection } from "@/hooks/useHomeSections";
 import { useAuth } from "@/hooks/useAuth";
