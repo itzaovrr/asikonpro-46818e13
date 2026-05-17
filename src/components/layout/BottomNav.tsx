@@ -1,25 +1,32 @@
-import { Home, BarChart3, UtensilsCrossed, CalendarDays, Plus } from "lucide-react";
-import { NavLink, useLocation, Link } from "react-router-dom";
+import { Home, GraduationCap, ShoppingBag, User, Plus, MoreHorizontal, Users, Heart, Package, Shirt, Info } from "lucide-react";
+import { NavLink, useLocation, Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { getActiveTab, TabId } from "@/lib/nav-map";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-const navItems = [
-  { icon: Home, label: "Home", path: "/" },
-  { icon: BarChart3, label: "Analyze", path: "/shop" },
-  { icon: UtensilsCrossed, label: "Food", path: "/community" },
-  { icon: CalendarDays, label: "Plans", path: "/profile" },
+const tabs: { id: Exclude<TabId, null>; icon: typeof Home; label: string; path: string }[] = [
+  { id: "home", icon: Home, label: "Home", path: "/" },
+  { id: "learn", icon: GraduationCap, label: "Learn", path: "/learn" },
+  { id: "shop", icon: ShoppingBag, label: "Shop", path: "/shop" },
+  { id: "profile", icon: User, label: "Profile", path: "/profile" },
 ];
 
-/**
- * Bottom nav inspired by Iconly reference: 4 tabs split around a center
- * circular FAB (+). Active tab uses a filled primary "chip" behind the icon.
- */
+const moreItems = [
+  { icon: Users, label: "Community", path: "/community" },
+  { icon: Heart, label: "Wishlist", path: "/wishlist" },
+  { icon: Package, label: "Orders", path: "/orders" },
+  { icon: Shirt, label: "Print on Demand", path: "/pod" },
+  { icon: Info, label: "About", path: "/about" },
+];
+
 export function BottomNav() {
   const { pathname } = useLocation();
-  const isActive = (p: string) =>
-    pathname === p || (p !== "/" && pathname.startsWith(p));
+  const activeTab = getActiveTab(pathname);
+  const [moreOpen, setMoreOpen] = useState(false);
 
-  const left = navItems.slice(0, 2);
-  const right = navItems.slice(2);
+  const left = tabs.slice(0, 2);
+  const right = tabs.slice(2);
 
   return (
     <nav
@@ -39,19 +46,19 @@ export function BottomNav() {
         >
           <div className="flex flex-1 items-center justify-around">
             {left.map((item) => (
-              <NavItem key={item.path} item={item} active={isActive(item.path)} />
+              <NavItem key={item.path} item={item} active={activeTab === item.id} />
             ))}
           </div>
 
-          {/* Center FAB */}
+          {/* Center FAB → Create */}
           <Link
             to="/create"
             aria-label="Create"
             className={cn(
               "shrink-0 mx-2 grid place-items-center",
               "h-14 w-14 rounded-full",
-              "bg-foreground text-background",
-              "shadow-[0_10px_24px_-6px_rgba(0,0,0,0.45)]",
+              "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground",
+              "shadow-[0_10px_24px_-6px_hsl(var(--primary)/0.55)]",
               "active:scale-95 transition-transform duration-150"
             )}
           >
@@ -60,10 +67,47 @@ export function BottomNav() {
 
           <div className="flex flex-1 items-center justify-around">
             {right.map((item) => (
-              <NavItem key={item.path} item={item} active={isActive(item.path)} />
+              <NavItem key={item.path} item={item} active={activeTab === item.id} />
             ))}
           </div>
         </div>
+
+        {/* More sheet trigger (long-press / tap on active home tab opens it) */}
+        <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
+          <SheetTrigger asChild>
+            <button
+              aria-label="More navigation"
+              className="pointer-events-auto absolute right-6 -top-3 h-8 w-8 grid place-items-center rounded-full bg-background/90 backdrop-blur border border-border/60 shadow-md"
+              style={{ top: "-12px" }}
+              onClick={(e) => { e.preventDefault(); setMoreOpen(true); }}
+            >
+              <MoreHorizontal className="h-4 w-4 text-foreground/70" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="rounded-t-3xl">
+            <SheetHeader>
+              <SheetTitle>More</SheetTitle>
+            </SheetHeader>
+            <div className="grid grid-cols-3 gap-3 pt-4 pb-2">
+              {moreItems.map((m) => {
+                const Icon = m.icon;
+                return (
+                  <Link
+                    key={m.path}
+                    to={m.path}
+                    onClick={() => setMoreOpen(false)}
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-secondary/40 border border-border/40 active:scale-95 transition"
+                  >
+                    <span className="grid place-items-center h-10 w-10 rounded-xl bg-primary/10 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span className="text-xs font-medium text-center">{m.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </nav>
   );
@@ -77,11 +121,23 @@ function NavItem({
   active: boolean;
 }) {
   const Icon = item.icon;
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const handleClick = (e: React.MouseEvent) => {
+    // iOS-style: tap active tab → scroll to top
+    if (active && pathname === item.path) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <NavLink
       to={item.path}
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
+      onClick={handleClick}
       className="group flex flex-col items-center justify-center gap-1 select-none touch-manipulation outline-none"
       style={{ WebkitTapHighlightColor: "transparent" }}
     >

@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import { ShoppingCart, Search } from "lucide-react";
+import { ShoppingCart, Search, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useMeasuredHeaderHeight } from "@/hooks/use-measured-header-height";
 import { CurrencyToggle } from "@/components/ui/currency-toggle";
+import { isInnerRoute, getRouteTitle } from "@/lib/nav-map";
 import logo from "@/assets/logo.png";
 
 interface MobileHeaderProps {
@@ -17,6 +17,10 @@ interface MobileHeaderProps {
 export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: MobileHeaderProps) {
   const ref = useRef<HTMLElement>(null);
   useMeasuredHeaderHeight(ref);
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const inner = isInnerRoute(pathname);
+  const title = getRouteTitle(pathname);
 
   return (
     <header
@@ -28,16 +32,30 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
       <div className="flex items-center justify-between h-14 px-3">
-        {/* Left — Logo doubles as the menu trigger */}
-        <button
-          type="button"
-          onClick={onMenuClick}
-          aria-label="Open menu"
-          className="flex items-center gap-2 -ml-1 px-1 py-1 rounded-lg hover:bg-secondary/60 active:scale-95 transition"
-        >
-          <img src={logo} alt="Asikon logo" className="w-8 h-8" />
-          <h1 className="text-xl font-bold text-gradient leading-none">Asikon</h1>
-        </button>
+        {/* Left — back chevron on inner routes, otherwise logo+menu */}
+        {inner ? (
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+            className="flex items-center gap-2 -ml-1 px-2 py-1 rounded-lg hover:bg-secondary/60 active:scale-95 transition"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            <span className="text-base font-semibold truncate max-w-[180px]">{title}</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onMenuClick}
+            aria-label="Open menu"
+            className="flex items-center gap-2 -ml-1 px-1 py-1 rounded-lg hover:bg-secondary/60 active:scale-95 transition"
+          >
+            <img src={logo} alt="Asikon logo" className="w-8 h-8" />
+            <h1 className="text-xl font-bold text-gradient leading-none">
+              {pathname === "/" ? "Asikon" : title}
+            </h1>
+          </button>
+        )}
 
         {/* Right - Currency toggle, Search & Cart */}
         <div className="flex items-center gap-1">

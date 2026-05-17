@@ -123,7 +123,7 @@ export function AppLayout({
         <main 
           className={cn(
             "min-h-screen transition-all duration-300",
-            isMobile && showBottomNav && "pb-20",
+            isMobile && showBottomNav && "pb-28",
             !isMobile && showSidebar && (isCollapsed ? "lg:pl-16" : "lg:pl-60"),
             className
           )}
