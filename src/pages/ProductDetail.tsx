@@ -93,7 +93,7 @@ const ProductDetail = () => {
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="container mx-auto px-4 py-6 max-w-6xl">
+        <div className="container mx-auto px-4 pt-3 pb-24 max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <Skeleton className="aspect-square rounded-xl" />
             <div className="space-y-4">

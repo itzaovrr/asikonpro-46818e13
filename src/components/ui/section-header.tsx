@@ -38,7 +38,7 @@ export function SectionHeader({
               {eyebrow}
             </p>
           )}
-          <h2 className="font-display text-[17px] sm:text-xl lg:text-2xl font-semibold tracking-tight truncate">
+          <h2 className="font-display text-[15px] sm:text-lg lg:text-2xl font-semibold tracking-tight truncate">
             {title}
           </h2>
           {subtitle && (

@@ -132,8 +132,8 @@ const Shop = () => {
   return (
     <AppLayout>
       <div className="container-editorial pb-8 lg:pb-16">
-        {/* Editorial header band */}
-        <div className="pt-4 lg:pt-10 pb-4 lg:pb-8">
+        {/* Editorial header band — minimal on mobile, full on desktop */}
+        <div className="hidden lg:block pt-10 pb-8">
           <p className="eyebrow-bar mb-2">ASIKON Marketplace</p>
           <h1 className="display-2 mb-1">Learn smarter. Shop with intent.</h1>
           <p className="text-sm lg:text-base text-muted-foreground max-w-2xl">
@@ -141,17 +141,17 @@ const Shop = () => {
           </p>
         </div>
 
-        {/* Points Progress */}
-        <div className="mb-4 lg:mb-6 p-3 lg:p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
+        {/* Points Progress — compact glass strip */}
+        <div className="mt-3 lg:mt-0 mb-4 lg:mb-6 p-3 lg:p-4 glass rounded-2xl">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">2x Learning XP Active</span>
+              <span className="text-[13px] font-medium">2x Learning XP Active</span>
             </div>
-            <span className="text-xs text-muted-foreground">Level 5</span>
+            <span className="text-[11px] text-muted-foreground">Level 5</span>
           </div>
           <Progress value={65} className="h-1.5" />
-          <p className="text-xs text-muted-foreground mt-1">On Skill-Up Fridays</p>
+          <p className="text-[11px] text-muted-foreground mt-1">On Skill-Up Fridays</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6 lg:gap-8">

@@ -158,7 +158,7 @@ const Prompts = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-6 space-y-6 pb-10">
+      <div className="container mx-auto px-4 pt-3 pb-24 space-y-6 pb-10">
         {/* Hero */}
         <Reveal as="section">
           <div

@@ -89,11 +89,9 @@ const Settings = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
-        <h1 className="text-2xl font-bold mb-6">Settings</h1>
-
+      <div className="container mx-auto px-4 pt-3 pb-24 max-w-2xl space-y-4">
         {/* Profile Section */}
-        <div className="bg-card rounded-xl p-6 border border-border mb-6">
+        <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <User className="h-5 w-5 text-primary" />
             <h2 className="font-semibold">Profile</h2>
@@ -179,7 +177,7 @@ const Settings = () => {
         </div>
 
         {/* Notifications */}
-        <div className="bg-card rounded-xl p-6 border border-border mb-6">
+        <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <Bell className="h-5 w-5 text-primary" />
             <h2 className="font-semibold">Notifications</h2>
@@ -228,7 +226,7 @@ const Settings = () => {
         </div>
 
         {/* Other Settings */}
-        <div className="bg-card rounded-xl border border-border mb-6 overflow-hidden">
+        <div className="glass rounded-2xl overflow-hidden">
           <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
             <div className="flex items-center gap-3">
               <Lock className="h-5 w-5 text-muted-foreground" />

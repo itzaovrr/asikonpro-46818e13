@@ -38,8 +38,8 @@ const Orders = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+      <div className="container mx-auto px-4 pt-3 pb-24 max-w-4xl">
+        <h1 className="hidden lg:block text-2xl font-bold mb-6">My Orders</h1>
 
         {isLoading ? (
           <div className="space-y-4">
