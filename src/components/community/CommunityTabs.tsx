@@ -15,7 +15,6 @@ const tabs: { id: CommunityTab; label: string }[] = [
   { id: "reviews", label: "Reviews" },
   { id: "live", label: "Live" },
   { id: "offers", label: "Offers" },
-  { id: "gallery", label: "Gallery" },
 ];
 
 export function CommunityTabs({ activeTab, onTabChange }: CommunityTabsProps) {

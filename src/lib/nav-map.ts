@@ -12,7 +12,7 @@ export interface TabDef {
 
 export const TABS: TabDef[] = [
   { id: "home", label: "Home", path: "/", matches: [] },
-  { id: "explore", label: "Explore", path: "/shop", matches: ["/shop", "/product", "/cart", "/checkout", "/orders", "/wishlist", "/pod"] },
+  { id: "explore", label: "Explore", path: "/shop", matches: ["/shop", "/product", "/cart", "/checkout", "/orders", "/wishlist", "/mentors"] },
   { id: "ai", label: "AI", path: "/learn", matches: ["/learn", "/track", "/lesson", "/prompts"] },
   { id: "community", label: "Community", path: "/community", matches: ["/community", "/create"] },
   { id: "profile", label: "Profile", path: "/profile", matches: ["/profile", "/settings", "/about"] },
@@ -51,7 +51,7 @@ export function getRouteTitle(pathname: string): string {
   if (pathname === "/settings") return "Settings";
   if (pathname === "/about") return "About";
   if (pathname === "/community") return "Community";
-  if (pathname.startsWith("/pod")) return "Print on Demand";
+  if (pathname.startsWith("/mentors")) return "Mentorship";
   if (pathname === "/create") return "Create";
   if (pathname === "/prompts") return "Prompts";
   return "Asikon";

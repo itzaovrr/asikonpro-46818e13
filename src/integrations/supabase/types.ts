@@ -389,6 +389,125 @@ export type Database = {
           },
         ]
       }
+      mentor_waitlist: {
+        Row: {
+          child_age: number
+          child_grade: string | null
+          child_name: string
+          created_at: string
+          goal: string | null
+          id: string
+          mentor_id: string | null
+          notes: string | null
+          parent_contact: string
+          parent_name: string
+          preferred_language: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          child_age: number
+          child_grade?: string | null
+          child_name: string
+          created_at?: string
+          goal?: string | null
+          id?: string
+          mentor_id?: string | null
+          notes?: string | null
+          parent_contact: string
+          parent_name: string
+          preferred_language?: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          child_age?: number
+          child_grade?: string | null
+          child_name?: string
+          created_at?: string
+          goal?: string | null
+          id?: string
+          mentor_id?: string | null
+          notes?: string | null
+          parent_contact?: string
+          parent_name?: string
+          preferred_language?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_waitlist_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "mentors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentors: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_order: number
+          experience_years: number
+          for_age_max: number
+          for_age_min: number
+          hourly_rate: number
+          id: string
+          is_active: boolean
+          languages: string[]
+          name: string
+          rating: number
+          slug: string
+          subjects: string[]
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          experience_years?: number
+          for_age_max?: number
+          for_age_min?: number
+          hourly_rate?: number
+          id?: string
+          is_active?: boolean
+          languages?: string[]
+          name: string
+          rating?: number
+          slug: string
+          subjects?: string[]
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          experience_years?: number
+          for_age_max?: number
+          for_age_min?: number
+          hourly_rate?: number
+          id?: string
+          is_active?: boolean
+          languages?: string[]
+          name?: string
+          rating?: number
+          slug?: string
+          subjects?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           chat_id: string
@@ -949,7 +1068,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          cover_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_or_create_today_mission: {

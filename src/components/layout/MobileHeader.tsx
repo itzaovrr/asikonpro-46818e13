@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ShoppingCart, Search, ChevronLeft, MoreHorizontal, Heart, Package, Shirt, Info, Settings as SettingsIcon, Sparkles } from "lucide-react";
+import { ShoppingCart, Search, ChevronLeft, MoreHorizontal, Heart, Package, GraduationCap, Info, Settings as SettingsIcon, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ const tabTitles: Record<string, string> = {
 const overflowItems = [
   { icon: Heart, label: "Wishlist", path: "/wishlist" },
   { icon: Package, label: "Orders", path: "/orders" },
-  { icon: Shirt, label: "Print on Demand", path: "/pod" },
+  { icon: GraduationCap, label: "1-on-1 Mentorship", path: "/mentors" },
   { icon: Sparkles, label: "Prompts", path: "/prompts" },
   { icon: Info, label: "About", path: "/about" },
   { icon: SettingsIcon, label: "Settings", path: "/settings" },

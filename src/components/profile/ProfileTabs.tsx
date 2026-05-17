@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Newspaper, ShoppingBag, Star, Image as ImageIcon, Palette, Activity } from "lucide-react";
+import { Newspaper, ShoppingBag, Star, Image as ImageIcon, Activity } from "lucide-react";
 
-export type ProfileTabType = "feed" | "shop" | "reviews" | "media" | "designs" | "activity";
+export type ProfileTabType = "feed" | "shop" | "reviews" | "media" | "activity";
 
 interface ProfileTabsProps {
   activeTab: ProfileTabType;
@@ -15,7 +15,6 @@ const tabs: { id: ProfileTabType; label: string; icon: React.ReactNode }[] = [
   { id: "shop", label: "Projects", icon: <ShoppingBag className="h-4 w-4" /> },
   { id: "reviews", label: "Reviews", icon: <Star className="h-4 w-4" /> },
   { id: "media", label: "Media", icon: <ImageIcon className="h-4 w-4" /> },
-  { id: "designs", label: "Designs", icon: <Palette className="h-4 w-4" /> },
   { id: "activity", label: "Activity", icon: <Activity className="h-4 w-4" /> },
 ];
 

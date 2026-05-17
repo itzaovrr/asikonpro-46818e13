@@ -14,7 +14,6 @@ import {
   ProfileShopTab,
   ProfileReviewsTab,
   ProfileMediaTab,
-  ProfileDesignsTab,
   ProfileActivityTab,
   ProfileEditModal,
   AvatarViewer,
@@ -186,9 +185,6 @@ const Profile = () => {
     { id: "2", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400", url: "", duration: 45, viewCount: 1200 },
   ];
 
-  const mockDesigns = [
-    { id: "1", title: "AI Study Notes Template", image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400", salesCount: 45, likes: 234, earnings: 450 },
-  ];
 
   const mockActivities = [
     { id: "1", type: "coins" as const, title: "Earned coins", description: "Lesson completion bonus", timestamp: "2 hours ago", metadata: { amount: 50 } },
@@ -203,19 +199,11 @@ const Profile = () => {
       case "feed":
         return <ProfileFeedTab posts={feedPosts} user={{ ...displayProfile, isVerified: displayProfile.isVerified }} />;
       case "shop":
-        return <ProfileShopTab products={shopProducts} isPodCreator={true} />;
+        return <ProfileShopTab products={shopProducts} />;
       case "reviews":
         return <ProfileReviewsTab reviews={mockReviews} />;
       case "media":
         return <ProfileMediaTab media={mockMedia} />;
-      case "designs":
-        return (
-          <ProfileDesignsTab 
-            designs={mockDesigns} 
-            isOwnProfile={isOwnProfile}
-            onCreateDesign={() => navigate("/pod/builder")}
-          />
-        );
       case "activity":
         return <ProfileActivityTab activities={mockActivities} />;
       default:
@@ -285,7 +273,6 @@ const Profile = () => {
                 counts={{
                   feed: userPosts?.length || 0,
                   reviews: mockReviews.length,
-                  designs: mockDesigns.length,
                 }}
               />
 

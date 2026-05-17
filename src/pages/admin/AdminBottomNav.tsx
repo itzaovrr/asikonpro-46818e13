@@ -31,7 +31,7 @@ const primary = [
 const more = [
   { title: "Categories", url: "/asikonasik/categories", icon: Tags },
   { title: "Community", url: "/asikonasik/community", icon: MessagesSquare },
-  { title: "POD Designs", url: "/asikonasik/pod", icon: Palette },
+  { title: "Mentors", url: "/asikonasik/mentors", icon: Palette },
   { title: "Settings", url: "/asikonasik/settings", icon: SettingsIcon },
   { title: "Back to app", url: "/", icon: Home },
 ];

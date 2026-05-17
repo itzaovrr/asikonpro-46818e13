@@ -29,9 +29,7 @@ const OrderDetailMod = () => import("./pages/OrderDetail");
 const WishlistMod = () => import("./pages/Wishlist");
 const SettingsMod = () => import("./pages/Settings");
 const CreateContentMod = () => import("./pages/CreateContent");
-const PodMod = () => import("./pages/Pod");
-const PodDesignsMod = () => import("./pages/PodDesigns");
-const PodUploadMod = () => import("./pages/PodUpload");
+const MentorsMod = () => import("./pages/Mentors");
 const LearnMod = () => import("./pages/Learn");
 const NotFoundMod = () => import("./pages/NotFound");
 const ResetPasswordMod = () => import("./pages/ResetPassword");
@@ -44,7 +42,7 @@ const AdminProductsMod = () => import("./pages/admin/AdminProducts");
 const AdminCategoriesMod = () => import("./pages/admin/AdminCategories");
 const AdminOrdersMod = () => import("./pages/admin/AdminOrders");
 const AdminCommunityMod = () => import("./pages/admin/AdminCommunity");
-const AdminPodMod = () => import("./pages/admin/AdminPod");
+const AdminMentorsMod = () => import("./pages/admin/AdminMentors");
 const AdminSettingsMod = () => import("./pages/admin/AdminSettings");
 const AdminHomeSectionsMod = () => import("./pages/admin/AdminHomeSections");
 const AdminTracksMod = () => import("./pages/admin/AdminTracks");
@@ -67,9 +65,7 @@ const OrderDetail = lazy(OrderDetailMod);
 const Wishlist = lazy(WishlistMod);
 const Settings = lazy(SettingsMod);
 const CreateContent = lazy(CreateContentMod);
-const Pod = lazy(PodMod);
-const PodDesigns = lazy(PodDesignsMod);
-const PodUpload = lazy(PodUploadMod);
+const Mentors = lazy(MentorsMod);
 const Learn = lazy(LearnMod);
 const NotFound = lazy(NotFoundMod);
 const About = lazy(AboutMod);
@@ -81,7 +77,7 @@ const AdminProducts = lazy(AdminProductsMod);
 const AdminCategories = lazy(AdminCategoriesMod);
 const AdminOrders = lazy(AdminOrdersMod);
 const AdminCommunity = lazy(AdminCommunityMod);
-const AdminPod = lazy(AdminPodMod);
+const AdminMentors = lazy(AdminMentorsMod);
 const AdminSettings = lazy(AdminSettingsMod);
 const AdminHomeSections = lazy(AdminHomeSectionsMod);
 const AdminTracks = lazy(AdminTracksMod);
@@ -127,7 +123,7 @@ function PersistentMobileShell() {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   // Hide nav on auth/onboarding-style routes; otherwise keep mounted permanently.
-  const hideOn = ["/auth", "/asikonasik", "/checkout", "/lesson", "/pod/upload", "/create", "/reset-password"];
+  const hideOn = ["/auth", "/asikonasik", "/checkout", "/lesson", "/create", "/reset-password"];
   // Hide on chat threads (/learn/:threadId) but keep on /learn root
   if (pathname.startsWith("/learn/")) return null;
   if (!isMobile || hideOn.some((p) => pathname.startsWith(p))) return null;
@@ -158,9 +154,7 @@ function AnimatedRoutes() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/create" element={<CreateContent />} />
-          <Route path="/pod" element={<Pod />} />
-          <Route path="/pod/designs" element={<PodDesigns />} />
-          <Route path="/pod/upload" element={<PodUpload />} />
+          <Route path="/mentors" element={<Mentors />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:threadId" element={<Learn />} />
           <Route path="/about" element={<About />} />
@@ -175,7 +169,7 @@ function AnimatedRoutes() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="community" element={<AdminCommunity />} />
-            <Route path="pod" element={<AdminPod />} />
+            <Route path="mentors" element={<AdminMentors />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="home-sections" element={<AdminHomeSections />} />
             <Route path="tracks" element={<AdminTracks />} />
