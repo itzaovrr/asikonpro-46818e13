@@ -57,12 +57,12 @@ const Orders = () => {
             </Link>
           </div>
         ) : (
-          orders.map((order) => {
+          orders.map((order, idx) => {
             const status = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.pending;
             const StatusIcon = status.icon;
             return (
               <Link key={order.id} to={`/orders/${order.id}`} className="block">
-                <MobileCard variant="glass">
+                <MobileCard variant="glass" animateIn index={idx}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="min-w-0">
                       <p className="text-[13px] font-semibold">Order #{order.id.slice(0, 8)}</p>

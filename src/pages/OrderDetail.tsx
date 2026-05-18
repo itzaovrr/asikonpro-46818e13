@@ -98,6 +98,8 @@ const OrderDetail = () => {
                     <img
                       src={item.products?.image_url || "/placeholder.svg"}
                       alt={item.products?.name || "Product"}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   </div>
