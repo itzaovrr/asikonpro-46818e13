@@ -163,3 +163,5 @@ function ActionButton({
     </button>
   );
 }
+
+export const PostCard = memo(PostCardImpl);
