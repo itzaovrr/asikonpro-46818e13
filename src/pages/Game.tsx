@@ -116,10 +116,10 @@ const Game = () => {
         {/* Course Progress */}
         <MobileSection title="My Courses" actionLabel="View all" actionHref="/learn">
           <div className="space-y-3">
-            {enrolledCourses.map((course) => {
+            {enrolledCourses.map((course, i) => {
               const pct = Math.round((course.completed / course.total) * 100);
               return (
-                <MobileCard key={course.id} variant="glass" className="p-3">
+                <MobileCard key={course.id} variant="glass" animateIn index={i} className="p-3">
                   <div className="flex gap-3">
                     <img src={course.cover} alt={course.title} loading="lazy" decoding="async" width={64} height={64} className="w-16 h-16 rounded-xl object-cover flex-shrink-0" />
                     <div className="flex-1 min-w-0">
@@ -165,8 +165,8 @@ const Game = () => {
         {/* Daily Challenges */}
         <MobileSection title="Daily Challenges" subtitle="Resets in 4h">
           <div className="space-y-3">
-            {mockChallenges.map((challenge) => (
-              <MobileCard key={challenge.id} variant="glass" className="flex items-center justify-between">
+            {mockChallenges.map((challenge, i) => (
+              <MobileCard key={challenge.id} variant="glass" animateIn index={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xl shrink-0">
                     {challenge.icon}
@@ -193,8 +193,8 @@ const Game = () => {
         {/* Hot Rewards */}
         <MobileSection title="Hot Rewards" actionLabel="View all">
           <div className="grid grid-cols-2 gap-3">
-            {rewards.map((reward) => (
-              <MobileCard key={reward.id} variant="glass" noPadding className="overflow-hidden">
+            {rewards.map((reward, i) => (
+              <MobileCard key={reward.id} variant="glass" animateIn index={i} noPadding className="overflow-hidden">
                 <div className="relative h-28">
                   <img src={reward.image} alt={reward.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
