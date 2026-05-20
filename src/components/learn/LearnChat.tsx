@@ -192,9 +192,9 @@ export function LearnChat({ threadId }: Props) {
   }
 
   return (
-    <div className="relative flex flex-col h-full bg-background">
+    <div className="relative flex flex-col h-full min-h-0 bg-background">
       {/* In-chat header */}
-      <div className="lg:hidden sticky top-0 z-20 flex items-center gap-2 px-3 py-2 bg-background/85 backdrop-blur border-b border-border/60">
+      <div className="lg:hidden shrink-0 flex items-center gap-2 px-3 py-1.5 bg-background/85 backdrop-blur border-b border-border/60">
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
@@ -230,15 +230,17 @@ export function LearnChat({ threadId }: Props) {
       </div>
 
       {/* Transcript */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain">
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         {loadingMsgs ? (
           <div className="flex justify-center py-10">
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
         ) : messages.length === 0 ? (
-          <EmptyState onPick={handleSend} />
+          <div className="h-full flex items-center justify-center">
+            <EmptyState onPick={handleSend} />
+          </div>
         ) : (
-          <div className="mx-auto w-full max-w-3xl px-3 sm:px-6 py-4 space-y-5 pb-6">
+          <div className="mx-auto w-full max-w-3xl px-3 sm:px-6 py-3 sm:py-4 space-y-5">
             {messages.map((m) => (
               <MessageRow key={m.id} message={m} />
             ))}
@@ -248,27 +250,28 @@ export function LearnChat({ threadId }: Props) {
                 চিন্তা করছি...
               </div>
             )}
-            <div className="h-2" />
+            <div className="h-1" />
           </div>
         )}
       </div>
+
 
       {/* Jump to latest pill */}
       {showJump && messages.length > 0 && (
         <button
           onClick={jumpToBottom}
-          className="absolute left-1/2 -translate-x-1/2 bottom-[180px] z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary/90 backdrop-blur border border-border shadow-md hover:bg-secondary"
+          className="absolute left-1/2 -translate-x-1/2 bottom-32 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary/90 backdrop-blur border border-border shadow-md hover:bg-secondary"
         >
           <ArrowDown className="w-3.5 h-3.5" /> Latest
         </button>
       )}
 
-      {/* Sticky composer area */}
-      <div className="sticky bottom-0 z-10 shrink-0 px-3 pt-2 pb-3 bg-gradient-to-t from-background via-background to-background/70">
+      {/* Composer area (non-scrolling) */}
+      <div className="shrink-0 px-3 pt-1.5 pb-2 bg-background border-t border-border/40">
         <div className="mx-auto w-full max-w-3xl">
           {/* Action chips */}
           {messages.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 -mx-1 px-1">
+            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1.5 -mx-1 px-1">
               {ACTION_CHIPS.map((chip) => (
                 <button
                   key={chip}
@@ -375,7 +378,7 @@ export function LearnChat({ threadId }: Props) {
 
 function EmptyState({ onPick }: { onPick: (s: string) => void }) {
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 pt-8 pb-6">
+    <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <div className="flex flex-col items-center text-center mb-7">
         <img
           src={tutorAvatar}
