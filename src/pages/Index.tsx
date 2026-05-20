@@ -13,6 +13,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Price } from "@/lib/currency";
 import { Reveal } from "@/components/transitions/Reveal";
 import { SmartImage } from "@/components/ui/smart-image";
+import { ProductCard } from "@/components/shop/ProductCard";
 import { MobileScroller } from "@/components/ui/mobile-scroller";
 import { MentorshipHomeSection } from "@/components/mentorship/MentorshipHomeSection";
 import { GreetingStrip } from "@/components/home/workspace/GreetingStrip";
