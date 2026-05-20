@@ -10,20 +10,22 @@ export type HomeSection = {
   subtitle_override: string | null;
 };
 
+// Home is intentionally lean — trust/marketing sections live on /about now.
 const FALLBACK: Pick<HomeSection, "key" | "enabled" | "display_order">[] = [
   { key: "hero", enabled: true, display_order: 10 },
-  { key: "quick_actions", enabled: true, display_order: 20 },
   { key: "quick_categories", enabled: true, display_order: 30 },
   { key: "mentorship", enabled: true, display_order: 35 },
   { key: "trending", enabled: true, display_order: 40 },
-  { key: "community", enabled: true, display_order: 50 },
-  { key: "how_it_works", enabled: true, display_order: 60 },
-  { key: "why_trust", enabled: true, display_order: 70 },
-  { key: "curated", enabled: true, display_order: 80 },
-  { key: "new_arrivals", enabled: true, display_order: 90 },
-  { key: "testimonials", enabled: true, display_order: 100 },
-  { key: "faq", enabled: true, display_order: 110 },
+  { key: "new_arrivals", enabled: true, display_order: 50 },
+  { key: "curated", enabled: true, display_order: 60 },
+  { key: "community", enabled: true, display_order: 70 },
   { key: "final_cta", enabled: true, display_order: 120 },
+  // Disabled on home by default — surfaced on /about. Admin can re-enable.
+  { key: "quick_actions", enabled: false, display_order: 200 },
+  { key: "how_it_works", enabled: false, display_order: 210 },
+  { key: "why_trust", enabled: false, display_order: 220 },
+  { key: "testimonials", enabled: false, display_order: 230 },
+  { key: "faq", enabled: false, display_order: 240 },
 ];
 
 export function useHomeSections() {
