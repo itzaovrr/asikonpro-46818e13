@@ -265,6 +265,11 @@ const Index = () => {
           <>
             {/* Personal, fast — top of fold */}
             <GreetingStrip />
+            {heroSection && (
+              <section className="section-x">
+                <HeroCarousel slides={heroSlides} />
+              </section>
+            )}
             <section className="section-x">
               <TodayMissionCard />
             </section>
