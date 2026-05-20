@@ -124,12 +124,16 @@ export function AppLayout({
         {/* Main Content */}
         <main 
           className={cn(
-            "min-h-screen transition-all duration-300",
-            isMobile && showBottomNav && "pb-28",
+            fillViewport ? "h-[100dvh] overflow-hidden" : "min-h-screen",
+            "transition-all duration-300",
+            !fillViewport && isMobile && showBottomNav && "pb-28",
             !isMobile && showSidebar && (isCollapsed ? "lg:pl-16" : "lg:pl-60"),
             className
           )}
-          style={{ paddingTop: "var(--app-header-h)" }}
+          style={{
+            paddingTop: "var(--app-header-h)",
+            ...(fillViewport && isMobile ? { paddingBottom: "var(--bottom-nav-h)" } : {}),
+          }}
         >
           {children}
         </main>
