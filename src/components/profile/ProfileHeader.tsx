@@ -194,7 +194,7 @@ export function ProfileHeader({ user, isOwnProfile, onAvatarClick, onUpdate, onE
       </div>
 
       {/* Identity */}
-      <div className="pt-20 px-4 sm:px-6 space-y-1.5">
+      <div className="pt-24 sm:pt-20 px-4 sm:px-6 space-y-1.5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <h1 className="text-2xl font-bold tracking-tight truncate">{user.name}</h1>

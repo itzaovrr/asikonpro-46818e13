@@ -39,14 +39,17 @@ export function SmartImage({
 }: SmartImageProps) {
   const [loaded, setLoaded] = useState(false);
 
+  // React DOM expects lowercase `fetchpriority` as a DOM attribute.
+  const priorityAttr = { fetchpriority: eager ? "high" : "low" } as Record<string, string>;
+
   return (
     <img
       {...rest}
+      {...priorityAttr}
       src={src}
       alt={alt}
       loading={eager ? "eager" : "lazy"}
       decoding="async"
-      fetchPriority={eager ? "high" : "low"}
       onLoad={(e) => {
         setLoaded(true);
         onLoad?.(e);
