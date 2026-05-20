@@ -26,8 +26,8 @@ export default function Learn() {
 
   if (!loading && !user) {
     return (
-      <AppLayout showBottomNav>
-        <div className="flex flex-col items-center justify-center h-[70vh] p-6 text-center">
+      <AppLayout showBottomNav fillViewport>
+        <div className="flex flex-col items-center justify-center h-full p-6 text-center">
           <img src={tutorAvatar} alt="ASIKON AI Tutor" className="w-20 h-20 mb-4" />
           <h1 className="text-2xl font-bold mb-2 text-gradient">ASIKON AI Tutor</h1>
           <p className="text-muted-foreground mb-4">সাইন ইন করো তোমার AI শিক্ষকের সাথে কথা বলতে।</p>
@@ -38,12 +38,12 @@ export default function Learn() {
   }
 
   return (
-    <AppLayout showBottomNav>
-      <div className="flex h-[calc(100dvh-var(--app-header-h,56px)-7rem)] lg:h-[calc(100dvh-var(--app-header-h,64px))]">
+    <AppLayout showBottomNav fillViewport>
+      <div className="flex h-full">
         <aside className="hidden lg:flex w-64 border-r border-border flex-col">
           <ThreadList activeId={threadId} />
         </aside>
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
           {threadId ? (
             <LearnChat key={threadId} threadId={threadId} />
           ) : (
