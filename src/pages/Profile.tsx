@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -7,300 +7,325 @@ import { MissionVision } from "@/components/about/MissionVision";
 import {
   ProfileHeader,
   ProfileStats,
-  ProfileBadges,
   ProfileActions,
-  ProfileTrustCard,
   ProfileTabs,
   ProfileFeedTab,
-  ProfileShopTab,
-  ProfileReviewsTab,
   ProfileMediaTab,
-  ProfileActivityTab,
-  ProfileEditModal,
+  ProfileReviewsTab,
+  ProfileLearningTab,
+  ProfileLibraryTab,
+  ProfileOrdersTab,
+  ProfileWishlistTab,
+  ProfileTrustCard,
+  ProfileBadges,
   AvatarViewer,
+  FollowersSheet,
   type ProfileTabType,
 } from "@/components/profile";
 import { MessagingDrawer } from "@/components/messaging";
-import { useProfile, useUpdateProfile, useFollowers, useFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useProfile";
-import { useLearnerProgress } from "@/hooks/useLearnerProgress";
+import {
+  useProfile,
+  useUpdateProfile,
+  useFollowers,
+  useFollowing,
+  useFollowUser,
+  useUnfollowUser,
+} from "@/hooks/useProfile";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreateOrGetChat } from "@/hooks/useMessages";
 import { useToast } from "@/hooks/use-toast";
-import { mockProducts } from "@/lib/mock-data";
+import {
+  useUserOrders,
+  useUserWishlist,
+  useUserLibrary,
+  useLearnerStats,
+  useProfileCounts,
+} from "@/hooks/useProfileData";
+
+type StatSheet = "followers" | "following" | null;
 
 const Profile = () => {
   const navigate = useNavigate();
   const { userId } = useParams<{ userId?: string }>();
   const { user } = useAuth();
-  
+  const { toast } = useToast();
+
   const targetUserId = userId || user?.id;
   const isOwnProfile = !userId || userId === user?.id;
-  
+
   const { data: profile, isLoading: profileLoading } = useProfile(targetUserId);
-  const { progress: learnerProgress } = useLearnerProgress(targetUserId);
+  const { data: counts } = useProfileCounts(targetUserId);
   const { data: followers } = useFollowers(targetUserId || "");
   const { data: following } = useFollowing(targetUserId || "");
-  const { data: userPosts } = usePosts({ userId: targetUserId, limit: 20 });
+  const { data: userPosts } = usePosts({ userId: targetUserId, limit: 50 });
+  const { data: reviewPosts } = usePosts({ userId: targetUserId, type: "review", limit: 50 });
+  const { data: learnerStats } = useLearnerStats(targetUserId);
+  const { data: library } = useUserLibrary(targetUserId);
+  const { data: orders } = useUserOrders(isOwnProfile ? targetUserId : undefined);
+  const { data: wishlist } = useUserWishlist(isOwnProfile ? targetUserId : undefined);
+
   const updateProfile = useUpdateProfile();
   const followUser = useFollowUser();
   const unfollowUser = useUnfollowUser();
+  const createOrGetChat = useCreateOrGetChat();
 
-  const [activeTab, setActiveTab] = useState<ProfileTabType>("feed");
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<ProfileTabType>("posts");
   const [showAvatarViewer, setShowAvatarViewer] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
-  
-  const createOrGetChat = useCreateOrGetChat();
-  const { toast } = useToast();
+  const [statSheet, setStatSheet] = useState<StatSheet>(null);
+
+  const isFollowing = followers?.some((f) => f.follower_id === user?.id) || false;
+
+  const handleFollow = async () => {
+    if (!targetUserId || !user) {
+      toast({ title: "Please login", description: "Sign in to follow users.", variant: "destructive" });
+      return;
+    }
+    try {
+      if (isFollowing) await unfollowUser.mutateAsync(targetUserId);
+      else await followUser.mutateAsync(targetUserId);
+    } catch (e) {
+      toast({ title: "Action failed", variant: "destructive" });
+    }
+  };
 
   const handleMessage = async () => {
     if (!targetUserId || !user) {
-      toast({
-        title: "Please login",
-        description: "You need to be logged in to send messages.",
-        variant: "destructive",
-      });
+      toast({ title: "Please login", description: "Sign in to send messages.", variant: "destructive" });
       return;
     }
-    
     try {
       await createOrGetChat.mutateAsync(targetUserId);
       setShowMessages(true);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to start conversation.",
-        variant: "destructive",
-      });
+    } catch {
+      toast({ title: "Error", description: "Failed to start conversation.", variant: "destructive" });
     }
   };
 
-  // Check if current user is following this profile
-  const isFollowing = followers?.some(f => f.follower_id === user?.id) || false;
-
-  const handleFollow = async () => {
-    if (!targetUserId || !user) return;
-    try {
-      if (isFollowing) {
-        await unfollowUser.mutateAsync(targetUserId);
-      } else {
-        await followUser.mutateAsync(targetUserId);
-      }
-    } catch (error) {
-      console.error("Follow action failed:", error);
+  const handleShare = () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: profile?.full_name || "Profile", url }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(url);
+      toast({ title: "Link copied" });
     }
-  };
-
-  const handleSaveProfile = async (updates: {
-    username?: string;
-    full_name?: string;
-    bio?: string;
-    avatar_url?: string;
-    cover_url?: string;
-  }) => {
-    await updateProfile.mutateAsync(updates);
   };
 
   if (profileLoading) {
     return (
-      <AppLayout showBottomNav={true}>
-        <div className="min-h-screen flex items-center justify-center">
+      <AppLayout showBottomNav>
+        <div className="min-h-[60vh] flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </AppLayout>
     );
   }
 
-  // Fallback data for display
   const displayProfile = {
     id: profile?.id || targetUserId || "",
     name: profile?.full_name || profile?.username || "Anonymous User",
     username: profile?.username || "user",
-    avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-    coverImage: profile?.cover_url,
+    avatar:
+      profile?.avatar_url ||
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200",
+    coverImage: profile?.cover_url || undefined,
     bio: profile?.bio || "",
-    location: undefined,
     isVerified: profile?.is_verified || false,
-    trustScore: profile?.trust_score || 0,
+    trustScore: profile?.trust_score ?? 0,
     isOnline: isOwnProfile,
   };
 
-  // Transform posts for feed tab
-  const feedPosts = (userPosts || []).map((post) => ({
-    id: post.id,
-    content: post.content || "",
-    image: post.images?.[0],
-    video: post.video_url || undefined,
-    likes: post.like_count || 0,
-    comments: post.comment_count || 0,
-    shares: post.share_count || 0,
-    timestamp: new Date(post.created_at || "").toLocaleDateString(),
-    product: undefined,
-  }));
-
-  // Mock data for other tabs (would be replaced with real data)
-  const shopProducts = mockProducts.map((p, idx) => ({
+  // Transform posts -> feed
+  const feedPosts = (userPosts || []).map((p: any) => ({
     id: p.id,
-    name: p.name,
-    image: p.image,
-    price: p.price,
-    rating: p.rating || 4.5,
-    reviewCount: p.reviews || 0,
-    isPurchased: idx % 2 === 0,
-    isReviewed: idx % 3 === 0,
-    isSold: idx === 0,
+    content: p.content || "",
+    images: p.images,
+    videoUrl: p.video_url,
+    createdAt: p.created_at,
+    likeCount: p.like_count || 0,
+    commentCount: p.comment_count || 0,
+    isLiked: false,
+    productSlug: p.products?.slug ?? null,
+    productName: p.products?.name ?? null,
   }));
 
-  const mockReviews = [
-    {
-      id: "1",
-      productId: mockProducts[0].id,
-      productName: mockProducts[0].name,
-      productImage: mockProducts[0].image,
-      rating: 5,
-      title: "This course changed how I learn AI",
-      content: "The AI tutor explains tough concepts in seconds. Projects feel real and the community is super supportive.",
-      images: [mockProducts[0].image],
-      helpfulCount: 87,
-      isVerifiedPurchase: true,
-      createdAt: "2 days ago",
-    },
-    {
-      id: "2",
-      productId: mockProducts[2].id,
-      productName: mockProducts[2].name,
-      productImage: mockProducts[2].image,
-      rating: 5,
-      title: "Must-read for every student",
-      content: "Atomic Habits paired with the Asikon planner totally rebuilt my study routine.",
-      images: [],
-      helpfulCount: 52,
-      isVerifiedPurchase: true,
-      createdAt: "1 week ago",
-    },
-  ];
+  // Media from posts (images + video)
+  const mediaItems = useMemo(() => {
+    const items: { id: string; postId: string; type: "image" | "video"; thumbnail: string }[] = [];
+    (userPosts || []).forEach((p: any) => {
+      (p.images || []).forEach((img: string, idx: number) =>
+        items.push({ id: `${p.id}-${idx}`, postId: p.id, type: "image", thumbnail: img }),
+      );
+      if (p.video_url && (!p.images || p.images.length === 0)) {
+        items.push({ id: `${p.id}-v`, postId: p.id, type: "video", thumbnail: p.video_url });
+      }
+    });
+    return items;
+  }, [userPosts]);
 
-  const mockMedia = [
-    { id: "1", type: "image" as const, thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400", url: "" },
-    { id: "2", type: "video" as const, thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400", url: "", duration: 45, viewCount: 1200 },
-  ];
+  // Reviews from posts where type='review'
+  const reviews = (reviewPosts || []).map((p: any) => ({
+    id: p.id,
+    rating: 5, // posts table doesn't store rating yet; default 5
+    content: p.content || "",
+    createdAt: p.created_at,
+    productSlug: p.products?.slug ?? null,
+    productName: p.products?.name ?? null,
+    productImage: p.products?.image_url ?? null,
+  }));
 
+  const followerUsers =
+    followers?.map((f: any) => ({
+      id: f.follower?.id,
+      username: f.follower?.username ?? null,
+      full_name: f.follower?.full_name ?? null,
+      avatar_url: f.follower?.avatar_url ?? null,
+    })).filter((u) => u.id) || [];
 
-  const mockActivities = [
-    { id: "1", type: "coins" as const, title: "Earned coins", description: "Lesson completion bonus", timestamp: "2 hours ago", metadata: { amount: 50 } },
-  ];
-
-  const handleStatClick = (stat: string) => {
-    console.log("Stat clicked:", stat);
-  };
+  const followingUsers =
+    following?.map((f: any) => ({
+      id: f.following?.id,
+      username: f.following?.username ?? null,
+      full_name: f.following?.full_name ?? null,
+      avatar_url: f.following?.avatar_url ?? null,
+    })).filter((u) => u.id) || [];
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "feed":
-        return <ProfileFeedTab posts={feedPosts} user={{ ...displayProfile, isVerified: displayProfile.isVerified }} />;
-      case "shop":
-        return <ProfileShopTab products={shopProducts} />;
-      case "reviews":
-        return <ProfileReviewsTab reviews={mockReviews} />;
+      case "posts":
+        return (
+          <ProfileFeedTab
+            posts={feedPosts}
+            user={{
+              name: displayProfile.name,
+              username: displayProfile.username,
+              avatar: displayProfile.avatar,
+              isVerified: displayProfile.isVerified,
+            }}
+          />
+        );
       case "media":
-        return <ProfileMediaTab media={mockMedia} />;
-      case "activity":
-        return <ProfileActivityTab activities={mockActivities} />;
+        return <ProfileMediaTab media={mediaItems} />;
+      case "reviews":
+        return <ProfileReviewsTab reviews={reviews} />;
+      case "learning":
+        return (
+          <ProfileLearningTab
+            stats={{
+              xp: learnerStats?.xp ?? 0,
+              streak: learnerStats?.streak ?? 0,
+              lessonsCompleted: learnerStats?.lessonsCompleted ?? 0,
+              milestones: learnerStats?.milestones ?? [],
+            }}
+            isOwnProfile={isOwnProfile}
+          />
+        );
+      case "library":
+        return <ProfileLibraryTab items={library ?? []} />;
+      case "orders":
+        return <ProfileOrdersTab orders={orders ?? []} />;
+      case "wishlist":
+        return <ProfileWishlistTab items={wishlist ?? []} />;
       default:
         return null;
     }
   };
 
   return (
-    <AppLayout showBottomNav={true}>
+    <AppLayout showBottomNav>
       <MobilePage
         bleed={
           <ProfileHeader
             user={displayProfile}
             isOwnProfile={isOwnProfile}
             onAvatarClick={() => displayProfile.avatar && setShowAvatarViewer(true)}
-            onEditProfile={() => setShowEditModal(true)}
             onUpdate={async (updates) => {
               await updateProfile.mutateAsync(updates);
             }}
           />
         }
-        spacing="space-y-4 lg:space-y-6"
+        sticky={
+          <ProfileTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showPrivate={isOwnProfile}
+            counts={{
+              posts: counts?.posts ?? userPosts?.length ?? 0,
+              reviews: counts?.reviews ?? reviews.length,
+              orders: orders?.length ?? 0,
+              wishlist: wishlist?.length ?? 0,
+              library: library?.length ?? 0,
+            }}
+          />
+        }
+        spacing="space-y-4"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-12">
-          {/* Left rail — sticky on desktop */}
-          <aside className="space-y-4 lg:space-y-5 lg:sticky lg:top-[calc(var(--app-header-h)+1rem)] lg:self-start">
-            <ProfileStats
-              followers={followers?.length || 0}
-              following={following?.length || 0}
-              posts={userPosts?.length || 0}
-              purchases={0}
-              reviews={mockReviews.length}
-              coins={0}
-              onStatClick={handleStatClick}
-            />
-            <ProfileActions
-              isOwnProfile={isOwnProfile}
-              isFollowing={isFollowing}
-              onFollow={handleFollow}
-              onEditProfile={() => setShowEditModal(true)}
-              onShare={() => {
-                if (navigator.share) {
-                  navigator.share({ title: displayProfile.name, url: window.location.href });
-                }
-              }}
-              onMessage={handleMessage}
-              onReport={() => console.log("Report user")}
-              onBlock={() => console.log("Block user")}
-            />
+        <ProfileStats
+          posts={counts?.posts ?? userPosts?.length ?? 0}
+          followers={counts?.followers ?? followers?.length ?? 0}
+          following={counts?.following ?? following?.length ?? 0}
+          coins={profile?.coins ?? 0}
+          onPostsClick={() => setActiveTab("posts")}
+          onFollowersClick={() => setStatSheet("followers")}
+          onFollowingClick={() => setStatSheet("following")}
+        />
+
+        <ProfileActions
+          isOwnProfile={isOwnProfile}
+          isFollowing={isFollowing}
+          onFollow={handleFollow}
+          onMessage={handleMessage}
+          onShare={handleShare}
+          onEditProfile={() => navigate("/settings")}
+          onReport={() => toast({ title: "Report submitted" })}
+          onBlock={() => toast({ title: "User blocked" })}
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-12 pt-1">
+          {/* Desktop side rail */}
+          <aside className="hidden lg:block space-y-4 lg:sticky lg:top-[calc(var(--app-header-h)+4rem)] lg:self-start">
             <ProfileTrustCard
               trustScore={displayProfile.trustScore}
-              coins={0}
-              level="Bronze"
-              onViewDetails={() => console.log("View trust details")}
+              coins={profile?.coins ?? 0}
+              level={
+                displayProfile.trustScore >= 90
+                  ? "Gold"
+                  : displayProfile.trustScore >= 70
+                  ? "Silver"
+                  : "Bronze"
+              }
             />
             <ProfileBadges
               badges={displayProfile.isVerified ? ["trusted"] : []}
-              learnerSessions={learnerProgress.sessions}
-              learnerQuizzes={learnerProgress.quizzes}
+              learnerSessions={0}
+              learnerQuizzes={0}
             />
+            <section>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3">
+                About ASIKON
+              </p>
+              <MissionVision />
+            </section>
           </aside>
 
-          {/* Right column — tabs + content */}
+          {/* Tab content */}
           <div className="min-w-0">
-            <ProfileTabs
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              counts={{
-                feed: userPosts?.length || 0,
-                reviews: mockReviews.length,
-              }}
-            />
-
-            <div key={activeTab} className="pb-2 animate-fade-in">
+            <div key={activeTab} className="animate-fade-in">
               {renderTabContent()}
             </div>
 
-            {/* About Asikon */}
-            <section className="pt-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3">About ASIKON</p>
+            {/* Mobile-only About block at the bottom */}
+            <section className="lg:hidden pt-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3">
+                About ASIKON
+              </p>
               <MissionVision />
             </section>
           </div>
         </div>
 
-        {/* Edit Modal */}
-        {isOwnProfile && profile && (
-          <ProfileEditModal
-            isOpen={showEditModal}
-            onClose={() => setShowEditModal(false)}
-            profile={profile}
-            onSave={handleSaveProfile}
-          />
-        )}
-
-        {/* Avatar Viewer */}
         <AvatarViewer
           isOpen={showAvatarViewer}
           onClose={() => setShowAvatarViewer(false)}
@@ -308,10 +333,19 @@ const Profile = () => {
           userName={displayProfile.name}
         />
 
-        {/* Messaging Drawer */}
-        <MessagingDrawer
-          open={showMessages}
-          onOpenChange={setShowMessages}
+        <MessagingDrawer open={showMessages} onOpenChange={setShowMessages} />
+
+        <FollowersSheet
+          open={statSheet === "followers"}
+          onOpenChange={(v) => setStatSheet(v ? "followers" : null)}
+          title="Followers"
+          users={followerUsers}
+        />
+        <FollowersSheet
+          open={statSheet === "following"}
+          onOpenChange={(v) => setStatSheet(v ? "following" : null)}
+          title="Following"
+          users={followingUsers}
         />
       </MobilePage>
     </AppLayout>
