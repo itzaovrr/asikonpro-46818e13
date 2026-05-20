@@ -74,6 +74,12 @@ export function ProfileOrdersTab({ orders }: { orders: OrderRow[] }) {
           </button>
         );
       })}
+      <button
+        onClick={() => navigate("/orders")}
+        className="w-full text-center text-xs font-medium text-primary hover:underline pt-2"
+      >
+        View all orders →
+      </button>
     </div>
   );
 }
