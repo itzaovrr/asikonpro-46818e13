@@ -8,6 +8,7 @@ import { Sidebar } from "./Sidebar";
 import { MobileSearchOverlay } from "@/components/search/MobileSearchOverlay";
 import { cn } from "@/lib/utils";
 
+
 // Context to share sidebar state
 interface SidebarContextType {
   isCollapsed: boolean;
@@ -130,13 +131,13 @@ export function AppLayout({
             !isMobile && showSidebar && (isCollapsed ? "lg:pl-16" : "lg:pl-60"),
             className
           )}
-          style={{
-            paddingTop: "var(--app-header-h)",
-            ...(fillViewport && isMobile ? { paddingBottom: "var(--bottom-nav-h)" } : {}),
-          }}
+          style={
+            fillViewport && isMobile ? { paddingBottom: "var(--bottom-nav-h)" } : undefined
+          }
         >
           {children}
         </main>
+
 
         {/* BottomNav is rendered once at App root (persistent app-shell) — never remounts */}
       </div>

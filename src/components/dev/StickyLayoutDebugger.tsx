@@ -23,6 +23,7 @@ export function StickyLayoutDebugger() {
     feedTop: 0,
     overlap: false,
     visible: false,
+    chain: "",
   });
 
   useEffect(() => {
@@ -41,6 +42,16 @@ export function StickyLayoutDebugger() {
         const tabRect = tab.getBoundingClientRect();
         const feedRect = firstFeedChild.getBoundingClientRect();
         const overlap = feedRect.top < tabRect.bottom - 0.5;
+        let chain = "";
+        let el: HTMLElement | null = tab;
+        let i = 0;
+        // walk parentElement chain (not offsetParent) to see ALL ancestors
+        while (el && i < 10) {
+          const r = el.getBoundingClientRect();
+          chain += `${el.tagName}.${(el.className || "").toString().slice(0, 18)}[t=${Math.round(r.top)},pT=${getComputedStyle(el).paddingTop}] | `;
+          el = el.parentElement;
+          i++;
+        }
         setInfo({
           headerVar,
           tabTop: Math.round(tabRect.top),
@@ -48,6 +59,7 @@ export function StickyLayoutDebugger() {
           feedTop: Math.round(feedRect.top),
           overlap,
           visible: true,
+          chain,
         });
       }
       raf = requestAnimationFrame(tick);
@@ -60,16 +72,15 @@ export function StickyLayoutDebugger() {
 
   return (
     <div
-      className="fixed bottom-24 right-3 z-[9999] rounded-lg px-3 py-2 text-[10px] font-mono leading-tight shadow-lg backdrop-blur-md pointer-events-none"
+      className="fixed bottom-24 left-2 right-2 z-[9999] rounded-lg px-3 py-2 text-[9px] font-mono leading-tight shadow-lg backdrop-blur-md pointer-events-none break-all"
       style={{
         background: info.overlap ? "rgba(220,38,38,0.92)" : "rgba(16,185,129,0.85)",
         color: "white",
       }}
     >
       <div>--app-header-h: {info.headerVar || "—"}</div>
-      <div>tab.top / bottom: {info.tabTop} / {info.tabBottom}</div>
-      <div>feed[0].top: {info.feedTop}</div>
-      <div>{info.overlap ? "⚠ OVERLAP" : "✓ no overlap"}</div>
+      <div>tab.top/bot: {info.tabTop}/{info.tabBottom} | feed[0].top: {info.feedTop}</div>
+      <div>{info.chain}</div>
     </div>
   );
 }
