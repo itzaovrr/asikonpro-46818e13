@@ -220,73 +220,15 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
       )}
     </Reveal>
   ),
-  testimonials: ({ sec }) => (
-    <Reveal as="section" className="section-x">
-      <SectionHeader title={sec.title_override ?? "Loved by learners"} />
-      <MobileScroller itemWidthMobile="78%" gridCols="md:grid md:grid-cols-3" gap="gap-3">
-        {[
-          { name: "Tanvir H.", role: "Python student", quote: "AI tutor explained recursion in Bangla — finally clicked." },
-          { name: "Ayesha R.", role: "ML beginner", quote: "Landed my first freelance gig in 6 weeks." },
-          { name: "Rakib M.", role: "Prompt engineer", quote: "Prompt library saves me hours every day." },
-        ].map((t) => (
-          <div key={t.name} className="h-full rounded-2xl glass p-4 border border-border/60 flex flex-col">
-            <div className="flex gap-0.5 mb-2 text-amber-400">
-              {Array.from({ length: 5 }).map((_, s) => <Star key={s} className="h-3 w-3 fill-current" />)}
-            </div>
-            <p className="text-[13px] leading-relaxed text-foreground/90 flex-1">"{t.quote}"</p>
-            <div className="mt-3 pt-3 border-t border-border/40">
-              <p className="font-semibold text-xs">{t.name}</p>
-              <p className="text-[11px] text-muted-foreground">{t.role}</p>
-            </div>
-          </div>
-        ))}
-      </MobileScroller>
-    </Reveal>
-  ),
-  faq: ({ sec }) => (
-    <Reveal as="section" className="section-x">
-      <SectionHeader title={sec.title_override ?? "Common questions"} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
-        {[
-          { q: "Need prior experience?", a: "No — most courses start from zero." },
-          { q: "Is the AI tutor free?", a: "Daily free messages + welcome coins." },
-          { q: "bKash / Nagad?", a: "Yes — plus COD on physical books." },
-          { q: "Certificates?", a: "Yes, for every paid course." },
-        ].map((f) => (
-          <div key={f.q} className="rounded-2xl border border-border/60 bg-card p-3.5">
-            <div className="flex items-start gap-2.5">
-              <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <div className="min-w-0">
-                <p className="font-semibold text-[13px] leading-tight">{f.q}</p>
-                <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{f.a}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </Reveal>
-  ),
+  testimonials: ({ sec }) => <Testimonials title={sec.title_override ?? undefined} />,
+  faq: ({ sec }) => <Faq title={sec.title_override ?? undefined} />,
+  // Home renders the slim CTA pointing to /about; admin can override title/subtitle.
   final_cta: ({ sec }) => (
-    <Reveal as="section" className="section-x">
-      <div
-        className="relative overflow-hidden rounded-3xl border border-primary/30 p-5 sm:p-7 text-center"
-        style={{ background: "var(--gradient-primary-soft)" }}
-      >
-        <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl gradient-primary shadow-[var(--shadow-glow)] mb-3">
-          <PlayCircle className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <h3 className="font-display text-lg sm:text-2xl font-bold mb-1.5 tracking-tight">
-          {sec.title_override ?? "Start your first lesson — free"}
-        </h3>
-        <p className="text-[13px] sm:text-sm text-muted-foreground max-w-md mx-auto mb-4">
-          {sec.subtitle_override ?? "Pick a course, ask the AI, earn 100 welcome coins."}
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <Button asChild variant="premium" size="lg"><Link to="/shop?type=courses">Browse courses</Link></Button>
-          <Button asChild variant="outline" size="lg"><Link to="/learn">Try AI tutor</Link></Button>
-        </div>
-      </div>
-    </Reveal>
+    <FinalCta
+      variant="slim"
+      title={sec.title_override ?? undefined}
+      subtitle={sec.subtitle_override ?? undefined}
+    />
   ),
 };
 
