@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAiThreadMessages } from "@/hooks/useAiTutor";
 import { useLearnerProgress } from "@/hooks/useLearnerProgress";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import tutorAvatar from "@/assets/asikon-tutor-avatar.png";
