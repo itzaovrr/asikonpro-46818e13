@@ -113,23 +113,6 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
       <div className="section-x">
         <HeroCarousel slides={heroSlides} />
       </div>
-      {/* Trust ribbon — sits flush under hero on mobile, scannable in one glance */}
-      <div className="section-x mt-3">
-        <div className="flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm px-3 py-2.5">
-          {[
-            { icon: ShieldCheck, label: "Verified content" },
-            { icon: Users, label: "10K+ learners" },
-            { icon: Headphones, label: "24/7 tutor" },
-          ].map(({ icon: Icon, label }) => (
-            <div key={label} className="flex items-center gap-1.5 min-w-0">
-              <Icon className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span className="text-[11px] sm:text-xs font-medium text-foreground/85 truncate">
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   ),
   mentorship: () => <MentorshipHomeSection />,
