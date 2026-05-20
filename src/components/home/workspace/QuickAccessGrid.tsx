@@ -3,7 +3,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import {
   Sparkles, BookOpenText, CalendarCheck2, LineChart, GraduationCap, Wand2,
   Heart, ShoppingBag, PackageCheck, Compass, PlayCircle, Gamepad2, MessagesSquare,
-  BellRing, Settings2, Info, PlusCircle,
+  BellRing, Settings2, Info, PlusCircle, Store, Users, UserCircle2, LifeBuoy,
 } from "lucide-react";
 import { Reveal } from "@/components/transitions/Reveal";
 import { cn } from "@/lib/utils";
@@ -24,6 +24,8 @@ const TILES: Tile[] = [
   { icon: LineChart,      label: "Progress", href: "/profile",            tone: "from-emerald-500 to-teal-500" },
   { icon: GraduationCap,  label: "Mentors",  href: "/mentors",            tone: "from-amber-500 to-orange-500" },
   { icon: Wand2,          label: "Prompts",  href: "/prompts",            tone: "from-indigo-500 to-purple-500" },
+  { icon: Store,          label: "Shop",     href: "/shop",               tone: "from-emerald-500 to-green-600" },
+  { icon: Users,          label: "Community",href: "/community",          tone: "from-sky-500 to-indigo-500" },
   { icon: Heart,          label: "Saved",    href: "/wishlist",           tone: "from-pink-500 to-rose-500" },
   { icon: ShoppingBag,    label: "Cart",     href: "/cart",               tone: "from-orange-500 to-red-500" },
   { icon: PackageCheck,   label: "Orders",   href: "/orders",             tone: "from-lime-500 to-emerald-500" },
@@ -33,6 +35,8 @@ const TILES: Tile[] = [
   { icon: MessagesSquare, label: "Messages", href: "/community",          tone: "from-cyan-500 to-blue-500" },
   { icon: BellRing,       label: "Alerts",   href: "/profile",            tone: "from-yellow-500 to-amber-500" },
   { icon: PlusCircle,     label: "Create",   href: "/create",             tone: "from-red-500 to-rose-500" },
+  { icon: UserCircle2,    label: "Profile",  href: "/profile",            tone: "from-purple-500 to-fuchsia-500" },
+  { icon: LifeBuoy,       label: "Help",     href: "/about",              tone: "from-teal-500 to-emerald-500" },
   { icon: Info,           label: "About",    href: "/about",              tone: "from-teal-500 to-cyan-500" },
   { icon: Settings2,      label: "Settings", href: "/settings",           tone: "from-slate-500 to-zinc-500" },
 ];
