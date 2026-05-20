@@ -76,7 +76,8 @@ export function MobilePage({
         className={cn(
           widthClass,
           padded && "px-3 sm:px-4 lg:px-8",
-          "pt-3 lg:pt-6 pb-6 min-w-0 overflow-x-clip",
+          sticky ? "pt-2" : "pt-3 lg:pt-6",
+          "pb-6 min-w-0 overflow-x-clip",
           spacing,
           className,
         )}
