@@ -13,47 +13,54 @@ interface ProductCardProps {
   variant?: "default" | "compact" | "featured";
 }
 
+/**
+ * Universal product card.
+ * - Mobile-app feel: rounded-2xl, hairline border, active:scale tap feedback.
+ * - Hover overlay only shows on devices with hover (md+/desktop).
+ * - Brand chip is hidden when it equals the default store brand to save space.
+ */
+const DEFAULT_BRAND = "Asikon Academy";
+
 export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
   ({ product, variant = "default" }, ref) => {
     const [isWishlisted, setIsWishlisted] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
     const [showQuickView, setShowQuickView] = useState(false);
 
-    const discount = product.originalPrice 
-      ? Math.round((1 - product.price / product.originalPrice) * 100) 
+    const discount = product.originalPrice
+      ? Math.round((1 - product.price / product.originalPrice) * 100)
       : 0;
 
     const isCompact = variant === "compact";
     const isFeatured = variant === "featured";
+    const showBrand = product.brand && product.brand !== DEFAULT_BRAND;
 
     return (
       <>
-        <article 
-          ref={ref} 
+        <article
+          ref={ref}
           className={cn(
-            "group relative bg-card rounded-2xl overflow-hidden border border-border/50 transition-all duration-300 h-full flex flex-col",
-            "hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20",
+            "group relative bg-card rounded-2xl overflow-hidden border border-border/60 h-full flex flex-col",
+            "transition-[transform,box-shadow,border-color] duration-200",
+            "shadow-[var(--shadow-xs)] hover:shadow-[var(--shadow-md)] hover:border-primary/30",
+            "active:scale-[0.98]",
             isFeatured && "lg:flex-row"
           )}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Image Container */}
-          <figure className={cn(
-            "relative overflow-hidden bg-secondary/30",
-            isCompact ? "aspect-square" : "aspect-[4/5]",
-            isFeatured && "lg:w-1/2 lg:aspect-auto lg:h-full"
-          )}>
+          {/* Image */}
+          <figure
+            className={cn(
+              "relative overflow-hidden bg-secondary/30",
+              isCompact ? "aspect-square" : "aspect-[4/5]",
+              isFeatured && "lg:w-1/2 lg:aspect-auto lg:h-full"
+            )}
+          >
             <SmartImage
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            
-            {/* Wishlist Button */}
+
+            {/* Wishlist — always visible, app-style */}
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -62,131 +69,133 @@ export const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(
               }}
               aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
               className={cn(
-                "absolute top-3 right-3 p-2.5 rounded-full transition-all duration-300 backdrop-blur-md",
-                isWishlisted 
-                  ? "bg-primary/20 ring-2 ring-primary/30" 
-                  : "bg-background/60 hover:bg-background/80"
+                "no-min-tap absolute top-2 right-2 h-8 w-8 grid place-items-center rounded-full transition-all duration-200 backdrop-blur-md",
+                isWishlisted
+                  ? "bg-primary/20 ring-1 ring-primary/40"
+                  : "bg-background/70 hover:bg-background/90"
               )}
             >
               <Heart
                 className={cn(
-                  "h-4 w-4 transition-all duration-300",
-                  isWishlisted 
-                    ? "fill-primary text-primary scale-110" 
-                    : "text-foreground group-hover:text-primary"
+                  "h-3.5 w-3.5 transition-colors",
+                  isWishlisted ? "fill-primary text-primary" : "text-foreground"
                 )}
               />
             </button>
 
-            {/* Badges Stack */}
-            <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-              {product.isAuthentic && (
-                <Badge variant="secondary" className="gap-1 text-[10px] font-semibold bg-background/80 backdrop-blur-sm border-0">
-                  <Shield className="h-3 w-3 text-success" />
-                  Authentic
-                </Badge>
-              )}
-              {product.isTrending && (
-                <Badge className="gap-1 text-[10px] font-semibold gradient-primary border-0">
-                  <TrendingUp className="h-3 w-3" />
-                  Trending
-                </Badge>
-              )}
+            {/* Badge stack — capped at 2 */}
+            <div className="absolute top-2 left-2 flex flex-col gap-1 max-w-[60%]">
               {discount > 0 && (
-                <Badge variant="destructive" className="text-[10px] font-bold">
-                  -{discount}% OFF
+                <Badge variant="destructive" className="text-[10px] font-bold px-1.5 py-0">
+                  -{discount}%
                 </Badge>
               )}
-              {product.isNew && (
-                <Badge className="text-[10px] font-semibold bg-accent text-accent-foreground border-0">
-                  NEW
+              {product.isTrending && discount === 0 && (
+                <Badge className="gap-1 text-[10px] font-semibold gradient-primary border-0 px-1.5 py-0">
+                  <TrendingUp className="h-2.5 w-2.5" />
+                  Hot
+                </Badge>
+              )}
+              {product.isNew && discount === 0 && !product.isTrending && (
+                <Badge className="text-[10px] font-semibold bg-accent text-accent-foreground border-0 px-1.5 py-0">
+                  New
+                </Badge>
+              )}
+              {product.isAuthentic && (
+                <Badge
+                  variant="secondary"
+                  className="gap-1 text-[10px] font-semibold bg-background/85 backdrop-blur-sm border-0 px-1.5 py-0"
+                >
+                  <Shield className="h-2.5 w-2.5 text-success" />
+                  Verified
                 </Badge>
               )}
             </div>
 
-            {/* Quick Actions - Shows on Hover */}
-            <div className={cn(
-              "absolute bottom-3 left-3 right-3 flex gap-2 transition-all duration-300",
-              isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-            )}>
-              <Button 
-                size="sm" 
+            {/* Hover actions — desktop only */}
+            <div
+              className={cn(
+                "hidden md:flex absolute bottom-2 left-2 right-2 gap-2 transition-all duration-300",
+                "opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
+              )}
+            >
+              <Button
+                size="sm"
                 variant="secondary"
-                className="flex-1 bg-background/90 backdrop-blur-md hover:bg-background font-semibold"
+                className="flex-1 h-8 bg-background/90 backdrop-blur-md hover:bg-background text-xs font-semibold"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   setShowQuickView(true);
                 }}
               >
-                <Eye className="h-4 w-4 mr-2" />
-                Quick View
+                <Eye className="h-3.5 w-3.5 mr-1.5" />
+                Quick view
               </Button>
-              <Button 
-                size="sm" 
-                className="gradient-primary border-0"
+              <Button
+                size="sm"
+                className="h-8 w-8 p-0 gradient-primary border-0"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   setShowQuickView(true);
                 }}
               >
-                <ShoppingBag className="h-4 w-4" />
+                <ShoppingBag className="h-3.5 w-3.5" />
               </Button>
             </div>
           </figure>
 
           {/* Content */}
-          <div className={cn(
-            "p-4 flex-1 flex flex-col",
-            isFeatured && "lg:flex-1 lg:justify-center lg:p-6"
-          )}>
-            {/* Brand (always reserves space so cards align) */}
-            <p className="text-[10px] font-semibold text-primary/80 uppercase tracking-[0.14em] mb-1.5 min-h-[14px] line-clamp-1">
-              {product.brand || "\u00A0"}
-            </p>
-            
-            {/* Title — always reserves 2 lines */}
-            <h3 className={cn(
-              "font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors",
-              isCompact ? "text-sm min-h-[2.5rem]" : "text-[15px] min-h-[2.75rem]",
-              isFeatured && "lg:text-xl lg:line-clamp-3 lg:min-h-0"
-            )}>
+          <div
+            className={cn(
+              "p-3 flex-1 flex flex-col",
+              isFeatured && "lg:flex-1 lg:justify-center lg:p-6"
+            )}
+          >
+            {showBrand && (
+              <p className="eyebrow text-primary/80 mb-1 line-clamp-1">{product.brand}</p>
+            )}
+
+            <h3
+              className={cn(
+                "font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors",
+                isCompact ? "text-[13px] min-h-[2.25rem]" : "text-sm min-h-[2.5rem]",
+                isFeatured && "lg:text-xl lg:line-clamp-3 lg:min-h-0"
+              )}
+            >
               {product.name}
             </h3>
-            
-            {/* Rating */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/60">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                <span className="text-xs font-medium">{product.rating}</span>
-              </div>
-              {product.reviews > 0 && (
-                <span className="text-xs text-muted-foreground">
-                  ({product.reviews})
-                </span>
-              )}
-            </div>
-            
-            {/* Price — pinned to bottom */}
-            <div className="flex items-baseline gap-2 flex-wrap mt-auto">
-              <Price
-                amount={product.price}
-                className={cn(
-                  "font-bold text-foreground",
-                  isCompact ? "text-lg" : "text-xl",
-                  isFeatured && "lg:text-2xl"
+
+            {/* Price + rating in one row to save vertical space */}
+            <div className="flex items-center justify-between gap-2 mt-2">
+              <div className="flex items-baseline gap-1.5 min-w-0">
+                <Price
+                  amount={product.price}
+                  className={cn(
+                    "font-bold text-foreground tracking-tight",
+                    isCompact ? "text-[15px]" : "text-base",
+                    isFeatured && "lg:text-2xl"
+                  )}
+                />
+                {product.originalPrice && (
+                  <Price
+                    amount={product.originalPrice}
+                    strike
+                    className="text-[11px] text-muted-foreground"
+                  />
                 )}
-              />
-              {product.originalPrice && (
-                <Price amount={product.originalPrice} strike className="text-sm text-muted-foreground" />
-              )}
-              {discount > 0 && (
-                <span className="text-xs font-medium text-success">Save {discount}%</span>
+              </div>
+              {product.rating > 0 && (
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <span className="text-[11px] font-medium text-muted-foreground">
+                    {product.rating}
+                  </span>
+                </div>
               )}
             </div>
 
-            {/* Trust Indicators for Featured */}
             {isFeatured && (
               <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-border">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
