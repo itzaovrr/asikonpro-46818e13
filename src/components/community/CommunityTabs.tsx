@@ -33,7 +33,7 @@ export function CommunityTabs({ activeTab, onTabChange }: CommunityTabsProps) {
   return (
     <div
       ref={containerRef}
-      className="flex items-center gap-1 px-3 py-2 overflow-x-auto hide-scrollbar"
+      className="flex items-center gap-1.5 px-2 py-2 overflow-x-auto hide-scrollbar scroll-px-4"
       role="tablist"
       aria-label="Community sections"
     >
@@ -47,11 +47,11 @@ export function CommunityTabs({ activeTab, onTabChange }: CommunityTabsProps) {
             aria-selected={isActive}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "relative px-3.5 py-2 text-[13px] font-medium rounded-full whitespace-nowrap",
-              "transition-[color,background-color,transform] duration-200 ease-out",
+              "relative shrink-0 px-4 py-2 text-[13px] font-semibold rounded-full whitespace-nowrap",
+              "transition-colors duration-200 ease-out",
               "active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
               isActive
-                ? "text-primary-foreground gradient-primary shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.55)]"
+                ? "text-primary-foreground gradient-primary shadow-sm"
                 : "text-muted-foreground hover:text-foreground hover:bg-secondary/70"
             )}
           >
