@@ -1037,6 +1037,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          allow_messages_from: string
+          created_at: string
+          notify_community: boolean
+          notify_follows: boolean
+          notify_messages: boolean
+          notify_orders: boolean
+          notify_promotions: boolean
+          profile_visibility: string
+          show_online_status: boolean
+          show_orders_to_followers: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allow_messages_from?: string
+          created_at?: string
+          notify_community?: boolean
+          notify_follows?: boolean
+          notify_messages?: boolean
+          notify_orders?: boolean
+          notify_promotions?: boolean
+          profile_visibility?: string
+          show_online_status?: boolean
+          show_orders_to_followers?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allow_messages_from?: string
+          created_at?: string
+          notify_community?: boolean
+          notify_follows?: boolean
+          notify_messages?: boolean
+          notify_orders?: boolean
+          notify_promotions?: boolean
+          profile_visibility?: string
+          show_online_status?: boolean
+          show_orders_to_followers?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wishlists: {
         Row: {
           created_at: string

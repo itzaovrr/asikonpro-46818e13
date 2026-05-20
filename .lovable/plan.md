@@ -1,103 +1,97 @@
-# Profile Redesign — Hybrid (IG Header + FB Feed), Fully Functional
+## Scope
 
-Make `/profile` and `/profile/:userId` look like an IG-style identity header on top of an FB-style scrollable feed, with tabs for Posts, Media, Reviews, Learning, Library, Orders, Wishlist. All data comes from Supabase; nothing mocked.
+Make the profile fully interactive by completing 5 areas. Most plumbing already exists (`useCreateOrGetChat`, `MessagingDrawer`, `useUserOrders`, `Orders`/`OrderDetail` pages, `useFollowUser`/`useUnfollowUser`); the gaps are wiring, a media lightbox, a real settings backend, and live updates.
 
-## 1. New layout
+---
 
-Mobile (≤lg):
+### 1. Messaging from profile (one-to-one chat)
+
+`Profile.tsx` already calls `useCreateOrGetChat` and opens `MessagingDrawer`, but the drawer doesn't auto-select the freshly created chat — clicking Message lands the user on an empty chat list.
+
+- Pass the new chat id into `MessagingDrawer` via `initialChatId`.
+- Fix `MessagingDrawer` selection: replace the misused `useState(() => ...)` initializer with a proper `useEffect` keyed on `initialChatId` + `chats` so the matching `Chat` is selected and the chat window opens.
+- Hide the Message button when `isOwnProfile`.
+- Disable the button while `createOrGetChat.isPending`, show toast on failure.
+
+### 2. Media tab → media detail viewer
+
+`ProfileMediaTab` already renders a 3-col grid but `onOpen` is unused.
+
+- Add a `MediaLightbox` component (`src/components/profile/MediaLightbox.tsx`) using shadcn `Dialog`: full-screen, swipe/arrow navigation across `mediaItems`, supports both `image` (img) and `video` (HTML5 `<video controls autoPlay>`), shows post caption + "Open post" link to `/community` (or post detail when available).
+- Profile.tsx: hold `selectedMediaIndex` state, pass `onOpen` to `ProfileMediaTab`, render `MediaLightbox` with index + setter.
+- Keyboard: Esc closes, ←/→ navigate.
+
+### 3. Orders tab + tracking
+
+`ProfileOrdersTab` already lists orders and navigates to `/orders/:id`; `OrderDetail.tsx` exists. Gaps:
+
+- Add a visual tracking timeline to `OrderDetail` (Pending → Processing → Shipped → Delivered) using the existing `statusConfig` — a 4-step horizontal stepper with the current step highlighted; "Cancelled" renders as a red banner instead.
+- "View all orders" link at the bottom of the profile Orders tab → `/orders`.
+- Empty state CTA in `ProfileOrdersTab` already navigates to shop — keep.
+- No schema change.
+
+### 4. Settings tab — privacy + notifications (Supabase-backed)
+
+The profiles table has no privacy/notification fields and `Settings.tsx` only stores notification toggles in local state. Create a dedicated table.
+
+**Migration** — new `public.user_settings` table:
+
+```text
+user_settings
+  user_id (uuid, PK, FK→auth.users, on delete cascade)
+  profile_visibility       text    default 'public'  -- 'public' | 'followers' | 'private'
+  show_online_status       boolean default true
+  allow_messages_from      text    default 'everyone' -- 'everyone' | 'followers' | 'none'
+  show_orders_to_followers boolean default false
+  notify_orders            boolean default true
+  notify_promotions        boolean default true
+  notify_community         boolean default true
+  notify_messages          boolean default true
+  notify_follows           boolean default true
+  created_at, updated_at
 ```
-┌──────────────────────────────┐
-│ Cover (h-40, gradient bleed) │
-│           ◯ Avatar            │ ← centered, overlaps cover
-│        Full Name  ✓           │
-│           @username           │
-│           short bio           │
-│  ┌─────┬─────┬─────┬─────┐    │
-│  │Posts│Foll.│Foll.│Coins│    │ ← IG stats row, tappable
-│  └─────┴─────┴─────┴─────┘    │
-│ [Edit Profile] [Share]        │ or [Follow][Message] for others
-│ Trust ring + verified chip    │
-├──────────────────────────────┤
-│ Sticky tabs (scrollable)      │ ← Posts·Media·Reviews·Learning·Library·Orders·Wishlist
-├──────────────────────────────┤
-│ FB-style feed of post cards   │
-└──────────────────────────────┘
-```
 
-Desktop (≥lg): two-column — left rail keeps Trust + Badges + About Asikon; right column = identity header + tabs + feed.
+- RLS: owner can `select/insert/update`; no delete.
+- Trigger: auto-insert default row on new auth user (extend `handle_new_user`).
+- Backfill insert for existing users.
+- `update_updated_at_column` trigger.
 
-## 2. Tabs (real data only)
+**Code**
 
-| Tab | Source | Cross-link |
-|---|---|---|
-| Posts | `posts` where `user_id` (FB feed cards) | tagged product → `/product/:slug` |
-| Media | images/videos from `posts` (3-col IG grid) | tap → post detail/lightbox |
-| Reviews | `posts` where `type='review'` | product → `/product/:slug` |
-| Learning | `learner_profiles` + `lesson_completions` + `milestones` | lesson → `/lesson/:id`, track → `/track/:slug` |
-| Library | `lesson_completions` joined to `lessons`/`tracks` | → `/track/:slug` |
-| Orders | `orders` + `order_items` (own profile only) | → `/orders/:id` |
-| Wishlist | `wishlists` (own profile only) | → `/product/:slug` |
+- `src/hooks/useUserSettings.ts` — `useUserSettings()` + `useUpdateUserSettings()` (react-query, optimistic).
+- `Settings.tsx` — split into sections: Profile, Privacy (new), Notifications (wire to Supabase), Account. Each switch calls `useUpdateUserSettings` and shows a toast.
+- Enforce `allow_messages_from` client-side in `handleMessage` (skip enforcement server-side this pass — note for follow-up).
 
-Other-user profiles only see public tabs (Posts/Media/Reviews/Learning summary). Library/Orders/Wishlist are private (RLS already enforces).
+### 5. Live follow / unfollow + live counts
 
-## 3. Stats row links
+`useFollowUser` / `useUnfollowUser` exist but only invalidate `followers`/`following` — the stat row reads from `useProfileCounts` and from `followers/following.length`, so counts can stall.
 
-- Posts → scrolls/selects Posts tab
-- Followers / Following → sheet/modal listing users (uses existing `useFollowers`/`useFollowing`), each row → `/profile/:userId`
-- Coins → opens Trust details
+- In both mutations, also invalidate `["profile-counts", targetUserId]` and `["profile-counts", currentUser.id]`.
+- Add optimistic update: increment/decrement `profile-counts` cache immediately on click.
+- `ProfileHeader` Follow button: already wired via `ProfileActions` — confirm disabled state while pending and aria-pressed reflects `isFollowing`.
+- Realtime channel in `Profile.tsx`: subscribe to `public:user_followers` filtered by `following_id=eq.{targetUserId}`; on insert/delete invalidate `followers` + `profile-counts`. Cleanup on unmount.
 
-## 4. Actions
+---
 
-Own profile: `Edit Profile` → navigates to `/settings` (profile section), `Share`, `Create Post` FAB reused.
-Other profile: `Follow/Unfollow` (already wired), `Message` (already opens MessagingDrawer), `Report/Block` menu.
+### Files
 
-## 5. Data wiring (new hooks under `src/hooks/`)
+**New**
+- `src/components/profile/MediaLightbox.tsx`
+- `src/hooks/useUserSettings.ts`
+- `supabase/migrations/<ts>_user_settings.sql`
 
-- `useUserOrders(userId)` — `orders` + `order_items` + product joins
-- `useUserWishlist(userId)` — `wishlists` + product joins
-- `useUserLibrary(userId)` — `lesson_completions` grouped by track
-- `useUserReviews(userId)` — `posts` filtered by `type='review'`
-- Reuse: `useProfile`, `usePosts`, `useFollowers/useFollowing`, `useLearnerProgress`
+**Edited**
+- `src/pages/Profile.tsx` — initialChatId, media lightbox state, follow realtime subscription
+- `src/components/messaging/MessagingDrawer.tsx` — fix initialChatId effect
+- `src/components/profile/tabs/ProfileMediaTab.tsx` — wire onOpen
+- `src/components/profile/tabs/ProfileOrdersTab.tsx` — "View all" link
+- `src/pages/OrderDetail.tsx` — tracking stepper
+- `src/pages/Settings.tsx` — privacy section + Supabase notification toggles
+- `src/hooks/useProfile.ts` — invalidate profile-counts in follow/unfollow with optimistic updates
 
-All hooks use `@tanstack/react-query` and `supabase` client. Empty states everywhere (no mock data) with a clear CTA.
+### Out of scope
 
-## 6. Components to refactor / add
-
-Refactor:
-- `ProfileHeader.tsx` — centered IG identity, smaller cover, trust ring kept, edit cover/avatar kept (upload pipeline already hardened).
-- `ProfileStats.tsx` — 4-cell tappable row, abbreviated counts (1.2K).
-- `ProfileTabs.tsx` — sticky under app header, horizontal scroll, animated underline (already there), accept more tabs.
-- `ProfileActions.tsx` — IG-style pill buttons; Edit routes to `/settings`.
-- `Profile.tsx` — remove all `mockProducts`/`mockReviews`/`mockMedia`/`mockActivities`; render tabs conditionally for own vs other.
-
-Add:
-- `tabs/ProfileLearningTab.tsx` — XP bar, streak, milestones grid, completed lessons.
-- `tabs/ProfileLibraryTab.tsx` — track cards with progress.
-- `tabs/ProfileOrdersTab.tsx` — order list with status badges → `/orders/:id`.
-- `tabs/ProfileWishlistTab.tsx` — product grid.
-- `FollowersSheet.tsx` — bottom sheet with followers/following lists.
-
-Delete (unused after redesign):
-- `ProfileShopTab.tsx`, `ProfileActivityTab.tsx`, `ProfileTrustCard` stays (moved to desktop rail / collapsible on mobile).
-
-## 7. Supabase
-
-Schema already supports everything needed — no migration required. Verified tables: `profiles`, `posts`, `orders`, `order_items`, `wishlists`, `lesson_completions`, `lessons`, `tracks`, `learner_profiles`, `milestones`, `user_followers`. RLS for `orders`/`wishlists`/`lesson_completions` correctly restricts to owner, which matches our "private tabs" rule.
-
-User can manually seed data via Supabase dashboard (SQL Editor) — no admin UI needed for this task. Empty states will guide them.
-
-## 8. Out of scope
-
-- No new admin pages.
-- No changes to Community, Shop, or Settings page UI (only deep-link target).
-- No payment/order creation flow changes.
-- MissionVision block stays on profile per project memory.
-
-## Technical notes
-
-- Routing: add `useNavigate()` for `/settings`, `/product/:slug`, `/orders/:id`, `/track/:slug`, `/lesson/:id`, `/profile/:userId`.
-- Sticky tabs: use the same `MobilePage` `sticky` slot pattern recently fixed (no double offset).
-- Number formatting helper `formatCount(n)` → `1.2K`/`3.4M` in `src/lib/utils.ts`.
-- All colors via semantic tokens (no raw hex/text-white).
-- Other-user view hides Edit/Orders/Wishlist/Library tabs; conditional rendering driven by `isOwnProfile`.
-
+- Push notifications (only stored prefs, no delivery layer).
+- Group chats, message reactions, typing indicators.
+- Server-side enforcement of `allow_messages_from` (RLS update on chats can be a follow-up).
+- Admin moderation of settings.
