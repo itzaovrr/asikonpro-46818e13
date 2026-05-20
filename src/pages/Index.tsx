@@ -105,51 +105,79 @@ type RenderCtx = {
 
 const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> = {
   hero: () => (
-    <section className="section-x">
-      <HeroCarousel slides={heroSlides} />
+    <section>
+      <div className="section-x">
+        <HeroCarousel slides={heroSlides} />
+      </div>
+      {/* Trust ribbon — sits flush under hero on mobile, scannable in one glance */}
+      <div className="section-x mt-3">
+        <div className="flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm px-3 py-2.5">
+          {[
+            { icon: ShieldCheck, label: "Verified content" },
+            { icon: Users, label: "10K+ learners" },
+            { icon: Headphones, label: "24/7 tutor" },
+          ].map(({ icon: Icon, label }) => (
+            <div key={label} className="flex items-center gap-1.5 min-w-0">
+              <Icon className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="text-[11px] sm:text-xs font-medium text-foreground/85 truncate">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   ),
   mentorship: () => <MentorshipHomeSection />,
   quick_actions: () => (
-    <Reveal as="section" className="section-x grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <Link to="/learn" className="group relative overflow-hidden rounded-2xl border border-primary/20 p-4 pressable focus-ring" style={{ background: "var(--gradient-primary-soft)" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center shadow-[var(--shadow-glow)]">
-            <Sparkles className="h-5 w-5 text-primary-foreground" />
+    <Reveal as="section" className="section-x">
+      {/* Mobile: 2 compact tiles. Desktop: 2 wide cards. */}
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+        <Link
+          to="/learn"
+          className="group relative overflow-hidden rounded-2xl border border-primary/20 p-3 sm:p-4 pressable focus-ring"
+          style={{ background: "var(--gradient-primary-soft)" }}
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl gradient-primary flex items-center justify-center shadow-[var(--shadow-glow)] shrink-0">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-[13px] sm:text-sm flex items-center gap-1 truncate">
+                AI Tutor
+                <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+              </p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">24/7 · Bangla & English</p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold text-sm flex items-center gap-1.5">
-              Ask the AI Tutor
-              <ArrowUpRight className="h-3.5 w-3.5 opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </p>
-            <p className="text-xs text-muted-foreground truncate">Bangla · English · 24/7 doubt-solver</p>
+        </Link>
+        <div className="flex items-center justify-between p-3 sm:p-4 rounded-2xl glass">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-amber-400/30 to-amber-500/10 border border-amber-400/20 flex items-center justify-center shrink-0">
+              <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-[13px] sm:text-sm truncate">Daily streak</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">+30 XP today</p>
+            </div>
           </div>
         </div>
-      </Link>
-      <div className="flex items-center justify-between p-4 rounded-2xl glass">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400/30 to-amber-500/10 border border-amber-400/20 flex items-center justify-center">
-            <Gift className="h-5 w-5 text-amber-400" />
-          </div>
-          <div className="min-w-0">
-            <p className="font-semibold text-sm">Daily streak</p>
-            <p className="text-xs text-muted-foreground">Claim +30 XP today</p>
-          </div>
-        </div>
-        <Button size="sm" variant="premium" className="shrink-0">Claim</Button>
       </div>
     </Reveal>
   ),
   quick_categories: () => (
     <section className="section-x">
-      <div className="grid grid-cols-4 gap-2 lg:gap-3">
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {quickCategories.map((cat, i) => {
           const Icon = cat.icon;
           return (
             <Reveal key={cat.label} delay={i * 60} variant="scale">
-              <Link to={cat.href} className={`pressable focus-ring flex flex-col items-center justify-center gap-2 aspect-square rounded-2xl bg-gradient-to-br ${cat.color} border border-border/60 hover:border-primary/40`}>
-                <Icon className="h-5 w-5 text-primary" />
-                <span className="text-[11px] sm:text-xs font-medium">{cat.label}</span>
+              <Link
+                to={cat.href}
+                className={`pressable focus-ring flex flex-col items-center justify-center gap-1.5 aspect-[1.1] rounded-2xl bg-gradient-to-br ${cat.color} border border-border/60 hover:border-primary/40`}
+              >
+                <Icon className="h-[18px] w-[18px] text-primary" />
+                <span className="text-[11px] font-medium">{cat.label}</span>
               </Link>
             </Reveal>
           );
@@ -160,44 +188,39 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
   trending: ({ sec, featuredLoading, trendingItems }) => (
     <Reveal as="section">
       {featuredLoading ? (
-        <CarouselSkeleton title={sec.title_override ?? "Trending Now"} />
+        <CarouselSkeleton title={sec.title_override ?? "Trending now"} />
       ) : (
-        <ProductCarousel products={trendingItems} title={sec.title_override ?? "Trending Now"} viewAllHref="/shop?filter=trending" />
+        <ProductCarousel products={trendingItems} title={sec.title_override ?? "Trending now"} viewAllHref="/shop?filter=trending" />
       )}
     </Reveal>
   ),
   community: ({ sec }) => (
-    <Reveal as="section">
-      <div className="section-x">
-        <SectionHeader
-          title={sec.title_override ?? "From the Community"}
-          subtitle={sec.subtitle_override ?? "Real wins from learners this week"}
-          viewAllHref="/community"
-          viewAllLabel="View all"
-        />
-      </div>
-      <div className="section-x">
-        <PostCard post={mockPosts[0]} />
-      </div>
+    <Reveal as="section" className="section-x">
+      <SectionHeader
+        title={sec.title_override ?? "From the community"}
+        viewAllHref="/community"
+        viewAllLabel="View all"
+      />
+      <PostCard post={mockPosts[0]} />
     </Reveal>
   ),
   how_it_works: ({ sec }) => (
     <Reveal as="section" className="section-x">
-      <SectionHeader
-        title={sec.title_override ?? "How Asikon helps you grow"}
-        subtitle={sec.subtitle_override ?? "A simple 3-step path from curious to confident"}
-      />
-      <MobileScroller itemWidthMobile="78%" gridCols="md:grid md:grid-cols-3" gap="gap-3">
+      <SectionHeader title={sec.title_override ?? "How it works"} />
+      <MobileScroller itemWidthMobile="72%" gridCols="md:grid md:grid-cols-3" gap="gap-3">
         {[
-          { icon: Compass, title: "1. Discover", text: "Browse curated courses, books and prompts hand-picked for your level." },
-          { icon: Target, title: "2. Practice", text: "Learn by doing with the 24/7 AI tutor in Bangla and English." },
-          { icon: Trophy, title: "3. Achieve", text: "Earn XP, unlock badges and ship real projects to your portfolio." },
-        ].map((step) => {
+          { icon: Compass, title: "Discover", text: "Courses, books & prompts for your level." },
+          { icon: Target, title: "Practice", text: "Learn with the 24/7 AI tutor." },
+          { icon: Trophy, title: "Achieve", text: "Earn XP, badges, ship projects." },
+        ].map((step, i) => {
           const Icon = step.icon;
           return (
-            <div key={step.title} className="h-full rounded-2xl glass p-4 lg:p-5 border border-border/60 hover-lift">
-              <div className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center shadow-[var(--shadow-glow)] mb-3">
-                <Icon className="h-5 w-5 text-primary-foreground" />
+            <div key={step.title} className="h-full rounded-2xl glass p-4 border border-border/60 hover-lift">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-[var(--shadow-glow)]">
+                  <Icon className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <span className="eyebrow text-primary/80">Step {i + 1}</span>
               </div>
               <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">{step.text}</p>
@@ -209,64 +232,39 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
   ),
   why_trust: ({ sec }) => (
     <Reveal as="section" className="section-x">
-      <SectionHeader
-        title={sec.title_override ?? "Why learners trust Asikon"}
-        subtitle={sec.subtitle_override ?? "Real value, real support, real outcomes"}
-      />
-      <MobileScroller itemWidthMobile="44%" gridCols="md:grid md:grid-cols-2 lg:grid-cols-4" gap="gap-3">
+      <SectionHeader title={sec.title_override ?? "Why learners trust us"} />
+      {/* 2x2 on mobile — more scannable than scroll */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
         {[
-          { icon: ShieldCheck, title: "Verified content", text: "Every course reviewed by experts." },
-          { icon: Users, title: "10K+ learners", text: "Active community across BD." },
-          { icon: Headphones, title: "24/7 AI tutor", text: "Doubt-solving in your language." },
-          { icon: Rocket, title: "Job-ready", text: "Projects employers actually want." },
+          { icon: ShieldCheck, title: "Verified content", text: "Reviewed by experts." },
+          { icon: Users, title: "10K+ learners", text: "Active across BD." },
+          { icon: Headphones, title: "24/7 AI tutor", text: "Your language." },
+          { icon: Rocket, title: "Job-ready", text: "Real-world projects." },
         ].map((p) => {
           const Icon = p.icon;
           return (
-            <div key={p.title} className="rounded-2xl border border-border/60 bg-card p-3 lg:p-4 h-full hover-lift">
-              <Icon className="h-5 w-5 text-primary mb-2" />
-              <p className="font-semibold text-xs lg:text-sm">{p.title}</p>
-              <p className="text-[11px] lg:text-xs text-muted-foreground mt-0.5">{p.text}</p>
+            <div key={p.title} className="rounded-2xl border border-border/60 bg-card p-3 hover-lift">
+              <Icon className="h-4 w-4 text-primary mb-1.5" />
+              <p className="font-semibold text-[13px] leading-tight">{p.title}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{p.text}</p>
             </div>
           );
         })}
-      </MobileScroller>
+      </div>
     </Reveal>
   ),
   curated: ({ sec, productsLoading, curated }) => (
     <section className="section-x">
-      <SectionHeader
-        title={sec.title_override ?? "Curated for You"}
-        subtitle={sec.subtitle_override ?? "Picked based on what learners like you love"}
-        viewAllHref="/shop"
-      />
+      <SectionHeader title={sec.title_override ?? "Curated for you"} viewAllHref="/shop" />
       {productsLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (<ProductCardSkeleton key={i} />))}
         </div>
       ) : (
         <MobileScroller itemWidthMobile="46%" gridCols="md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" gap="gap-3 lg:gap-4">
-          {curated.map((product: any) => (
-            <Link key={product.id} to={`/product/${product.slug}`} className="group relative bg-card rounded-2xl overflow-hidden border border-border/60 hover-lift focus-ring flex flex-col h-full">
-              <div className="relative aspect-square overflow-hidden bg-muted">
-                <SmartImage src={product.image_url || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" />
-                {product.is_featured && (
-                  <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold rounded-full gradient-primary text-primary-foreground shadow-sm">HOT</span>
-                )}
-              </div>
-              <div className="p-3 flex flex-col flex-1">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-[0.12em] mb-1">ASIKON Academy</p>
-                <h3 className="font-medium text-sm line-clamp-2 mb-2 min-h-[2.5rem] group-hover:text-primary transition-colors">{product.name}</h3>
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-baseline gap-1.5">
-                    <Price amount={product.price} className="font-bold text-foreground" />
-                    {product.original_price && (<Price amount={product.original_price} strike className="text-[11px] text-muted-foreground" />)}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span className="text-amber-400">★</span>
-                    <span>{product.rating || 0}</span>
-                  </div>
-                </div>
-              </div>
+          {curated.map((p: any) => (
+            <Link key={p.id} to={`/product/${p.slug}`} className="h-full block focus-ring rounded-2xl">
+              <ProductCard product={transformProduct(p)} variant="compact" />
             </Link>
           ))}
         </MobileScroller>
@@ -276,29 +274,26 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
   new_arrivals: ({ sec, productsLoading, newArrivalItems }) => (
     <Reveal as="section">
       {productsLoading ? (
-        <CarouselSkeleton title={sec.title_override ?? "New Arrivals"} />
+        <CarouselSkeleton title={sec.title_override ?? "New arrivals"} />
       ) : (
-        <ProductCarousel products={newArrivalItems} title={sec.title_override ?? "New Arrivals"} viewAllHref="/shop?filter=new" />
+        <ProductCarousel products={newArrivalItems} title={sec.title_override ?? "New arrivals"} viewAllHref="/shop?filter=new" />
       )}
     </Reveal>
   ),
   testimonials: ({ sec }) => (
     <Reveal as="section" className="section-x">
-      <SectionHeader
-        title={sec.title_override ?? "Loved by learners"}
-        subtitle={sec.subtitle_override ?? "Stories from the Asikon community"}
-      />
-      <MobileScroller itemWidthMobile="80%" gridCols="md:grid md:grid-cols-3" gap="gap-3">
+      <SectionHeader title={sec.title_override ?? "Loved by learners"} />
+      <MobileScroller itemWidthMobile="78%" gridCols="md:grid md:grid-cols-3" gap="gap-3">
         {[
-          { name: "Tanvir H.", role: "Python student", quote: "The AI tutor explained recursion in Bangla — finally clicked after 2 weeks of struggle." },
-          { name: "Ayesha R.", role: "ML beginner", quote: "Bought one course, got a full roadmap. Landed my first freelance gig in 6 weeks." },
-          { name: "Rakib M.", role: "Prompt engineer", quote: "The prompt library alone is worth 10x the price. Saves me hours every day." },
+          { name: "Tanvir H.", role: "Python student", quote: "AI tutor explained recursion in Bangla — finally clicked." },
+          { name: "Ayesha R.", role: "ML beginner", quote: "Landed my first freelance gig in 6 weeks." },
+          { name: "Rakib M.", role: "Prompt engineer", quote: "Prompt library saves me hours every day." },
         ].map((t) => (
           <div key={t.name} className="h-full rounded-2xl glass p-4 border border-border/60 flex flex-col">
             <div className="flex gap-0.5 mb-2 text-amber-400">
-              {Array.from({ length: 5 }).map((_, s) => <Star key={s} className="h-3.5 w-3.5 fill-current" />)}
+              {Array.from({ length: 5 }).map((_, s) => <Star key={s} className="h-3 w-3 fill-current" />)}
             </div>
-            <p className="text-sm leading-relaxed text-foreground/90 flex-1">"{t.quote}"</p>
+            <p className="text-[13px] leading-relaxed text-foreground/90 flex-1">"{t.quote}"</p>
             <div className="mt-3 pt-3 border-t border-border/40">
               <p className="font-semibold text-xs">{t.name}</p>
               <p className="text-[11px] text-muted-foreground">{t.role}</p>
@@ -310,43 +305,45 @@ const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> 
   ),
   faq: ({ sec }) => (
     <Reveal as="section" className="section-x">
-      <SectionHeader
-        title={sec.title_override ?? "Common questions"}
-        subtitle={sec.subtitle_override ?? "Quick answers before you start"}
-      />
-      <MobileScroller itemWidthMobile="82%" gridCols="md:grid md:grid-cols-2" gap="gap-3">
+      <SectionHeader title={sec.title_override ?? "Common questions"} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
         {[
-          { q: "Do I need prior coding experience?", a: "No. Most courses start from zero and ramp up gradually." },
-          { q: "Is the AI tutor free?", a: "Every signed-up learner gets daily free messages plus bonus coins." },
-          { q: "Can I pay with bKash / Nagad?", a: "Yes — and Cash on Delivery is available for physical books." },
-          { q: "Do I get a certificate?", a: "Yes, completion certificates are issued for every paid course." },
+          { q: "Need prior experience?", a: "No — most courses start from zero." },
+          { q: "Is the AI tutor free?", a: "Daily free messages + welcome coins." },
+          { q: "bKash / Nagad?", a: "Yes — plus COD on physical books." },
+          { q: "Certificates?", a: "Yes, for every paid course." },
         ].map((f) => (
-          <div key={f.q} className="rounded-2xl border border-border/60 bg-card p-4 hover-lift h-full">
+          <div key={f.q} className="rounded-2xl border border-border/60 bg-card p-3.5">
             <div className="flex items-start gap-2.5">
               <HelpCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="font-semibold text-sm">{f.q}</p>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.a}</p>
+              <div className="min-w-0">
+                <p className="font-semibold text-[13px] leading-tight">{f.q}</p>
+                <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{f.a}</p>
               </div>
             </div>
           </div>
         ))}
-      </MobileScroller>
+      </div>
     </Reveal>
   ),
   final_cta: ({ sec }) => (
     <Reveal as="section" className="section-x">
-      <div className="relative overflow-hidden rounded-3xl border border-primary/30 p-6 lg:p-8 text-center" style={{ background: "var(--gradient-primary-soft)" }}>
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl gradient-primary shadow-[var(--shadow-glow)] mb-3">
-          <PlayCircle className="h-6 w-6 text-primary-foreground" />
+      <div
+        className="relative overflow-hidden rounded-3xl border border-primary/30 p-5 sm:p-7 text-center"
+        style={{ background: "var(--gradient-primary-soft)" }}
+      >
+        <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl gradient-primary shadow-[var(--shadow-glow)] mb-3">
+          <PlayCircle className="h-5 w-5 text-primary-foreground" />
         </div>
-        <h3 className="text-xl lg:text-2xl font-bold mb-2">{sec.title_override ?? "Start your first lesson — free"}</h3>
-        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
-          {sec.subtitle_override ?? "Pick a course, ask the AI anything, and earn 100 welcome coins on signup."}
+        <h3 className="font-display text-lg sm:text-2xl font-bold mb-1.5 tracking-tight">
+          {sec.title_override ?? "Start your first lesson — free"}
+        </h3>
+        <p className="text-[13px] sm:text-sm text-muted-foreground max-w-md mx-auto mb-4">
+          {sec.subtitle_override ?? "Pick a course, ask the AI, earn 100 welcome coins."}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Button asChild variant="premium" size="lg"><Link to="/shop?type=courses">Browse courses</Link></Button>
-          <Button asChild variant="outline" size="lg"><Link to="/learn">Try the AI tutor</Link></Button>
+          <Button asChild variant="outline" size="lg"><Link to="/learn">Try AI tutor</Link></Button>
         </div>
       </div>
     </Reveal>
