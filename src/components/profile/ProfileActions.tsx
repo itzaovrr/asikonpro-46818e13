@@ -1,4 +1,4 @@
-import { MessageCircle, Share2, UserPlus, UserCheck, Flag, Ban, Link2, Pencil } from "lucide-react";
+import { MessageCircle, Share2, UserPlus, UserCheck, Flag, Ban, Pencil, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +12,6 @@ interface ProfileActionsProps {
   isFollowing?: boolean;
   isOwnProfile?: boolean;
   onFollow?: () => void;
-  onConnect?: () => void;
   onMessage?: () => void;
   onShare?: () => void;
   onReport?: () => void;
@@ -24,7 +23,6 @@ export function ProfileActions({
   isFollowing = false,
   isOwnProfile = false,
   onFollow,
-  onConnect,
   onMessage,
   onShare,
   onReport,
@@ -33,13 +31,9 @@ export function ProfileActions({
 }: ProfileActionsProps) {
   if (isOwnProfile) {
     return (
-      <div className="px-4 sm:px-6 pb-4">
-        <div className="flex items-center gap-2.5">
-          <Button
-            onClick={onEditProfile}
-            className="flex-1 gradient-primary border-0 shadow-md"
-            aria-label="Edit profile"
-          >
+      <div className="px-4 pt-3">
+        <div className="flex items-center gap-2">
+          <Button onClick={onEditProfile} className="flex-1 gradient-primary border-0 shadow-md" aria-label="Edit profile">
             <Pencil className="h-4 w-4 mr-2" />
             Edit Profile
           </Button>
@@ -52,8 +46,8 @@ export function ProfileActions({
   }
 
   return (
-    <div className="px-4 sm:px-6 pb-4">
-      <div className="flex items-center gap-2.5">
+    <div className="px-4 pt-3">
+      <div className="flex items-center gap-2">
         <Button
           onClick={onFollow}
           className={
@@ -75,31 +69,14 @@ export function ProfileActions({
             </>
           )}
         </Button>
-
-        <Button
-          variant="secondary"
-          className="flex-1"
-          onClick={onMessage}
-          aria-label="Send message"
-        >
+        <Button variant="secondary" className="flex-1" onClick={onMessage} aria-label="Send message">
           <MessageCircle className="h-4 w-4 mr-2" />
           Message
         </Button>
-
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onConnect}
-          aria-label="Connect"
-          title="Connect"
-        >
-          <Link2 className="h-4 w-4" />
-        </Button>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" aria-label="More options">
-              <Share2 className="h-4 w-4" />
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="glass-strong">

@@ -1,25 +1,22 @@
-import { Heart, MessageCircle, Share2, MoreHorizontal, ShoppingBag, BadgeCheck } from "lucide-react";
+import { Heart, MessageCircle, Share2, ShoppingBag, MoreHorizontal, BadgeCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { Price } from "@/lib/currency";
+import { cn, formatCount, timeAgo } from "@/lib/utils";
+import { Newspaper } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useLikePost } from "@/hooks/usePosts";
 
-interface FeedPost {
+export interface FeedPost {
   id: string;
   content: string;
-  image?: string;
-  video?: string;
-  likes: number;
-  comments: number;
-  shares: number;
-  timestamp: string;
-  product?: {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-  };
+  images?: string[] | null;
+  videoUrl?: string | null;
+  createdAt: string;
+  likeCount: number;
+  commentCount: number;
   isLiked?: boolean;
+  productSlug?: string | null;
+  productName?: string | null;
 }
 
 interface ProfileFeedTabProps {
@@ -33,111 +30,121 @@ interface ProfileFeedTabProps {
 }
 
 export function ProfileFeedTab({ posts, user }: ProfileFeedTabProps) {
+  if (posts.length === 0) {
+    return (
+      <EmptyState
+        icon={<Newspaper className="h-10 w-10" />}
+        title="No posts yet"
+        hint="When this profile shares posts, they'll show up here."
+      />
+    );
+  }
   return (
-    <div className="divide-y divide-border">
+    <div className="space-y-4 py-3">
       {posts.map((post) => (
         <FeedPostCard key={post.id} post={post} user={user} />
       ))}
-      
-      {posts.length === 0 && (
-        <div className="py-16 text-center">
-          <p className="text-muted-foreground">No posts yet</p>
-        </div>
-      )}
     </div>
   );
 }
 
 function FeedPostCard({ post, user }: { post: FeedPost; user: ProfileFeedTabProps["user"] }) {
-  const [liked, setLiked] = useState(post.isLiked || false);
-  const [likeCount, setLikeCount] = useState(post.likes);
+  const [liked, setLiked] = useState(!!post.isLiked);
+  const [count, setCount] = useState(post.likeCount);
+  const like = useLikePost();
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount(prev => liked ? prev - 1 : prev + 1);
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toString();
+  const onLike = async () => {
+    const next = !liked;
+    setLiked(next);
+    setCount((c) => Math.max(0, c + (next ? 1 : -1)));
+    try {
+      await like.mutateAsync(post.id);
+    } catch {
+      setLiked(!next);
+      setCount((c) => Math.max(0, c + (next ? -1 : 1)));
+    }
   };
 
   return (
-    <div className="p-4">
-      {/* Post Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+    <article className="rounded-2xl border border-border/60 bg-card/70 backdrop-blur-xl overflow-hidden">
+      <header className="flex items-center justify-between p-3.5">
+        <div className="flex items-center gap-3 min-w-0">
           <Avatar className="h-10 w-10">
             <AvatarImage src={user.avatar} alt={user.name} />
             <AvatarFallback>{user.name[0]}</AvatarFallback>
           </Avatar>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="font-semibold text-sm">{user.name}</span>
-              {user.isVerified && (
-                <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
-              )}
+              <span className="font-semibold text-sm truncate">{user.name}</span>
+              {user.isVerified && <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />}
             </div>
-            <p className="text-xs text-muted-foreground">{post.timestamp}</p>
+            <p className="text-[11px] text-muted-foreground">@{user.username} · {timeAgo(post.createdAt)}</p>
           </div>
         </div>
-        <button className="p-1.5 rounded-full hover:bg-secondary transition-colors">
+        <button className="p-1.5 rounded-full hover:bg-secondary transition-colors" aria-label="More">
           <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
         </button>
-      </div>
+      </header>
 
-      {/* Content */}
-      <p className="text-sm mb-3 whitespace-pre-wrap">{post.content}</p>
+      {post.content && (
+        <p className="px-4 pb-3 text-sm whitespace-pre-wrap">{post.content}</p>
+      )}
 
-      {/* Image/Video */}
-      {post.image && (
-        <div className="relative rounded-xl overflow-hidden mb-3">
-          <img 
-            src={post.image} 
-            alt="" 
-            className="w-full aspect-[4/3] object-cover"
-          />
-          
-          {/* Product Tag */}
-          {post.product && (
-            <div className="absolute bottom-3 left-3">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg glass-strong">
-                <ShoppingBag className="h-4 w-4 text-primary" />
-                <div>
-                  <p className="text-xs font-medium line-clamp-1">{post.product.name}</p>
-                  <Price amount={post.product.price} className="text-xs text-primary font-bold" />
-                </div>
-              </div>
-            </div>
+      {post.images && post.images[0] && (
+        <div className="relative">
+          <img src={post.images[0]} alt="" className="w-full max-h-[520px] object-cover" />
+          {post.productSlug && (
+            <Link
+              to={`/product/${post.productSlug}`}
+              className="absolute bottom-3 left-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/85 backdrop-blur-md border border-border/60 text-[12px] font-medium hover:bg-background transition-colors"
+            >
+              <ShoppingBag className="h-3.5 w-3.5 text-primary" />
+              {post.productName || "Shop now"}
+            </Link>
           )}
         </div>
       )}
 
-      {/* Actions */}
-      <div className="flex items-center justify-between pt-2">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={handleLike}
-            className="flex items-center gap-1.5 text-sm transition-colors"
-          >
-            <Heart className={cn(
-              "h-5 w-5 transition-colors",
-              liked ? "fill-primary text-primary" : "text-muted-foreground"
-            )} />
-            <span className={cn(liked && "text-primary")}>{formatNumber(likeCount)}</span>
-          </button>
-          
-          <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <MessageCircle className="h-5 w-5" />
-            <span>{formatNumber(post.comments)}</span>
-          </button>
-          
-          <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <Share2 className="h-5 w-5" />
-            <span>{formatNumber(post.shares)}</span>
-          </button>
-        </div>
+      {post.videoUrl && !post.images?.[0] && (
+        <video src={post.videoUrl} controls className="w-full max-h-[520px] bg-black" />
+      )}
+
+      <div className="flex items-center gap-4 px-3.5 py-3 border-t border-border/40">
+        <button onClick={onLike} className="flex items-center gap-1.5 text-sm" aria-pressed={liked}>
+          <Heart className={cn("h-5 w-5 transition-colors", liked ? "fill-primary text-primary" : "text-muted-foreground")} />
+          <span className={cn("tabular-nums", liked && "text-primary")}>{formatCount(count)}</span>
+        </button>
+        <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <MessageCircle className="h-5 w-5" />
+          <span className="tabular-nums">{formatCount(post.commentCount)}</span>
+        </button>
+        <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors ml-auto">
+          <Share2 className="h-5 w-5" />
+        </button>
       </div>
+    </article>
+  );
+}
+
+export function EmptyState({
+  icon,
+  title,
+  hint,
+  action,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  hint?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="py-16 px-6 flex flex-col items-center text-center">
+      <div className="h-16 w-16 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground/70 mb-4">
+        {icon}
+      </div>
+      <p className="font-semibold">{title}</p>
+      {hint && <p className="text-sm text-muted-foreground mt-1 max-w-xs">{hint}</p>}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }
