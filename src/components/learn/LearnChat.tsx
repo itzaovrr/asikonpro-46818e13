@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAiThreadMessages } from "@/hooks/useAiTutor";
 import { useLearnerProgress } from "@/hooks/useLearnerProgress";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import tutorAvatar from "@/assets/asikon-tutor-avatar.png";
@@ -40,13 +41,19 @@ export function LearnChat({ threadId }: Props) {
     () =>
       new DefaultChatTransport({
         api: `${SUPABASE_URL}/functions/v1/ai-tutor-chat`,
-        headers: () => ({
-          Authorization: `Bearer ${session?.access_token ?? ""}`,
-          "Content-Type": "application/json",
-        }),
+        // Read the freshest token at request time to avoid sending an empty Bearer
+        // when the session loads after the transport was first created.
+        headers: async () => {
+          const { data } = await supabase.auth.getSession();
+          const token = data.session?.access_token ?? "";
+          return {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          };
+        },
         body: { threadId },
       }),
-    [threadId, session?.access_token],
+    [threadId],
   );
 
   const initial = useMemo<UIMessage[]>(() => {
