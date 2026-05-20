@@ -178,14 +178,14 @@ export function LearnChat({ threadId }: Props) {
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   };
 
-  const comingSoon = () => toast("শীঘ্রই আসছে");
+  const comingSoon = () => toast("Coming soon");
 
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-6 text-center">
         <img src={tutorAvatar} alt="ASIKON AI Tutor" className="w-16 h-16 mb-4" />
         <h2 className="text-xl font-semibold mb-2">ASIKON AI Tutor</h2>
-        <p className="text-muted-foreground mb-4">সাইন ইন করো তোমার AI শিক্ষকের সাথে কথা বলতে।</p>
+        <p className="text-muted-foreground mb-4">Sign in to chat with your AI tutor.</p>
         <a href="/auth"><Button>Sign in</Button></a>
       </div>
     );
