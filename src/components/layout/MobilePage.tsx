@@ -53,14 +53,24 @@ export function MobilePage({
     <div className="page-enter page-enter-active">
       {bleed}
       {sticky && (
-        <div
-          className="sticky z-30 bg-background/95 backdrop-blur-md hairline-bottom"
-          style={{ top: "var(--app-header-h)" }}
-        >
-          <div className={cn(widthClass, padded && "px-3 sm:px-4 lg:px-8")}>
-            {sticky}
+        <>
+          {/* Fixed sub-header tab strip — sits directly under the global app header
+              and stays pinned on scroll, immune to layout gaps from siblings. */}
+          <div
+            className="fixed left-0 right-0 z-30 bg-background/95 backdrop-blur-md hairline-bottom"
+            style={{ top: "var(--app-header-h)" }}
+          >
+            <div className={cn(widthClass, padded && "px-3 sm:px-4 lg:px-8")}>
+              {sticky}
+            </div>
           </div>
-        </div>
+          {/* Spacer that reserves the tab strip's height in normal flow. */}
+          <div aria-hidden className="invisible" style={{ paddingTop: 0 }}>
+            <div className={cn(widthClass, padded && "px-3 sm:px-4 lg:px-8")}>
+              {sticky}
+            </div>
+          </div>
+        </>
       )}
       <div
         className={cn(

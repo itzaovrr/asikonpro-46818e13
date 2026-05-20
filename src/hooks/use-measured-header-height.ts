@@ -1,18 +1,12 @@
-import { useEffect, RefObject } from "react";
+import { useLayoutEffect, RefObject } from "react";
 
 /**
  * Measures the live offsetHeight of a header element (including its own
  * safe-area-inset padding) and publishes it as the global CSS variable
- * `--app-header-h` on <html>. This becomes the single source of truth for
- * every sticky offset in the app (sticky tab bars, main content padding, etc.)
- * and stays accurate across:
- *   - device rotation
- *   - dynamic browser chrome (mobile URL bar)
- *   - safe-area changes (notch / status-bar variations)
- *   - layout/font changes that affect header height
+ * `--app-header-h` on <html>. Single source of truth for sticky offsets.
  */
 export function useMeasuredHeaderHeight(ref: RefObject<HTMLElement>) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
 
@@ -24,6 +18,9 @@ export function useMeasuredHeaderHeight(ref: RefObject<HTMLElement>) {
     };
 
     apply();
+    const raf = requestAnimationFrame(apply);
+    const t1 = window.setTimeout(apply, 50);
+    const t2 = window.setTimeout(apply, 250);
 
     const ro = new ResizeObserver(apply);
     ro.observe(el);
@@ -31,9 +28,13 @@ export function useMeasuredHeaderHeight(ref: RefObject<HTMLElement>) {
     window.addEventListener("resize", apply);
 
     return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
       ro.disconnect();
       window.removeEventListener("orientationchange", apply);
       window.removeEventListener("resize", apply);
+      document.documentElement.style.removeProperty("--app-header-h");
     };
   }, [ref]);
 }
