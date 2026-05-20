@@ -140,6 +140,7 @@ export function AppLayout({
         </main>
 
         {/* BottomNav is rendered once at App root (persistent app-shell) — never remounts */}
+        <StickyLayoutDebugger />
       </div>
     </SidebarContext.Provider>
   );
