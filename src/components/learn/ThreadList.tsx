@@ -72,8 +72,9 @@ export function ThreadListSheet({ activeId }: Props) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden">
-          <ArrowLeft className="w-5 h-5" />
+        <Button variant="secondary" size="sm" className="lg:hidden h-9 rounded-full px-3 shadow-md backdrop-blur bg-secondary/80 border border-border">
+          <PanelLeft className="w-4 h-4 mr-1.5" />
+          <span className="text-xs font-medium">Chats</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-72 p-0">
