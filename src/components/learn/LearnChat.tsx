@@ -192,9 +192,9 @@ export function LearnChat({ threadId }: Props) {
   }
 
   return (
-    <div className="relative flex flex-col h-full bg-background">
+    <div className="relative flex flex-col h-full min-h-0 bg-background">
       {/* In-chat header */}
-      <div className="lg:hidden sticky top-0 z-20 flex items-center gap-2 px-3 py-2 bg-background/85 backdrop-blur border-b border-border/60">
+      <div className="lg:hidden shrink-0 flex items-center gap-2 px-3 py-1.5 bg-background/85 backdrop-blur border-b border-border/60">
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
@@ -230,15 +230,17 @@ export function LearnChat({ threadId }: Props) {
       </div>
 
       {/* Transcript */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain">
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         {loadingMsgs ? (
           <div className="flex justify-center py-10">
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
         ) : messages.length === 0 ? (
-          <EmptyState onPick={handleSend} />
+          <div className="h-full flex items-center justify-center">
+            <EmptyState onPick={handleSend} />
+          </div>
         ) : (
-          <div className="mx-auto w-full max-w-3xl px-3 sm:px-6 py-4 space-y-5 pb-6">
+          <div className="mx-auto w-full max-w-3xl px-3 sm:px-6 py-3 sm:py-4 space-y-5">
             {messages.map((m) => (
               <MessageRow key={m.id} message={m} />
             ))}
@@ -248,10 +250,11 @@ export function LearnChat({ threadId }: Props) {
                 চিন্তা করছি...
               </div>
             )}
-            <div className="h-2" />
+            <div className="h-1" />
           </div>
         )}
       </div>
+
 
       {/* Jump to latest pill */}
       {showJump && messages.length > 0 && (
