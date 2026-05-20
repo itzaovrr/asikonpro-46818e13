@@ -260,18 +260,18 @@ export function LearnChat({ threadId }: Props) {
       {showJump && messages.length > 0 && (
         <button
           onClick={jumpToBottom}
-          className="absolute left-1/2 -translate-x-1/2 bottom-[180px] z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary/90 backdrop-blur border border-border shadow-md hover:bg-secondary"
+          className="absolute left-1/2 -translate-x-1/2 bottom-32 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary/90 backdrop-blur border border-border shadow-md hover:bg-secondary"
         >
           <ArrowDown className="w-3.5 h-3.5" /> Latest
         </button>
       )}
 
-      {/* Sticky composer area */}
-      <div className="sticky bottom-0 z-10 shrink-0 px-3 pt-2 pb-3 bg-gradient-to-t from-background via-background to-background/70">
+      {/* Composer area (non-scrolling) */}
+      <div className="shrink-0 px-3 pt-1.5 pb-2 bg-background border-t border-border/40">
         <div className="mx-auto w-full max-w-3xl">
           {/* Action chips */}
           {messages.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 -mx-1 px-1">
+            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1.5 -mx-1 px-1">
               {ACTION_CHIPS.map((chip) => (
                 <button
                   key={chip}
