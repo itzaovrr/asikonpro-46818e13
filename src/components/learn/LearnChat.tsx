@@ -110,8 +110,8 @@ export function LearnChat({ threadId }: Props) {
     transport,
     onError: (e) => {
       const msg = (e as Error).message || "Something went wrong";
-      if (msg.includes("429")) toast.error("একটু পরে আবার চেষ্টা করো — অনেক request হয়ে গেছে।");
-      else if (msg.includes("402")) toast.error("AI credits শেষ। Workspace settings এ গিয়ে credits যোগ করো।");
+      if (msg.includes("429")) toast.error("Too many requests — please try again in a moment.");
+      else if (msg.includes("402")) toast.error("AI credits exhausted. Add credits in workspace settings.");
       else toast.error(msg);
     },
   });
