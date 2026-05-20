@@ -5,52 +5,42 @@ import { VideoCard } from "@/components/community/VideoCard";
 import { ShortCard } from "@/components/community/ShortCard";
 import { ReviewCard } from "@/components/community/ReviewCard";
 import { LiveCard } from "@/components/community/LiveCard";
+import { OfferCard } from "@/components/community/OfferCard";
 import { mockStories, mockPosts } from "@/lib/mock-data";
-import { mockVideos, mockShorts, mockReviews, mockLiveSessions } from "@/lib/community-mock-data";
+import { mockVideos, mockShorts, mockReviews, mockLiveSessions, mockOffers } from "@/lib/community-mock-data";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
 
 type FeedItem = {
-  type: "post" | "video" | "short" | "review" | "live";
+  type: "post" | "video" | "short" | "review" | "live" | "offer";
   data: any;
   id: string;
   _loopKey?: string;
 };
 
 export function MyFeedTab() {
-  // Combine all content into a mixed feed
   const allContent = useMemo<FeedItem[]>(() => {
     const items: FeedItem[] = [];
-    
-    // Interleave different content types for variety
+
     const maxLength = Math.max(
       mockPosts.length,
       mockVideos.length,
       mockShorts.length,
       mockReviews.length,
-      mockLiveSessions.length
+      mockLiveSessions.length,
+      mockOffers.length,
     );
-    
+
     for (let i = 0; i < maxLength; i++) {
-      if (mockPosts[i]) {
-        items.push({ type: "post", data: mockPosts[i], id: `post-${mockPosts[i].id}` });
-      }
-      if (mockVideos[i]) {
-        items.push({ type: "video", data: mockVideos[i], id: `video-${mockVideos[i].id}` });
-      }
-      if (mockShorts[i] && i % 3 === 0) {
-        // Add shorts less frequently, they appear in horizontal scroll
-        items.push({ type: "short", data: mockShorts[i], id: `short-${mockShorts[i].id}` });
-      }
-      if (mockReviews[i]) {
-        items.push({ type: "review", data: mockReviews[i], id: `review-${mockReviews[i].id}` });
-      }
-      if (mockLiveSessions[i] && mockLiveSessions[i].isLive) {
-        items.push({ type: "live", data: mockLiveSessions[i], id: `live-${mockLiveSessions[i].id}` });
-      }
+      if (mockPosts[i]) items.push({ type: "post", data: mockPosts[i], id: `post-${mockPosts[i].id}` });
+      if (mockVideos[i]) items.push({ type: "video", data: mockVideos[i], id: `video-${mockVideos[i].id}` });
+      if (mockShorts[i] && i % 3 === 0) items.push({ type: "short", data: mockShorts[i], id: `short-${mockShorts[i].id}` });
+      if (mockReviews[i]) items.push({ type: "review", data: mockReviews[i], id: `review-${mockReviews[i].id}` });
+      if (mockLiveSessions[i] && mockLiveSessions[i].isLive) items.push({ type: "live", data: mockLiveSessions[i], id: `live-${mockLiveSessions[i].id}` });
+      if (mockOffers[i]) items.push({ type: "offer", data: mockOffers[i], id: `offer-${mockOffers[i].id}` });
     }
-    
+
     return items;
   }, []);
 
@@ -61,16 +51,12 @@ export function MyFeedTab() {
 
   const renderFeedItem = (item: FeedItem, index: number) => {
     const key = item._loopKey || `${item.id}-${index}`;
-    
+
     switch (item.type) {
       case "post":
         return <PostCard key={key} post={item.data} />;
       case "video":
-        return (
-          <div key={key} className="px-4">
-            <VideoCard video={item.data} />
-          </div>
-        );
+        return <div key={key} className="px-4"><VideoCard video={item.data} /></div>;
       case "short":
         return (
           <div key={key} className="px-4">
@@ -87,11 +73,9 @@ export function MyFeedTab() {
       case "review":
         return <ReviewCard key={key} review={item.data} />;
       case "live":
-        return (
-          <div key={key} className="px-4">
-            <LiveCard session={item.data} />
-          </div>
-        );
+        return <div key={key} className="px-4"><LiveCard session={item.data} /></div>;
+      case "offer":
+        return <div key={key} className="px-4"><OfferCard offer={item.data} /></div>;
       default:
         return null;
     }
