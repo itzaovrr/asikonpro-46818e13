@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -17,28 +17,21 @@ export function MessagingDrawer({ open, onOpenChange, initialChatId }: Messaging
   const { data: chats, isLoading } = useChats();
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 
-  // Auto-select initial chat if provided
-  useState(() => {
-    if (initialChatId && chats) {
-      const chat = chats.find((c) => c.id === initialChatId);
-      if (chat) setSelectedChat(chat);
-    }
-  });
+  // Auto-select chat when initialChatId is provided and chats load
+  useEffect(() => {
+    if (!open || !initialChatId || !chats) return;
+    const chat = chats.find((c) => c.id === initialChatId);
+    if (chat && chat.id !== selectedChat?.id) setSelectedChat(chat);
+  }, [open, initialChatId, chats, selectedChat?.id]);
 
-  const handleSelectChat = (chat: Chat) => {
-    setSelectedChat(chat);
-  };
-
-  const handleBack = () => {
-    setSelectedChat(null);
-  };
+  // Reset selection when drawer closes
+  useEffect(() => {
+    if (!open) setSelectedChat(null);
+  }, [open]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-md lg:max-w-2xl p-0 flex flex-col"
-      >
+      <SheetContent side="right" className="w-full sm:max-w-md lg:max-w-2xl p-0 flex flex-col">
         <SheetHeader className="p-4 border-b border-border glass-strong">
           <div className="flex items-center justify-between">
             <SheetTitle className="flex items-center gap-2">
@@ -52,30 +45,23 @@ export function MessagingDrawer({ open, onOpenChange, initialChatId }: Messaging
         </SheetHeader>
 
         <div className="flex-1 flex overflow-hidden">
-          {/* Chat List - Hidden on mobile when chat is selected */}
           <div
             className={cn(
               "w-full lg:w-80 border-r border-border flex-shrink-0",
-              selectedChat ? "hidden lg:block" : "block"
+              selectedChat ? "hidden lg:block" : "block",
             )}
           >
             <ChatList
               chats={chats || []}
               selectedChatId={selectedChat?.id || null}
-              onSelectChat={handleSelectChat}
+              onSelectChat={setSelectedChat}
               isLoading={isLoading}
             />
           </div>
 
-          {/* Chat Window */}
-          <div
-            className={cn(
-              "flex-1 flex flex-col",
-              selectedChat ? "block" : "hidden lg:flex"
-            )}
-          >
+          <div className={cn("flex-1 flex flex-col", selectedChat ? "block" : "hidden lg:flex")}>
             {selectedChat ? (
-              <ChatWindow chat={selectedChat} onBack={handleBack} />
+              <ChatWindow chat={selectedChat} onBack={() => setSelectedChat(null)} />
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
                 <div className="w-20 h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-4">

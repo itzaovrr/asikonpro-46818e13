@@ -71,6 +71,10 @@ const OrderDetail = () => {
   const StatusIcon = status.icon;
   const shippingAddress = order.shipping_address as Record<string, string> | null;
 
+  const STEPS = ["pending", "processing", "shipped", "delivered"] as const;
+  const currentIdx = STEPS.indexOf(order.status as typeof STEPS[number]);
+  const isCancelled = order.status === "cancelled";
+
   return (
     <AppLayout>
       <MobilePage maxWidth="4xl">
@@ -87,6 +91,51 @@ const OrderDetail = () => {
             {status.label}
           </Badge>
         </MobileCard>
+
+        {/* Tracking timeline */}
+        <MobileSection title="Order Tracking">
+          <MobileCard variant="glass">
+            {isCancelled ? (
+              <div className="flex items-center gap-3 rounded-xl border border-destructive/40 bg-destructive/10 p-3">
+                <XCircle className="h-5 w-5 text-destructive shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">Order cancelled</p>
+                  <p className="text-xs text-muted-foreground">This order is no longer being processed.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-1">
+                {STEPS.map((step, i) => {
+                  const cfg = statusConfig[step];
+                  const Icon = cfg.icon;
+                  const active = i <= Math.max(0, currentIdx);
+                  return (
+                    <div key={step} className="flex-1 flex items-center">
+                      <div className="flex flex-col items-center gap-1 min-w-0 flex-1">
+                        <div
+                          className={
+                            "h-9 w-9 rounded-full flex items-center justify-center border-2 transition-colors " +
+                            (active
+                              ? "bg-primary/15 border-primary text-primary"
+                              : "bg-muted border-border text-muted-foreground")
+                          }
+                        >
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <span className={"text-[10px] text-center " + (active ? "text-foreground font-medium" : "text-muted-foreground")}>
+                          {cfg.label}
+                        </span>
+                      </div>
+                      {i < STEPS.length - 1 && (
+                        <div className={"h-0.5 flex-1 mx-1 mb-4 " + (i < currentIdx ? "bg-primary" : "bg-border")} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </MobileCard>
+        </MobileSection>
 
         {/* Items */}
         <MobileSection title="Items">

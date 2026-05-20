@@ -1,8 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { MobilePage } from "@/components/layout/MobilePage";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { MissionVision } from "@/components/about/MissionVision";
 import {
   ProfileHeader,
@@ -20,6 +22,7 @@ import {
   ProfileBadges,
   AvatarViewer,
   FollowersSheet,
+  MediaLightbox,
   type ProfileTabType,
 } from "@/components/profile";
 import { MessagingDrawer } from "@/components/messaging";
@@ -47,6 +50,7 @@ type StatSheet = "followers" | "following" | null;
 
 const Profile = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { userId } = useParams<{ userId?: string }>();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -73,6 +77,8 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<ProfileTabType>("posts");
   const [showAvatarViewer, setShowAvatarViewer] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
+  const [activeChatId, setActiveChatId] = useState<string | undefined>();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [statSheet, setStatSheet] = useState<StatSheet>(null);
 
   const isFollowing = followers?.some((f) => f.follower_id === user?.id) || false;
@@ -96,12 +102,33 @@ const Profile = () => {
       return;
     }
     try {
-      await createOrGetChat.mutateAsync(targetUserId);
+      const chat = await createOrGetChat.mutateAsync(targetUserId);
+      setActiveChatId(chat.id);
       setShowMessages(true);
     } catch {
       toast({ title: "Error", description: "Failed to start conversation.", variant: "destructive" });
     }
   };
+
+  // Live follower count updates via realtime
+  useEffect(() => {
+    if (!targetUserId) return;
+    const channel = supabase
+      .channel(`followers-${targetUserId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "user_followers", filter: `following_id=eq.${targetUserId}` },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["followers", targetUserId] });
+          queryClient.invalidateQueries({ queryKey: ["profile-counts", targetUserId] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [targetUserId, queryClient]);
+
 
   const handleShare = () => {
     const url = window.location.href;
@@ -207,7 +234,15 @@ const Profile = () => {
           />
         );
       case "media":
-        return <ProfileMediaTab media={mediaItems} />;
+        return (
+          <ProfileMediaTab
+            media={mediaItems}
+            onOpen={(item) => {
+              const idx = mediaItems.findIndex((m) => m.id === item.id);
+              if (idx >= 0) setLightboxIndex(idx);
+            }}
+          />
+        );
       case "reviews":
         return <ProfileReviewsTab reviews={reviews} />;
       case "learning":
@@ -333,7 +368,21 @@ const Profile = () => {
           userName={displayProfile.name}
         />
 
-        <MessagingDrawer open={showMessages} onOpenChange={setShowMessages} />
+        <MessagingDrawer
+          open={showMessages}
+          onOpenChange={(v) => {
+            setShowMessages(v);
+            if (!v) setActiveChatId(undefined);
+          }}
+          initialChatId={activeChatId}
+        />
+
+        <MediaLightbox
+          items={mediaItems}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onIndexChange={setLightboxIndex}
+        />
 
         <FollowersSheet
           open={statSheet === "followers"}

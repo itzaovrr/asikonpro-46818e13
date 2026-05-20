@@ -14,3 +14,4 @@ export { ProfileWishlistTab } from "./tabs/ProfileWishlistTab";
 export { ProfileEditModal } from "./ProfileEditModal";
 export { AvatarViewer } from "./AvatarViewer";
 export { FollowersSheet } from "./FollowersSheet";
+export { MediaLightbox } from "./MediaLightbox";

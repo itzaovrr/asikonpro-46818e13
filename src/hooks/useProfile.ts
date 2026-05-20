@@ -112,9 +112,25 @@ export function useFollowUser() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["followers"] });
-      queryClient.invalidateQueries({ queryKey: ["following"] });
+    onMutate: async (followingId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["profile-counts", followingId] });
+      const prev = queryClient.getQueryData<any>(["profile-counts", followingId]);
+      if (prev) {
+        queryClient.setQueryData(["profile-counts", followingId], {
+          ...prev,
+          followers: (prev.followers ?? 0) + 1,
+        });
+      }
+      return { prev, followingId };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(["profile-counts", ctx.followingId], ctx.prev);
+    },
+    onSettled: (_d, _e, followingId) => {
+      queryClient.invalidateQueries({ queryKey: ["followers", followingId] });
+      queryClient.invalidateQueries({ queryKey: ["following", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["profile-counts", followingId] });
+      queryClient.invalidateQueries({ queryKey: ["profile-counts", user?.id] });
     },
   });
 }
@@ -134,10 +150,28 @@ export function useUnfollowUser() {
         .eq("following_id", followingId);
 
       if (error) throw error;
+      return followingId;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["followers"] });
-      queryClient.invalidateQueries({ queryKey: ["following"] });
+    onMutate: async (followingId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["profile-counts", followingId] });
+      const prev = queryClient.getQueryData<any>(["profile-counts", followingId]);
+      if (prev) {
+        queryClient.setQueryData(["profile-counts", followingId], {
+          ...prev,
+          followers: Math.max(0, (prev.followers ?? 0) - 1),
+        });
+      }
+      return { prev, followingId };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(["profile-counts", ctx.followingId], ctx.prev);
+    },
+    onSettled: (_d, _e, followingId) => {
+      queryClient.invalidateQueries({ queryKey: ["followers", followingId] });
+      queryClient.invalidateQueries({ queryKey: ["following", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["profile-counts", followingId] });
+      queryClient.invalidateQueries({ queryKey: ["profile-counts", user?.id] });
     },
   });
 }
+
