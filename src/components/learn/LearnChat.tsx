@@ -41,13 +41,19 @@ export function LearnChat({ threadId }: Props) {
     () =>
       new DefaultChatTransport({
         api: `${SUPABASE_URL}/functions/v1/ai-tutor-chat`,
-        headers: () => ({
-          Authorization: `Bearer ${session?.access_token ?? ""}`,
-          "Content-Type": "application/json",
-        }),
+        // Read the freshest token at request time to avoid sending an empty Bearer
+        // when the session loads after the transport was first created.
+        headers: async () => {
+          const { data } = await supabase.auth.getSession();
+          const token = data.session?.access_token ?? "";
+          return {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          };
+        },
         body: { threadId },
       }),
-    [threadId, session?.access_token],
+    [threadId],
   );
 
   const initial = useMemo<UIMessage[]>(() => {
