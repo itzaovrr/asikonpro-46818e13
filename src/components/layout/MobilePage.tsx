@@ -33,10 +33,9 @@ const maxWidthMap: Record<MaxWidth, string> = {
 /**
  * Consistent mobile-app page shell.
  * - Uses the global MobileHeader/DesktopHeader from AppLayout (don't double-stack).
- * - Standard horizontal padding (16px), top padding (12px), and bottom safe-area
- *   handled by AppLayout's pb-28 on mobile.
- * - Optional sticky slot for sub-tab rows (chips, filters).
- * - Optional bleed slot for full-width covers/heroes before padded content.
+ * - AppLayout already offsets the page by `--app-header-h`, so the sticky tab
+ *   strip is rendered in normal flow with `sticky top-0` and sits flush under
+ *   the header with zero gap.
  */
 export function MobilePage({
   children,
@@ -53,30 +52,17 @@ export function MobilePage({
     <div className="page-enter page-enter-active">
       {bleed}
       {sticky && (
-        <>
-          {/* Fixed sub-header tab strip — sits directly under the global app header
-              and stays pinned on scroll, immune to layout gaps from siblings. */}
-          <div
-            className="fixed left-0 right-0 z-30 bg-background/95 backdrop-blur-md hairline-bottom"
-            style={{ top: "var(--app-header-h)" }}
-          >
-            <div className={cn(widthClass, padded && "px-3 sm:px-4 lg:px-8")}>
-              {sticky}
-            </div>
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md hairline-bottom">
+          <div className={cn(widthClass, padded && "px-3 sm:px-4 lg:px-8")}>
+            {sticky}
           </div>
-          {/* Spacer that reserves the tab strip's height in normal flow. */}
-          <div aria-hidden className="invisible" style={{ paddingTop: 0 }}>
-            <div className={cn(widthClass, padded && "px-3 sm:px-4 lg:px-8")}>
-              {sticky}
-            </div>
-          </div>
-        </>
+        </div>
       )}
       <div
         className={cn(
           widthClass,
           padded && "px-3 sm:px-4 lg:px-8",
-          sticky ? "pt-2" : "pt-3 lg:pt-6",
+          sticky ? "pt-3" : "pt-3 lg:pt-6",
           "pb-6 min-w-0 overflow-x-clip",
           spacing,
           className,
