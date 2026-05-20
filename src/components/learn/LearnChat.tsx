@@ -263,8 +263,8 @@ export function LearnChat({ threadId }: Props) {
         </button>
       )}
 
-      {/* Composer area (non-scrolling) */}
-      <div className="shrink-0 px-3 pt-1.5 pb-2 bg-background border-t border-border/40">
+      {/* Composer area — pinned flush against bottom nav */}
+      <div className="shrink-0 px-3 pt-1.5 pb-1.5 bg-background/95 backdrop-blur border-t border-border/60">
         <div className="mx-auto w-full max-w-3xl">
           {/* Action chips */}
           {messages.length > 0 && (
@@ -276,7 +276,7 @@ export function LearnChat({ threadId }: Props) {
                     setInput((v) => (v ? `${v} ${chip}` : chip));
                     textareaRef.current?.focus();
                   }}
-                  className="shrink-0 px-3.5 py-1.5 rounded-full border border-border bg-card/80 hover:bg-secondary text-xs font-medium whitespace-nowrap transition-colors"
+                  className="shrink-0 px-3 py-1 rounded-full border border-border bg-card/80 hover:bg-secondary text-[11px] font-medium whitespace-nowrap transition-colors"
                 >
                   {chip}
                 </button>
@@ -284,8 +284,8 @@ export function LearnChat({ threadId }: Props) {
             </div>
           )}
 
-          {/* Composer card — slim */}
-          <div className="flex items-end gap-1.5 rounded-full border border-border bg-card/95 backdrop-blur shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.3)] focus-within:border-primary/50 transition-colors pl-4 pr-1.5 py-1">
+          {/* Composer card — slim pill */}
+          <div className="flex items-end gap-1 rounded-full border border-border bg-card shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.35)] focus-within:border-primary/50 transition-colors pl-4 pr-1 py-1">
             <textarea
               ref={textareaRef}
               value={input}
@@ -298,7 +298,7 @@ export function LearnChat({ threadId }: Props) {
               }}
               placeholder="Ask your question..."
               rows={1}
-              className="flex-1 resize-none bg-transparent outline-none text-[14px] leading-5 placeholder:text-muted-foreground/70 py-1.5 max-h-[140px]"
+              className="flex-1 resize-none bg-transparent outline-none text-[14px] leading-5 placeholder:text-muted-foreground/70 py-1.5 max-h-[120px]"
               autoFocus
             />
             <Button
@@ -332,9 +332,6 @@ export function LearnChat({ threadId }: Props) {
               </Button>
             )}
           </div>
-          <p className="text-[10px] text-center text-muted-foreground/70 mt-1.5">
-            AI can make mistakes — verify important info.
-          </p>
         </div>
       </div>
     </div>
