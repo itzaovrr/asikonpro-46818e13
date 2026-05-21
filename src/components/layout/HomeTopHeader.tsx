@@ -34,15 +34,14 @@ export function HomeTopHeader({ showTrustStrip = true, cartCount = 0 }: HomeTopH
       data-app-header
       className="fixed top-0 left-0 right-0 z-40 transition-all duration-300"
     >
-      <TrustStrip show={showTrustStrip && !isScrolled} />
-
       {/* Section 1 — Core: logo, search (center), actions */}
       <div
         className={cn(
           "hairline-bottom transition-all duration-300",
           "bg-background/55 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/55",
-          isScrolled ? "py-2" : "py-3"
+          isScrolled ? "py-1.5" : "py-2"
         )}
+
         style={{
           backgroundImage:
             "linear-gradient(180deg, hsl(var(--glass-highlight) / 0.04), transparent 60%)",
