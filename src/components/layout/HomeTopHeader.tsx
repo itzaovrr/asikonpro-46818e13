@@ -36,7 +36,7 @@ export function HomeTopHeader({ showTrustStrip = true, cartCount = 0 }: HomeTopH
     >
       <TrustStrip show={showTrustStrip && !isScrolled} />
 
-      {/* Main bar */}
+      {/* Section 1 — Core: logo, search (center), actions */}
       <div
         className={cn(
           "hairline-bottom transition-all duration-300",
@@ -48,8 +48,8 @@ export function HomeTopHeader({ showTrustStrip = true, cartCount = 0 }: HomeTopH
             "linear-gradient(180deg, hsl(var(--glass-highlight) / 0.04), transparent 60%)",
         }}
       >
-        <div className="container-editorial flex items-center gap-6">
-          {/* Logo */}
+        <div className="container-editorial grid grid-cols-[auto_1fr_auto] items-center gap-6">
+          {/* Logo (left) */}
           <Link to="/" className="group flex-shrink-0 flex items-center gap-2.5">
             <span
               className={cn(
@@ -79,14 +79,11 @@ export function HomeTopHeader({ showTrustStrip = true, cartCount = 0 }: HomeTopH
             </div>
           </Link>
 
-          {/* Mega menu */}
-          <MegaMenu className="flex-shrink-0" />
+          {/* Search (center) */}
+          <SmartSearch className="w-full max-w-2xl mx-auto" />
 
-          {/* Search */}
-          <SmartSearch className="flex-1 max-w-xl ml-auto" />
-
-          {/* Actions */}
-          <div className="flex items-center gap-1.5">
+          {/* Actions (right) */}
+          <div className="flex items-center gap-1.5 justify-self-end">
             <CurrencyToggle />
             <Link to="/cart">
               <Button
@@ -107,6 +104,20 @@ export function HomeTopHeader({ showTrustStrip = true, cartCount = 0 }: HomeTopH
             <ThemeToggle />
             <UserMenu />
           </div>
+        </div>
+      </div>
+
+      {/* Section 2 — Premium Mega Menu */}
+      <div
+        className={cn(
+          "hairline-bottom transition-all duration-300 overflow-hidden",
+          "bg-background/40 backdrop-blur-xl",
+          "[background-image:linear-gradient(180deg,hsl(var(--primary)/0.04),transparent_70%)]",
+          isScrolled ? "h-0 opacity-0 py-0" : "py-1.5 opacity-100"
+        )}
+      >
+        <div className="container-editorial flex items-center justify-center">
+          <MegaMenu />
         </div>
       </div>
     </header>
