@@ -61,10 +61,10 @@ const transformProduct = (p: any) => ({
 });
 
 const quickCategories = [
-  { icon: GraduationCap, label: "Courses", href: "/shop?type=courses", color: "from-primary/25 to-primary/5" },
-  { icon: BookOpen, label: "Books", href: "/shop?type=books", color: "from-primary/20 to-primary/5" },
-  { icon: Sparkles, label: "Prompts", href: "/prompts", color: "from-primary/25 to-primary/10" },
-  { icon: Flame, label: "Trending", href: "/shop?filter=trending", color: "from-primary/30 to-primary/10" },
+  { icon: GraduationCap, label: "Courses", href: "/shop?type=courses" },
+  { icon: BookOpen, label: "Books", href: "/shop?type=books" },
+  { icon: Sparkles, label: "Prompts", href: "/prompts" },
+  { icon: Flame, label: "Trending", href: "/shop?filter=trending" },
 ];
 
 const ProductCardSkeleton = () => (
