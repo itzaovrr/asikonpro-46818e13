@@ -267,11 +267,12 @@ const Index = () => {
         <title>Asikon — AI-Powered Learning Platform</title>
         <meta name="description" content="Master AI, Python, and modern skills with expert-led courses, a 24/7 AI tutor, and a community of learners." />
       </Helmet>
-      <MobilePage spacing="space-y-4 lg:space-y-14">
+      <MobilePage spacing="space-y-3 lg:space-y-14">
         {user ? (
           <>
             {/* Personal, fast — top of fold */}
             <GreetingStrip />
+            <QuickAccessGrid />
             {heroSection && (
               <section className="section-x">
                 <HeroCarousel slides={heroSlides} />
@@ -280,7 +281,6 @@ const Index = () => {
             <section className="section-x">
               <TodayMissionCard />
             </section>
-            <QuickAccessGrid />
             <ContinueLearningRow />
             <ProgressSnapshot />
             <AiAssistantBox />

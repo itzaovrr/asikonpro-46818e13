@@ -86,17 +86,32 @@ function Tile({ icon: Icon, label, href, tone }: Tile) {
   return (
     <Link
       to={href}
-      className="group focus-ring flex flex-col items-center gap-1.5 lg:gap-2 rounded-2xl py-2.5 lg:py-3 px-1.5 active:scale-[0.94] hover:-translate-y-0.5 transition-transform"
+      className="group focus-ring flex flex-col items-center gap-1.5 rounded-2xl py-1.5 px-1 active:scale-[0.94] hover:-translate-y-0.5 transition-transform"
     >
       <div
         className={cn(
-          "w-[52px] h-[52px] lg:w-[58px] lg:h-[58px] rounded-[18px] bg-gradient-to-br shadow-[0_6px_14px_-6px_hsl(var(--primary)/0.45)]",
-          "flex items-center justify-center ring-1 ring-primary/20",
-          "group-hover:shadow-[0_14px_28px_-8px_hsl(var(--primary)/0.65)] group-hover:ring-primary/40 transition-all duration-300",
-          tone,
+          "relative w-[48px] h-[48px] lg:w-[54px] lg:h-[54px] rounded-[16px] overflow-hidden",
+          "bg-white/[0.04] backdrop-blur-xl border border-white/10",
+          "flex items-center justify-center",
+          "shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(var(--glass-highlight)/0.18)]",
+          "group-hover:bg-white/[0.08] group-hover:shadow-[0_14px_30px_-10px_hsl(var(--primary)/0.7),inset_0_1px_0_hsl(var(--glass-highlight)/0.25)] transition-all duration-300",
         )}
       >
-        <Icon className="h-[22px] w-[22px] lg:h-6 lg:w-6 text-primary-foreground" strokeWidth={2.25} />
+        {/* radial brand tint */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-70"
+          style={{
+            background:
+              "radial-gradient(120% 80% at 30% 20%, hsl(var(--primary) / 0.28) 0%, transparent 60%)",
+          }}
+        />
+        {/* gloss */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-2 top-1 h-1/3 rounded-full bg-gradient-to-b from-white/25 to-transparent blur-[2px]"
+        />
+        <Icon className="relative h-[20px] w-[20px] lg:h-[22px] lg:w-[22px] text-primary drop-shadow-[0_1px_3px_hsl(var(--primary)/0.55)]" strokeWidth={2} />
       </div>
       <span className="text-[10.5px] lg:text-[11.5px] font-medium leading-tight text-center truncate w-full text-foreground/85 group-hover:text-foreground transition-colors">
         {label}
