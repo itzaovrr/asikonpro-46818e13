@@ -3,7 +3,6 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import {
   ArrowUp,
-  Loader2,
   Square,
   ArrowDown,
   BookOpen,
@@ -14,7 +13,6 @@ import {
   Mic,
   ChevronDown,
   ChevronUp,
-  Minus,
   PanelLeft,
   PenSquare,
 } from "lucide-react";
@@ -38,20 +36,50 @@ import {
 import { ThreadList } from "@/components/learn/ThreadList";
 import tutorAvatar from "@/assets/asikon-tutor-avatar.png";
 
+// Each quick prompt gets its own brand-tinted accent so the icon means something,
+// not just decoration: green = subject help, amber = practice, blue = concept,
+// primary = planning, rose = wellbeing.
 const QUICK_PROMPTS = [
-  { icon: BookOpen, label: "Explain SSC Math", prompt: "I'm weak at SSC math. Where should I start?" },
-  { icon: ListChecks, label: "Photosynthesis MCQ", prompt: "Make 5 MCQs on photosynthesis with answers and explanations." },
-  { icon: Brain, label: "Newton's 2nd law", prompt: "Explain Newton's second law in a simple way." },
-  { icon: SparklesIcon, label: "Study routine", prompt: "Build a realistic 7-day revision routine for HSC exams." },
-  { icon: Heart, label: "Motivate me", prompt: "I feel like I'm going to fail. Say something to motivate me." },
+  {
+    icon: BookOpen,
+    label: "Help me with SSC Math",
+    prompt: "I'm struggling with SSC math. Can you walk me through where to start?",
+    tint: "text-emerald-500 bg-emerald-500/10 group-hover:bg-emerald-500/15",
+  },
+  {
+    icon: ListChecks,
+    label: "Quiz me on photosynthesis",
+    prompt: "Give me 5 MCQs on photosynthesis with answers and short explanations.",
+    tint: "text-amber-500 bg-amber-500/10 group-hover:bg-amber-500/15",
+  },
+  {
+    icon: Brain,
+    label: "Explain Newton's 2nd law",
+    prompt: "Explain Newton's second law to me like I'm 12, with one real example.",
+    tint: "text-sky-500 bg-sky-500/10 group-hover:bg-sky-500/15",
+  },
+  {
+    icon: SparklesIcon,
+    label: "Plan my HSC revision",
+    prompt: "Build me a realistic 7-day HSC revision routine I can actually follow.",
+    tint: "text-primary bg-primary/10 group-hover:bg-primary/15",
+  },
+  {
+    icon: Heart,
+    label: "I need some motivation",
+    prompt: "I'm losing confidence before exams. Help me get back on track.",
+    tint: "text-rose-500 bg-rose-500/10 group-hover:bg-rose-500/15",
+  },
 ];
 
+// Chips append a real instruction to the next message — each one shapes how
+// Apu replies, so they're verbs/modes, not vague vibes.
 const ACTION_CHIPS = [
-  "Explain simply",
-  "Reply in Bangla",
-  "Make a quiz",
-  "Give an example",
-  "Summarize",
+  "Explain like I'm 12",
+  "In Bangla please",
+  "Quiz me on this",
+  "Give me an example",
+  "TL;DR",
 ];
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -76,7 +104,7 @@ export function LearnChat({ threadId }: Props) {
   const [showJump, setShowJump] = useState(false);
 
   const activeThread = threads.find((t) => t.id === threadId);
-  const threadTitle = activeThread?.title ?? "ASIKON Tutor";
+  const threadTitle = activeThread?.title ?? "Apu — your tutor";
 
   const transport = useMemo(
     () =>
@@ -109,10 +137,11 @@ export function LearnChat({ threadId }: Props) {
     messages: initial,
     transport,
     onError: (e) => {
-      const msg = (e as Error).message || "Something went wrong";
-      if (msg.includes("429")) toast.error("Too many requests — please try again in a moment.");
-      else if (msg.includes("402")) toast.error("AI credits exhausted. Add credits in workspace settings.");
-      else toast.error(msg);
+      const msg = (e as Error).message || "";
+      if (msg.includes("429")) toast.error("Slow down a sec — try again in a moment.");
+      else if (msg.includes("402"))
+        toast.error("Out of tutoring credits for today. Try again tomorrow or top up in settings.");
+      else toast.error("Something went off — let's try that again.");
     },
   });
 
@@ -178,14 +207,15 @@ export function LearnChat({ threadId }: Props) {
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   };
 
-  const comingSoon = () => toast("Coming soon");
+  const voiceComingSoon = () =>
+    toast("Voice questions are on the way — text works great for now.");
 
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-        <img src={tutorAvatar} alt="ASIKON AI Tutor" className="w-16 h-16 mb-4" />
-        <h2 className="text-xl font-semibold mb-2">ASIKON AI Tutor</h2>
-        <p className="text-muted-foreground mb-4">Sign in to chat with your AI tutor.</p>
+        <img src={tutorAvatar} alt="Apu, your ASIKON tutor" className="w-16 h-16 mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Hi, I'm Apu</h2>
+        <p className="text-muted-foreground mb-4">Sign in to start chatting with Apu.</p>
         <a href="/auth"><Button>Sign in</Button></a>
       </div>
     );
@@ -193,11 +223,21 @@ export function LearnChat({ threadId }: Props) {
 
   return (
     <div className="relative flex flex-col h-full min-h-0 bg-background">
-      {/* In-chat header */}
-      <div className="lg:hidden shrink-0 flex items-center gap-2 px-3 py-1.5 bg-background/85 backdrop-blur border-b border-border/60">
+      {/* Brand-tinted glass header */}
+      <div className="lg:hidden shrink-0 relative flex items-center gap-2 px-3 py-1.5 border-b border-border/60 backdrop-blur-xl bg-background/70">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.18]"
+          style={{ background: "var(--gradient-primary)" }}
+          aria-hidden
+        />
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative h-9 w-9 rounded-full"
+              aria-label="Your chats"
+            >
               <PanelLeft className="w-4 h-4" />
             </Button>
           </SheetTrigger>
@@ -211,7 +251,8 @@ export function LearnChat({ threadId }: Props) {
 
         <button
           onClick={() => setSheetOpen(true)}
-          className="flex-1 mx-auto max-w-[60%] flex items-center justify-center gap-1.5 h-9 px-4 rounded-full border border-border bg-secondary/40 hover:bg-secondary/60 transition-colors"
+          aria-label="Switch chat"
+          className="relative flex-1 mx-auto max-w-[60%] flex items-center justify-center gap-1.5 h-9 px-4 rounded-full border border-border/70 bg-card/60 hover:bg-card transition-colors"
         >
           <span className="text-sm font-medium truncate">{threadTitle}</span>
           <ChevronDown className="w-3.5 h-3.5 opacity-70 shrink-0" />
@@ -221,9 +262,9 @@ export function LearnChat({ threadId }: Props) {
           onClick={handleNewChat}
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full"
+          className="relative h-9 w-9 rounded-full"
           disabled={createThread.isPending}
-          aria-label="New chat"
+          aria-label="Start a new chat"
         >
           <PenSquare className="w-4 h-4" />
         </Button>
@@ -232,9 +273,7 @@ export function LearnChat({ threadId }: Props) {
       {/* Transcript */}
       <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         {loadingMsgs ? (
-          <div className="flex justify-center py-10">
-            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-          </div>
+          <TranscriptSkeleton />
         ) : messages.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <EmptyState onPick={handleSend} />
@@ -244,46 +283,46 @@ export function LearnChat({ threadId }: Props) {
             {messages.map((m) => (
               <MessageRow key={m.id} message={m} />
             ))}
-            {status === "submitted" && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
-                Thinking...
-              </div>
-            )}
+            {status === "submitted" && <TypingIndicator />}
             <div className="h-1" />
           </div>
         )}
       </div>
 
-
       {/* Jump to latest pill */}
       {showJump && messages.length > 0 && (
         <button
           onClick={jumpToBottom}
-          className="absolute left-1/2 -translate-x-1/2 bottom-32 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary/90 backdrop-blur border border-border shadow-md hover:bg-secondary"
+          aria-label="Jump to latest reply"
+          className="absolute left-1/2 -translate-x-1/2 bottom-32 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-card/90 backdrop-blur border border-border shadow-md hover:bg-card transition-colors animate-fade-in"
         >
           <ArrowDown className="w-3.5 h-3.5" /> Latest
         </button>
       )}
 
-      {/* Composer area — pinned flush against bottom nav */}
-      <div className="shrink-0 px-3 pt-1.5 pb-1.5 bg-background/95 backdrop-blur border-t border-border/60">
-        <div className="mx-auto w-full max-w-3xl">
+      {/* Composer — pinned flush against bottom nav */}
+      <div className="shrink-0 relative px-3 pt-1.5 pb-1.5 border-t border-border/60 backdrop-blur-xl bg-background/85">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.10]"
+          style={{ background: "var(--gradient-primary)" }}
+          aria-hidden
+        />
+        <div className="relative mx-auto w-full max-w-3xl">
           {composerCollapsed ? (
             <button
               onClick={() => {
                 setComposerCollapsed(false);
                 setTimeout(() => textareaRef.current?.focus(), 0);
               }}
-              className="w-full flex items-center justify-between gap-2 h-9 px-4 rounded-full border border-border bg-card/95 text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors text-sm"
+              className="w-full flex items-center justify-between gap-2 h-9 px-4 rounded-full border border-border bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-colors text-sm animate-fade-in"
               aria-label="Expand chat input"
             >
-              <span className="truncate">Tap to ask...</span>
+              <span className="truncate">Ask Apu a question</span>
               <ChevronUp className="w-4 h-4 shrink-0" />
             </button>
           ) : (
             <>
-              {/* Action chips */}
+              {/* Action chips — append a real instruction to the next message */}
               {messages.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1.5 -mx-1 px-1">
                   {ACTION_CHIPS.map((chip) => (
@@ -293,7 +332,7 @@ export function LearnChat({ threadId }: Props) {
                         setInput((v) => (v ? `${v} ${chip}` : chip));
                         textareaRef.current?.focus();
                       }}
-                      className="shrink-0 px-3 py-1 rounded-full border border-border bg-card/80 hover:bg-secondary text-[11px] font-medium whitespace-nowrap transition-colors"
+                      className="shrink-0 px-3 py-1 rounded-full border border-border bg-card/80 hover:bg-card hover:border-primary/40 text-[11px] font-medium whitespace-nowrap transition-colors"
                     >
                       {chip}
                     </button>
@@ -301,16 +340,16 @@ export function LearnChat({ threadId }: Props) {
                 </div>
               )}
 
-              {/* Composer card — slim pill */}
-              <div className="flex items-end gap-1 rounded-full border border-border bg-card shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.35)] focus-within:border-primary/50 transition-colors pl-1 pr-1 py-1">
+              {/* Slim pill composer */}
+              <div className="flex items-end gap-1 rounded-full border border-border bg-card shadow-[0_6px_24px_-12px_hsl(var(--primary)/0.45)] focus-within:border-primary/60 focus-within:shadow-[0_8px_28px_-10px_hsl(var(--primary)/0.6)] transition-all pl-1 pr-1 py-1">
                 <Button
                   onClick={() => setComposerCollapsed(true)}
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 rounded-full shrink-0 text-muted-foreground hover:text-foreground"
-                  aria-label="Minimize"
+                  aria-label="Collapse chat input"
                 >
-                  <Minus className="w-4 h-4" />
+                  <ChevronDown className="w-4 h-4" />
                 </Button>
                 <textarea
                   ref={textareaRef}
@@ -322,17 +361,18 @@ export function LearnChat({ threadId }: Props) {
                       handleSend(input);
                     }
                   }}
-                  placeholder="Ask your question..."
+                  placeholder="Ask Apu anything…"
                   rows={1}
                   className="flex-1 resize-none bg-transparent outline-none text-[14px] leading-5 placeholder:text-muted-foreground/70 py-1.5 max-h-[120px]"
                   autoFocus
                 />
                 <Button
-                  onClick={comingSoon}
+                  onClick={voiceComingSoon}
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-full shrink-0 text-muted-foreground hover:text-foreground"
-                  aria-label="Voice"
+                  className="h-8 w-8 rounded-full shrink-0 text-muted-foreground/60 hover:text-muted-foreground"
+                  aria-label="Voice input — coming soon"
+                  title="Voice input — coming soon"
                 >
                   <Mic className="w-4 h-4" />
                 </Button>
@@ -342,7 +382,8 @@ export function LearnChat({ threadId }: Props) {
                     size="icon"
                     variant="secondary"
                     className="h-8 w-8 rounded-full shrink-0"
-                    aria-label="Stop"
+                    aria-label="Stop reply"
+                    title="Stop reply"
                   >
                     <Square className="w-3.5 h-3.5 fill-current" />
                   </Button>
@@ -351,8 +392,9 @@ export function LearnChat({ threadId }: Props) {
                     onClick={() => handleSend(input)}
                     disabled={!input.trim()}
                     size="icon"
-                    className="h-8 w-8 rounded-full shrink-0 gradient-primary text-primary-foreground disabled:opacity-40"
-                    aria-label="Send"
+                    className="h-8 w-8 rounded-full shrink-0 gradient-primary text-primary-foreground disabled:opacity-40 transition-transform active:scale-95 hover:shadow-[0_0_18px_-2px_hsl(var(--primary)/0.6)]"
+                    aria-label="Send message"
+                    title="Send"
                   >
                     <ArrowUp className="w-4 h-4" />
                   </Button>
@@ -366,24 +408,67 @@ export function LearnChat({ threadId }: Props) {
   );
 }
 
+function TranscriptSkeleton() {
+  return (
+    <div className="mx-auto w-full max-w-3xl px-3 sm:px-6 py-4 space-y-5" aria-label="Loading conversation">
+      <div className="flex justify-end">
+        <div className="h-9 w-48 rounded-2xl rounded-br-md bg-primary/20 animate-pulse" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-3.5 w-[70%] rounded-md bg-muted animate-pulse" />
+        <div className="h-3.5 w-[85%] rounded-md bg-muted animate-pulse" />
+        <div className="h-3.5 w-[55%] rounded-md bg-muted animate-pulse" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-3.5 w-[60%] rounded-md bg-muted animate-pulse" />
+        <div className="h-3.5 w-[78%] rounded-md bg-muted animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div
+      className="flex items-center gap-2 text-sm text-muted-foreground animate-fade-in"
+      aria-live="polite"
+    >
+      <span className="inline-flex items-end gap-1 h-4">
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
+      </span>
+      Apu is thinking…
+    </div>
+  );
+}
+
 function EmptyState({ onPick }: { onPick: (s: string) => void }) {
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-6">
+    <div className="mx-auto w-full max-w-2xl px-4 py-6 animate-fade-in">
       <div className="flex flex-col items-center text-center mb-7">
-        <img
-          src={tutorAvatar}
-          alt="ASIKON AI Tutor"
-          className="w-20 h-20 mb-4 drop-shadow-[0_8px_24px_hsl(var(--primary)/0.35)]"
-          width={512}
-          height={512}
-        />
-        <h1 className="text-2xl font-bold mb-1.5 text-gradient">Your AI Tutor</h1>
+        <div className="relative mb-4">
+          <div
+            className="absolute inset-0 -m-6 rounded-full blur-2xl opacity-60 animate-pulse"
+            style={{ background: "var(--gradient-primary)" }}
+            aria-hidden
+          />
+          <img
+            src={tutorAvatar}
+            alt="Apu, your ASIKON tutor"
+            className="relative w-20 h-20 drop-shadow-[0_8px_24px_hsl(var(--primary)/0.45)]"
+            width={512}
+            height={512}
+          />
+        </div>
+        <h1 className="text-2xl font-bold mb-1.5 text-gradient">Hi, I'm Apu</h1>
         <p className="text-muted-foreground text-sm max-w-md leading-relaxed">
-          SSC, HSC, Math, Physics, English — ask anything. Answers in both English and Bangla.
+          Stuck on a chapter? Ask me anything — SSC, HSC, Math, Physics, English.
+          I'll explain in English or Bangla, whichever helps.
         </p>
       </div>
       <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground/70 mb-3 px-1">
-        Try one of these
+        Not sure where to start?
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {QUICK_PROMPTS.map((q) => {
@@ -392,9 +477,14 @@ function EmptyState({ onPick }: { onPick: (s: string) => void }) {
             <button
               key={q.label}
               onClick={() => onPick(q.prompt)}
-              className="group flex items-start gap-3 text-left p-3.5 rounded-2xl bg-card border border-border hover:border-primary/40 hover:bg-secondary/40 transition-colors pressable focus-ring"
+              className="group flex items-start gap-3 text-left p-3.5 rounded-2xl bg-card border border-border hover:border-primary/40 hover:bg-card/80 transition-all hover:-translate-y-0.5 pressable focus-ring"
             >
-              <span className="shrink-0 w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <span
+                className={cn(
+                  "shrink-0 w-8 h-8 rounded-xl flex items-center justify-center transition-colors",
+                  q.tint,
+                )}
+              >
                 <Icon className="w-4 h-4" />
               </span>
               <span className="text-sm font-medium leading-snug pt-1">{q.label}</span>
@@ -414,8 +504,8 @@ function MessageRow({ message }: { message: UIMessage }) {
 
   if (isUser) {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[85%] rounded-2xl rounded-br-md px-3.5 py-2 bg-primary text-primary-foreground whitespace-pre-wrap text-[15px] leading-relaxed">
+      <div className="flex justify-end animate-fade-in">
+        <div className="max-w-[85%] rounded-2xl rounded-br-md px-3.5 py-2 bg-primary text-primary-foreground whitespace-pre-wrap text-[15px] leading-relaxed shadow-[0_4px_16px_-8px_hsl(var(--primary)/0.5)]">
           {text}
         </div>
       </div>
@@ -424,7 +514,7 @@ function MessageRow({ message }: { message: UIMessage }) {
   return (
     <div
       className={cn(
-        "text-foreground text-[15px] leading-relaxed",
+        "animate-fade-in text-foreground text-[15px] leading-relaxed",
         "prose prose-sm dark:prose-invert max-w-none break-words",
         "prose-p:my-2 prose-headings:mt-3 prose-headings:mb-1.5 prose-li:my-0.5",
         "prose-pre:my-2 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:text-xs prose-pre:bg-secondary/60",
@@ -451,7 +541,7 @@ function MessageRow({ message }: { message: UIMessage }) {
           },
         }}
       >
-        {text || "..."}
+        {text || "…"}
       </ReactMarkdown>
     </div>
   );

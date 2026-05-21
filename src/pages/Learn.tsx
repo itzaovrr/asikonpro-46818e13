@@ -28,9 +28,9 @@ export default function Learn() {
     return (
       <AppLayout showBottomNav fillViewport>
         <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-          <img src={tutorAvatar} alt="ASIKON AI Tutor" className="w-20 h-20 mb-4" />
-          <h1 className="text-2xl font-bold mb-2 text-gradient">ASIKON AI Tutor</h1>
-          <p className="text-muted-foreground mb-4">Sign in to chat with your AI tutor.</p>
+          <img src={tutorAvatar} alt="Apu, your ASIKON tutor" className="w-20 h-20 mb-4" />
+          <h1 className="text-2xl font-bold mb-2 text-gradient">Hi, I'm Apu</h1>
+          <p className="text-muted-foreground mb-4">Sign in to start chatting with Apu.</p>
           <Button onClick={() => navigate("/auth")}>Sign in</Button>
         </div>
       </AppLayout>
