@@ -140,6 +140,20 @@ const Profile = () => {
     }
   };
 
+  // Media from posts (images + video) — must be declared before any early return to keep hook order stable
+  const mediaItems = useMemo(() => {
+    const items: { id: string; postId: string; type: "image" | "video"; thumbnail: string }[] = [];
+    (userPosts || []).forEach((p: any) => {
+      (p.images || []).forEach((img: string, idx: number) =>
+        items.push({ id: `${p.id}-${idx}`, postId: p.id, type: "image", thumbnail: img }),
+      );
+      if (p.video_url && (!p.images || p.images.length === 0)) {
+        items.push({ id: `${p.id}-v`, postId: p.id, type: "video", thumbnail: p.video_url });
+      }
+    });
+    return items;
+  }, [userPosts]);
+
   if (profileLoading) {
     return (
       <AppLayout showBottomNav>
@@ -178,19 +192,6 @@ const Profile = () => {
     productName: p.products?.name ?? null,
   }));
 
-  // Media from posts (images + video)
-  const mediaItems = useMemo(() => {
-    const items: { id: string; postId: string; type: "image" | "video"; thumbnail: string }[] = [];
-    (userPosts || []).forEach((p: any) => {
-      (p.images || []).forEach((img: string, idx: number) =>
-        items.push({ id: `${p.id}-${idx}`, postId: p.id, type: "image", thumbnail: img }),
-      );
-      if (p.video_url && (!p.images || p.images.length === 0)) {
-        items.push({ id: `${p.id}-v`, postId: p.id, type: "video", thumbnail: p.video_url });
-      }
-    });
-    return items;
-  }, [userPosts]);
 
   // Reviews from posts where type='review'
   const reviews = (reviewPosts || []).map((p: any) => ({
