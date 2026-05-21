@@ -212,6 +212,42 @@ export type Database = {
           },
         ]
       }
+      home_banners: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["home_banner_kind"]
+          link_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          is_active?: boolean
+          kind: Database["public"]["Enums"]["home_banner_kind"]
+          link_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["home_banner_kind"]
+          link_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       home_sections: {
         Row: {
           created_at: string
@@ -1300,6 +1336,7 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "moderator" | "admin" | "super_admin"
+      home_banner_kind: "hero" | "offer"
       pod_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -1429,6 +1466,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "moderator", "admin", "super_admin"],
+      home_banner_kind: ["hero", "offer"],
       pod_status: ["pending", "approved", "rejected"],
     },
   },
