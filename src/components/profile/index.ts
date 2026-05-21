@@ -15,3 +15,6 @@ export { ProfileEditModal } from "./ProfileEditModal";
 export { AvatarViewer } from "./AvatarViewer";
 export { FollowersSheet } from "./FollowersSheet";
 export { MediaLightbox } from "./MediaLightbox";
+export { ProfileSkeleton } from "./ProfileSkeleton";
+export { ProfileActivityFeed } from "./ProfileActivityFeed";
+export { ProfileCompletionBar } from "./ProfileCompletionBar";
