@@ -61,7 +61,7 @@ function NavItem({
   item,
   active,
 }: {
-  item: { icon: LucideIcon; label: string; path: string; badge?: number; dot?: boolean };
+  item: { icon: IconComponent; label: string; path: string; badge?: number; dot?: boolean };
   active: boolean;
 }) {
   const Icon = item.icon;
