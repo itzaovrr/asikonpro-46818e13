@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import asikonLogo from "@/assets/logo.png";
+import { SEO } from "@/components/SEO";
 
 // ---- Validation -----------------------------------------------------------
 const loginSchema = z.object({
@@ -338,6 +339,10 @@ const Auth = () => {
 
   return (
     <main className="relative min-h-screen w-full bg-background overflow-hidden">
+      <SEO
+        title="Sign in"
+        description="Sign in or create your Asikon account to access AI tutoring, courses, and the learner community."
+      />
       {/* Ambient brand glow */}
       <div
         aria-hidden

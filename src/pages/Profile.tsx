@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { MobilePage } from "@/components/layout/MobilePage";
+import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -274,6 +275,11 @@ const Profile = () => {
 
   return (
     <AppLayout showBottomNav>
+      <SEO
+        title={displayProfile?.full_name || displayProfile?.username || "Profile"}
+        description={`${displayProfile?.full_name || displayProfile?.username || "Asikon learner"} on Asikon — courses, posts, and learning progress.`}
+        noIndex={!isOwnProfile ? false : true}
+      />
       <MobilePage
         bleed={
           <ProfileHeader
