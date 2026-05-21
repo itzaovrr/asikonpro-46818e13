@@ -196,7 +196,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
       </button>
 
       {/* Progress segments */}
-      <div className="absolute bottom-3 left-4 right-4 sm:left-6 sm:right-auto sm:w-40 flex gap-1.5">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 w-24 sm:w-28 flex gap-1">
         {slides.map((_, index) => {
           const active = index === selectedIndex;
           return (
@@ -204,7 +204,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
               key={index}
               onClick={() => scrollTo(index)}
               aria-label={`Go to slide ${index + 1}`}
-              className="group/seg flex-1 h-1 rounded-full bg-background/40 backdrop-blur-sm overflow-hidden"
+              className="group/seg flex-1 h-[3px] rounded-full bg-foreground/15 backdrop-blur-sm overflow-hidden"
             >
               <span
                 key={`fill-${selectedIndex}-${index}`}
