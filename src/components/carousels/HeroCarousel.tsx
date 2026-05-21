@@ -147,7 +147,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
                         )}
                       </h2>
                       {slide.subtitle && (
-                        <p className="mt-2 text-sm sm:text-base text-foreground/80 line-clamp-2">
+                        <p className="mt-1.5 text-xs sm:text-sm text-foreground/80 line-clamp-2">
                           {slide.subtitle}
                         </p>
                       )}
