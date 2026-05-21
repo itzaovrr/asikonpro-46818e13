@@ -1,4 +1,4 @@
-import { Sparkles, Heart } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -6,13 +6,12 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { CategoryCarousel } from "@/components/carousels";
 import { ShopFilters } from "@/components/shop/ShopFilters";
 import { DesktopFilterRail } from "@/components/shop/DesktopFilterRail";
+import { ProductCard } from "@/components/shop/ProductCard";
+import { Reveal } from "@/components/transitions/Reveal";
 import { useProducts, SortOption } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Price } from "@/lib/currency";
-import { cn } from "@/lib/utils";
 
 const MAX_PRICE = 500;
 
@@ -226,10 +225,10 @@ const Shop = () => {
             {/* Products Grid */}
             <div>
               {productsLoading ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                <div className="grid-products">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                     <div key={i} className="space-y-3">
-                      <Skeleton className="aspect-square rounded-2xl" />
+                      <Skeleton className="aspect-[4/5] rounded-2xl" />
                       <Skeleton className="h-3 w-1/3" />
                       <Skeleton className="h-4 w-3/4" />
                       <Skeleton className="h-5 w-1/2" />
@@ -237,64 +236,44 @@ const Shop = () => {
                   ))}
                 </div>
               ) : filteredProducts && filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-                  {filteredProducts.map((product) => (
-                    <Link
+                <div className="grid-products">
+                  {filteredProducts.map((product, idx) => (
+                    <Reveal
                       key={product.id}
-                      to={`/product/${product.slug}`}
-                      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 card-hover"
+                      variant="fade-up"
+                      staggerIndex={Math.min(idx, 8)}
+                      className="h-full"
                     >
-                      <div className="relative aspect-square overflow-hidden bg-secondary/30">
-                        <img
-                          src={product.image_url || "/placeholder.svg"}
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      <Link
+                        to={`/product/${product.slug}`}
+                        className="block h-full focus-ring rounded-2xl"
+                      >
+                        <ProductCard
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            brand: "Asikon Academy",
+                            price: product.price,
+                            originalPrice: product.original_price || undefined,
+                            image: product.image_url || "/placeholder.svg",
+                            rating: product.rating || 0,
+                            reviews: product.review_count || 0,
+                            isNew: false,
+                            isTrending: product.is_featured || false,
+                            slug: product.slug,
+                          }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <button
-                          onClick={(e) => e.preventDefault()}
-                          className="absolute top-3 right-3 p-2.5 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80 transition-all"
-                        >
-                          <Heart className="h-4 w-4 text-foreground group-hover:text-primary transition-colors" />
-                        </button>
-                        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                          {product.is_featured && (
-                            <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full gradient-primary text-primary-foreground shadow-lg">
-                              🔥 Hot
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="p-3 sm:p-4">
-                        <p className="text-[10px] font-semibold text-primary/80 uppercase tracking-[0.14em] mb-1.5">
-                          ASIKON Academy
-                        </p>
-                        <h3 className="font-medium text-sm line-clamp-2 mb-3 min-h-[2.5rem] group-hover:text-primary transition-colors">
-                          {product.name}
-                        </h3>
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-baseline gap-1.5 min-w-0">
-                            <Price amount={product.price} className="font-bold text-base sm:text-lg tracking-tight" />
-                            {product.original_price && (
-                              <Price amount={product.original_price} strike className="text-[11px] text-muted-foreground" />
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/60 shrink-0">
-                            <span className="text-amber-400 text-xs">★</span>
-                            <span className="text-xs font-medium">{product.rating || 0}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
+                      </Link>
+                    </Reveal>
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="flex flex-col items-center justify-center py-16 text-center glass rounded-2xl">
                   <p className="text-muted-foreground mb-4">No products found</p>
                   {(searchQuery || activeFiltersCount > 0) && (
                     <button
                       onClick={handleClearFilters}
-                      className="text-primary hover:underline text-sm"
+                      className="text-primary hover:underline text-sm font-semibold"
                     >
                       Clear all filters
                     </button>
