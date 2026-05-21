@@ -256,7 +256,7 @@ export function useRedeemReward() {
   const { user } = useAuth();
   return useMutation({
     mutationFn: async ({ rewardKey, coins }: { rewardKey: string; coins: number }) => {
-      const { data, error } = await db.rpc("redeem_reward", {
+      const { data, error } = await supabase.rpc("redeem_reward", {
         _reward_key: rewardKey,
         _coins: coins,
       });
