@@ -178,9 +178,7 @@ function NavItem({
   };
   active: boolean;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const shouldFill = active || isHovered;
-  const Icon = shouldFill ? item.iconFill : item.iconOutline;
+  const Icon = active ? item.iconFill : item.iconOutline;
   const { pathname } = useLocation();
 
   const handleClick = (e: React.MouseEvent) => {
@@ -199,10 +197,6 @@ function NavItem({
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
       onClick={handleClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={() => setIsHovered(true)}
-      onTouchEnd={() => setIsHovered(false)}
       className="relative flex h-full w-full flex-col items-center justify-center gap-0.5 select-none touch-manipulation outline-none"
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
@@ -210,10 +204,8 @@ function NavItem({
         <Icon
           aria-hidden
           className={cn(
-            "pointer-events-none h-[24px] w-[24px] transition-all duration-300 ease-out",
-            shouldFill
-              ? "text-primary -translate-y-0.5 drop-shadow-[0_2px_6px_hsl(var(--primary)/0.55)]"
-              : "text-muted-foreground"
+            "pointer-events-none h-[24px] w-[24px]",
+            active ? "text-primary" : "text-muted-foreground"
           )}
         />
 
@@ -236,8 +228,8 @@ function NavItem({
 
       <span
         className={cn(
-          "pointer-events-none relative z-10 text-[10px] leading-none transition-all duration-300",
-          shouldFill ? "font-semibold text-primary translate-y-0" : "font-medium text-muted-foreground translate-y-1"
+          "pointer-events-none relative z-10 text-[10px] leading-none",
+          active ? "font-semibold text-primary" : "font-medium text-muted-foreground"
         )}
       >
         {item.label}
