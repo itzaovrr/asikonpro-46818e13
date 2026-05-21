@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Bell, Lock, Moon, LogOut, ChevronRight, Camera, Shield, Eye } from "lucide-react";
+import { User, Bell, Lock, Moon, LogOut, ChevronRight, Camera, Shield, Eye, Palette, Coins } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { CurrencyToggle } from "@/components/ui/currency-toggle";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { MissionVision } from "@/components/about/MissionVision";
 import { Button } from "@/components/ui/button";
@@ -223,15 +225,39 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Appearance & Preferences */}
+        <div className="glass rounded-2xl p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <Palette className="h-5 w-5 text-primary" />
+            <h2 className="font-semibold">Appearance & Preferences</h2>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-start gap-2 min-w-0">
+              <Moon className="h-4 w-4 text-muted-foreground mt-0.5" />
+              <div className="min-w-0">
+                <p className="font-medium text-sm">Theme</p>
+                <p className="text-xs text-muted-foreground">Switch between light and dark</p>
+              </div>
+            </div>
+            <ThemeToggle />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-start gap-2 min-w-0">
+              <Coins className="h-4 w-4 text-muted-foreground mt-0.5" />
+              <div className="min-w-0">
+                <p className="font-medium text-sm">Currency</p>
+                <p className="text-xs text-muted-foreground">Display prices in your preferred currency</p>
+              </div>
+            </div>
+            <CurrencyToggle />
+          </div>
+        </div>
+
         {/* Other Settings */}
         <div className="glass rounded-2xl overflow-hidden">
           <button onClick={() => navigate("/auth?mode=reset")} className="w-full flex items-center justify-between p-4 hover:bg-secondary/50">
             <div className="flex items-center gap-3"><Lock className="h-5 w-5 text-muted-foreground" /><span>Change Password</span></div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </button>
-          <Separator />
-          <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50">
-            <div className="flex items-center gap-3"><Moon className="h-5 w-5 text-muted-foreground" /><span>Appearance</span></div>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
