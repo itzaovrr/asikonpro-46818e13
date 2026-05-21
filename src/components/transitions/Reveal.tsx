@@ -55,9 +55,13 @@ export function Reveal({
       setShown(true);
       return;
     }
+    // Safety fallback: if IO never fires within 800ms (e.g. far below viewport
+    // during full-page renders), reveal anyway so layout is never left blank.
+    const fallback = window.setTimeout(() => setShown(true), 800);
     callbacks.set(el, (visible) => {
       if (visible) {
         setShown(true);
+        window.clearTimeout(fallback);
         if (once) {
           io.unobserve(el);
           callbacks.delete(el);
@@ -68,6 +72,7 @@ export function Reveal({
     });
     io.observe(el);
     return () => {
+      window.clearTimeout(fallback);
       io.unobserve(el);
       callbacks.delete(el);
     };
