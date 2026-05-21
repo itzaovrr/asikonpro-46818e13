@@ -159,6 +159,8 @@ export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEd
       username: formData.username,
       full_name: formData.full_name,
       bio: formData.bio,
+      location: formData.location,
+      website: formData.website,
     });
     if (!parsed.success) {
       const first = parsed.error.errors[0];
@@ -172,7 +174,11 @@ export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEd
 
     setLoading(true);
     try {
-      await onSave(formData);
+      await onSave({
+        ...formData,
+        website: formData.website?.trim() ? formData.website.trim() : null,
+        location: formData.location?.trim() ? formData.location.trim() : null,
+      });
       toast({
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
@@ -230,6 +236,38 @@ export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEd
               onChange={handleCoverChange}
               className="hidden"
             />
+          </div>
+
+          {/* Cover gradient picker (used when no cover image is set) */}
+          <div className="space-y-2">
+            <Label>Cover Gradient</Label>
+            <p className="text-xs text-muted-foreground">Used when you don't upload a cover photo.</p>
+            <div className="grid grid-cols-3 gap-2">
+              {(Object.entries(COVER_GRADIENTS) as [CoverGradientKey, { label: string; css: string }][]).map(
+                ([key, g]) => {
+                  const selected = formData.cover_gradient === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setFormData((p) => ({ ...p, cover_gradient: key }))}
+                      className={cn(
+                        "relative h-12 rounded-lg overflow-hidden border-2 transition-all",
+                        selected ? "border-primary scale-[1.02]" : "border-transparent hover:border-border",
+                      )}
+                      style={{ background: g.css }}
+                      aria-label={`Cover gradient ${g.label}`}
+                    >
+                      {selected && (
+                        <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                          <Check className="h-3 w-3" />
+                        </span>
+                      )}
+                    </button>
+                  );
+                },
+              )}
+            </div>
           </div>
 
           {/* Avatar */}
@@ -326,8 +364,29 @@ export function ProfileEditModal({ isOpen, onClose, profile, onSave }: ProfileEd
                 "Save Changes"
               )}
             </Button>
+          {/* Location */}
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              value={formData.location}
+              onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
+              placeholder="City, Country"
+              maxLength={80}
+            />
           </div>
-        </form>
+
+          {/* Website */}
+          <div className="space-y-2">
+            <Label htmlFor="website">Website</Label>
+            <Input
+              id="website"
+              type="url"
+              value={formData.website}
+              onChange={(e) => setFormData((prev) => ({ ...prev, website: e.target.value }))}
+              placeholder="https://your-site.com"
+            />
+          </div>
       </DialogContent>
     </Dialog>
   );
