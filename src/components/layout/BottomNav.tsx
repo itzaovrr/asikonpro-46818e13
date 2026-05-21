@@ -139,7 +139,7 @@ export function BottomNav() {
   const tabs: (Tab & { badge?: number; dot?: boolean })[] = [
     { id: "home", iconOutline: HomeOutline, iconFill: HomeFill, label: "Home", path: "/" },
     { id: "explore", iconOutline: ShopOutline, iconFill: ShopFill, label: "Shop", path: "/shop", badge: cartCount },
-    { id: "ai", iconOutline: Sparkles, iconFill: Sparkles, label: "AI", path: "/learn" },
+    { id: "ai", iconOutline: AsikonIcon, iconFill: AsikonIcon, label: "AI", path: "/learn" },
     { id: "community", iconOutline: CommunityOutline, iconFill: CommunityFill, label: "Community", path: "/community", dot: false },
     { id: "profile", iconOutline: ProfileOutline, iconFill: ProfileFill, label: "Profile", path: "/profile" },
   ];
