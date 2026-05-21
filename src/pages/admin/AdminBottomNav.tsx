@@ -62,7 +62,7 @@ export function AdminBottomNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       aria-label="Admin navigation"
     >
-      <div className="relative mx-auto flex h-16 max-w-lg items-stretch">
+      <div className="relative flex h-16 w-full items-stretch">
         {activeIndex >= 0 && (
           <span
             aria-hidden
