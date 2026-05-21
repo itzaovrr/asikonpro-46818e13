@@ -1,7 +1,9 @@
 import { useState, ReactNode, createContext, useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileHeader } from "./MobileHeader";
-import { DesktopHeader } from "./DesktopHeader";
+import { HomeTopHeader } from "./HomeTopHeader";
+import { SlimDesktopHeader } from "./SlimDesktopHeader";
 import { DesktopSidebar } from "./DesktopSidebar";
 import { Sidebar } from "./Sidebar";
 
