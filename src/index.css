@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap");
+/* Fonts loaded async in index.html with preconnect + font-display:swap */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -234,41 +234,65 @@
     background: linear-gradient(180deg, hsl(225, 15%, 8%) 0%, hsl(225, 18%, 4%) 100%);
   }
 
-  /* === Refined liquid glass v2 ===
-     A subtle inset highlight + soft shadow gives a tactile, layered feel
-     while keeping content fully readable on top. */
+  /* === Refined liquid glass v3 ===
+     Layered sheen + saturation lift + crisp top highlight = Apple-like liquid glass. */
   .glass {
     position: relative;
     background:
-      var(--gradient-sheen),
+      linear-gradient(180deg, hsl(var(--glass-highlight) / 0.08) 0%, transparent 40%),
       hsl(var(--glass-bg) / 0.55);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border: 1px solid hsl(var(--glass-border) / 0.55);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid hsl(var(--glass-border) / 0.5);
     box-shadow:
       var(--shadow-md),
-      inset 0 1px 0 hsl(var(--glass-highlight) / 0.06);
+      inset 0 1px 0 hsl(var(--glass-highlight) / 0.08),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.04);
   }
 
   .glass-strong {
     position: relative;
     background:
-      var(--gradient-sheen),
-      hsl(var(--glass-bg) / 0.82);
-    backdrop-filter: blur(28px) saturate(150%);
-    -webkit-backdrop-filter: blur(28px) saturate(150%);
-    border: 1px solid hsl(var(--glass-border) / 0.7);
+      linear-gradient(180deg, hsl(var(--glass-highlight) / 0.10) 0%, transparent 45%),
+      hsl(var(--glass-bg) / 0.78);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid hsl(var(--glass-border) / 0.65);
     box-shadow:
       var(--shadow-lg),
-      inset 0 1px 0 hsl(var(--glass-highlight) / 0.08);
+      inset 0 1px 0 hsl(var(--glass-highlight) / 0.12),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.05);
   }
 
   .glass-subtle {
     background: hsl(var(--glass-bg) / 0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
     border: 1px solid hsl(var(--glass-border) / 0.4);
   }
+
+  /* Nav-specific liquid glass — used on top header & bottom tab bar.
+     Adds a refraction hairline on the inner edge for depth. */
+  .liquid-nav {
+    position: relative;
+    background:
+      linear-gradient(180deg, hsl(var(--glass-highlight) / 0.12) 0%, transparent 50%),
+      hsl(var(--glass-bg) / 0.72);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    box-shadow:
+      0 8px 32px -12px hsl(0 0% 0% / 0.28),
+      inset 0 1px 0 hsl(var(--glass-highlight) / 0.14);
+  }
+  .liquid-nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px hsl(var(--glass-border) / 0.45);
+  }
+
 
   .glow-primary {
     box-shadow: var(--shadow-glow);
