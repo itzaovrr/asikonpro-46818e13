@@ -51,6 +51,9 @@ const AdminHomeSectionsMod = () => import("./pages/admin/AdminHomeSections");
 const AdminBannersMod = () => import("./pages/admin/AdminBanners");
 const AdminTracksMod = () => import("./pages/admin/AdminTracks");
 const AdminLessonsMod = () => import("./pages/admin/AdminLessons");
+const AdminAnalyticsMod = () => import("./pages/admin/AdminAnalytics");
+const AdminNotificationsMod = () => import("./pages/admin/AdminNotifications");
+const AdminRewardsMod = () => import("./pages/admin/AdminRewards");
 
 const TrackDetailMod = () => import("./pages/TrackDetail");
 const LessonDetailMod = () => import("./pages/LessonDetail");
@@ -88,6 +91,9 @@ const AdminHomeSections = lazy(AdminHomeSectionsMod);
 const AdminBanners = lazy(AdminBannersMod);
 const AdminTracks = lazy(AdminTracksMod);
 const AdminLessons = lazy(AdminLessonsMod);
+const AdminAnalytics = lazy(AdminAnalyticsMod);
+const AdminNotifications = lazy(AdminNotificationsMod);
+const AdminRewards = lazy(AdminRewardsMod);
 const TrackDetail = lazy(TrackDetailMod);
 const LessonDetail = lazy(LessonDetailMod);
 
@@ -182,6 +188,9 @@ function AnimatedRoutes() {
             <Route path="banners" element={<AdminBanners />} />
             <Route path="tracks" element={<AdminTracks />} />
             <Route path="lessons" element={<AdminLessons />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="rewards" element={<AdminRewards />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
