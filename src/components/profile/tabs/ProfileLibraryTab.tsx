@@ -7,6 +7,8 @@ interface TrackGroup {
   lessons: Array<{ id: string; title: string; completed_at: string }>;
 }
 
+import { Button } from "@/components/ui/button";
+
 export function ProfileLibraryTab({ items }: { items: TrackGroup[] }) {
   const navigate = useNavigate();
   if (items.length === 0) {
@@ -15,6 +17,7 @@ export function ProfileLibraryTab({ items }: { items: TrackGroup[] }) {
         icon={<Library className="h-8 w-8" />}
         title="Library is empty"
         hint="Lessons you complete are organized here by track."
+        action={<Button onClick={() => navigate("/shop?type=courses")}>Browse courses</Button>}
       />
     );
   }
