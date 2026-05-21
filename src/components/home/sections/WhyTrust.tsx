@@ -17,10 +17,12 @@ export function WhyTrust({ title = "Why learners trust us" }: { title?: string }
         {POINTS.map((p) => {
           const Icon = p.icon;
           return (
-            <div key={p.title} className="rounded-2xl border border-border/60 bg-card p-3 hover-lift">
-              <Icon className="h-4 w-4 text-primary mb-1.5" />
+            <div key={p.title} className="rounded-2xl border border-border/50 glass p-3 hover-lift transition-colors hover:border-primary/30">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
+                <Icon className="h-4 w-4 text-primary" />
+              </div>
               <p className="font-semibold text-[13px] leading-tight">{p.title}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{p.text}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{p.text}</p>
             </div>
           );
         })}
