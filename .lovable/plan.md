@@ -1,45 +1,39 @@
-## Goal
+## Improve BottomNav icons and badges
 
-The two-section home desktop header is already in place (Section 1 = logo · centered search · actions; Section 2 = mega menu band). The mega menu in Section 2 currently looks like a plain nav row. Make it feel **premium** while keeping all functionality.
+**Scope:** `src/components/layout/BottomNav.tsx` only (mobile bottom navigation bar).
 
-## Scope
+### Issues observed
+1. No notification/badge system exists on bottom nav today — but selected element is the Home icon SVG, and the user references "notification dot" and "badge". Likely meaning: add proper unread/cart count indicators to relevant tabs (e.g. Community unread, Explore cart) and polish the active-state dot.
+2. Current icons (`House`, `Compass`, `Wand2`, `Users`, `CircleUser`) feel generic. Swap to a more modern, consistent set.
+3. Active indicator pill is heavy; a subtle top-dot indicator reads cleaner on mobile.
 
-Only `HomeTopHeader.tsx` (Section 2 band) and `MegaMenu.tsx` (triggers + dropdown panels). No routing, no data, no sidebar/mobile changes.
+### Changes
 
-## Changes
+**Icon swap (modern, filled-on-active feel via stroke weight):**
+- Home → `HousePlus` or keep `House` but pair with rounded variant — use **`House`** (already modern in lucide latest)
+- Explore (shop) → `Compass` → **`Store`** (clearer "shop" semantic) or **`ShoppingBag`**
+- AI (learn) → `Wand2` → **`Sparkles`** (current modern AI convention)
+- Community → `Users` → **`UsersRound`** (rounded modern variant)
+- Profile → `CircleUser` → **`UserRound`** (cleaner, matches set)
 
-**Section 2 band (`HomeTopHeader.tsx`)**
-- Keep the centered layout, but make the band feel like its own surface:
-  - Soft gradient wash (`--gradient-primary-soft`) + bottom hairline.
-  - Slight inner shadow / top sheen for the "liquid glass" look used elsewhere.
-  - Gracefully collapses (height + opacity) when scrolled, exactly as today.
+All icons rendered at 24px with `strokeWidth` 2 default / 2.25 active for crisp consistency.
 
-**Mega menu triggers (`MegaMenu.tsx`)**
-- Larger hit area, pill-shaped triggers with:
-  - Animated underline / glow on hover and when their panel is open.
-  - Small leading icon per top-level item (Learn → GraduationCap, Shop → BookOpen, Community → Users, Mentorship → Heart, About → Compass).
-  - Active state when current route belongs to that panel.
-- Add a thin animated indicator bar that slides under the active trigger.
+**Badge system:**
+- Add optional `badge?: number` per tab. Render a small pill top-right of the icon:
+  - Count badge: `min-w-[18px] h-[18px]` rounded-full, `bg-primary text-primary-foreground`, `text-[10px] font-bold`, shows `9+` when >9.
+  - Dot-only (unread, no count): `h-2 w-2` rounded-full, `bg-primary` with soft glow ring, positioned `-top-0.5 -right-0.5` on the icon wrapper.
+- Wire cart count to Explore tab via `useCart` and a notifications/unread dot on Community (placeholder hook, count=0 hidden).
 
-**Mega menu panels (`MegaMenu.tsx` → `PanelGrid`)**
-- Wider panel (`w-[760px]`), 3 columns: `[1fr_1fr_260px]`:
-  1. Primary links (with icon tile + label + description, hover lift).
-  2. Secondary "Popular" / "Quick links" list (text-only, compact).
-  3. Feature card with gradient background, eyebrow, title, CTA arrow — keep current design but add an image/illustration slot using existing assets (course-ai-ml.jpg, prompt-library.jpg, course-python.jpg) per panel.
-- Panel surface: `bg-card/90 backdrop-blur-2xl`, `ring-1 ring-border/60`, `shadow-2xl`, rounded `rounded-2xl`, subtle aurora glow behind.
-- Smooth open/close motion (Radix already animates; tune duration + easing via classes).
-- Add a footer strip inside each panel: "View all {category} →" link.
+**Active indicator polish:**
+- Replace large background pill with: (a) icon color shift to `text-primary`, (b) label weight bump, (c) a 4px primary dot centered **above** the icon (top: 6px) with smooth scale-in. Drops visual weight, makes badges readable.
 
-**Accessibility & behavior**
-- Keep keyboard navigation from Radix `NavigationMenu` intact.
-- Close on route change (already wired).
-- Respect `prefers-reduced-motion` (no underline slide / aurora animation).
+**Accessibility:**
+- Badges wrapped in `aria-label="{n} unread"` for screen readers.
+- Hit area unchanged.
 
-## Out of scope
-- Mobile header, sidebar, slim header on inner pages.
-- Adding new routes or content sources.
-- Search/cart/user actions in Section 1 (already final).
+### Files
+- `src/components/layout/BottomNav.tsx` — icon swap, badge prop + render, active indicator restyle.
+- Optional: import `useCart` for live cart count on Explore tab.
 
-## Files touched
-- `src/components/layout/HomeTopHeader.tsx` — restyle Section 2 wrapper only.
-- `src/components/layout/MegaMenu.tsx` — triggers + panel layout/visuals.
+### Out of scope
+Desktop sidebar, headers, mega menu, route changes.
