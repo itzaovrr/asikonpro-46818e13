@@ -128,6 +128,10 @@ const Shop = () => {
 
   return (
     <AppLayout>
+      <Helmet>
+        <title>Shop — Courses, Books & Kits | Asikon</title>
+        <meta name="description" content="Browse curated courses, books, study kits, and prompt libraries — every item vetted by ASIKON mentors." />
+      </Helmet>
       <div className="container-editorial pb-8 lg:pb-16">
         {/* Editorial header band — minimal on mobile, full on desktop */}
         <div className="hidden lg:block pt-10 pb-8">
