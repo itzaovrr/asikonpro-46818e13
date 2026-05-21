@@ -1,4 +1,4 @@
-import { House, Compass, Trophy, Wand2, CircleUser } from "lucide-react";
+import { House, Compass, Trophy, Users, CircleUser } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { getActiveTab, TabId } from "@/lib/nav-map";
@@ -6,8 +6,8 @@ import { getActiveTab, TabId } from "@/lib/nav-map";
 const tabs: { id: Exclude<TabId, null>; icon: typeof House; label: string; path: string }[] = [
   { id: "home", icon: House, label: "Home", path: "/" },
   { id: "explore", icon: Compass, label: "Explore", path: "/shop" },
-  { id: "earn", icon: Trophy, label: "Earn", path: "/game" },
-  { id: "ai", icon: Wand2, label: "AI", path: "/learn" },
+  { id: "game", icon: Trophy, label: "Game", path: "/game" },
+  { id: "community", icon: Users, label: "Community", path: "/community" },
   { id: "profile", icon: CircleUser, label: "Profile", path: "/profile" },
 ];
 
