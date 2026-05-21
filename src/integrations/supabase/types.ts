@@ -860,7 +860,6 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean
-          is_pod: boolean
           name: string
           original_price: number | null
           price: number
@@ -877,7 +876,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean
-          is_pod?: boolean
           name: string
           original_price?: number | null
           price?: number
@@ -894,7 +892,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean
-          is_pod?: boolean
           name?: string
           original_price?: number | null
           price?: number
