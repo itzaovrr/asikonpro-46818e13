@@ -24,11 +24,13 @@ export function BottomNav() {
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
-      <div className="grid grid-cols-5 h-[60px]">
+      <ul className="flex h-[60px] items-stretch">
         {tabs.map((item) => (
-          <NavItem key={item.path} item={item} active={activeTab === item.id} />
+          <li key={item.path} className="flex-1 min-w-0">
+            <NavItem item={item} active={activeTab === item.id} />
+          </li>
         ))}
-      </div>
+      </ul>
     </nav>
   );
 }
@@ -44,6 +46,7 @@ function NavItem({
   const { pathname } = useLocation();
 
   const handleClick = (e: React.MouseEvent) => {
+    // Only intercept when we're already on the exact same path (scroll-to-top affordance)
     if (active && pathname === item.path) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -56,29 +59,30 @@ function NavItem({
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
       onClick={handleClick}
-      className="relative flex flex-col items-center justify-center gap-0.5 select-none touch-manipulation outline-none group"
+      className="relative flex h-full w-full flex-col items-center justify-center gap-0.5 select-none touch-manipulation outline-none group"
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
-      {/* Active pill background */}
+      {/* Decorative active pill — never intercept taps */}
       <span
         aria-hidden
         className={cn(
-          "absolute inset-x-3 top-1.5 bottom-1.5 rounded-2xl transition-all duration-300",
+          "pointer-events-none absolute inset-x-2.5 top-1.5 bottom-1.5 rounded-2xl transition-all duration-300 ease-out",
           active
-            ? "bg-primary/12 scale-100 opacity-100 shadow-[inset_0_1px_0_hsl(var(--glass-highlight)/0.18)]"
-            : "scale-90 opacity-0 group-active:opacity-50 group-active:scale-95"
+            ? "bg-primary/12 opacity-100 scale-100 shadow-[inset_0_1px_0_hsl(var(--glass-highlight)/0.2)]"
+            : "opacity-0 scale-90 group-active:opacity-60 group-active:scale-95 group-active:bg-foreground/5"
         )}
       />
       <Icon
+        aria-hidden
         className={cn(
-          "relative h-[22px] w-[22px] transition-all duration-300 ease-out",
-          active ? "text-primary scale-110 -translate-y-px" : "text-muted-foreground"
+          "pointer-events-none relative h-[22px] w-[22px] transition-all duration-300 ease-out",
+          active ? "text-primary -translate-y-px scale-110" : "text-muted-foreground"
         )}
         strokeWidth={active ? 2.4 : 1.9}
       />
       <span
         className={cn(
-          "relative text-[10px] leading-none tracking-tight transition-colors duration-200",
+          "pointer-events-none relative text-[10px] leading-none tracking-tight transition-colors duration-200",
           active ? "font-semibold text-primary" : "font-medium text-muted-foreground"
         )}
       >
