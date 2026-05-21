@@ -36,6 +36,7 @@ const NotFoundMod = () => import("./pages/NotFound");
 const ResetPasswordMod = () => import("./pages/ResetPassword");
 const AboutMod = () => import("./pages/About");
 const PromptsMod = () => import("./pages/Prompts");
+const WelcomeMod = () => import("./pages/Welcome");
 const AdminLayoutMod = () => import("./pages/admin/AdminLayout");
 const AdminOverviewMod = () => import("./pages/admin/AdminOverview");
 const AdminUsersMod = () => import("./pages/admin/AdminUsers");
@@ -71,6 +72,7 @@ const Learn = lazy(LearnMod);
 const NotFound = lazy(NotFoundMod);
 const About = lazy(AboutMod);
 const Prompts = lazy(PromptsMod);
+const Welcome = lazy(WelcomeMod);
 const AdminLayout = lazy(AdminLayoutMod);
 const AdminOverview = lazy(AdminOverviewMod);
 const AdminUsers = lazy(AdminUsersMod);
@@ -157,6 +159,7 @@ function AnimatedRoutes() {
           <Route path="/learn/:threadId" element={<Learn />} />
           <Route path="/about" element={<About />} />
           <Route path="/prompts" element={<Prompts />} />
+          <Route path="/welcome" element={<Welcome />} />
           
           <Route path="/track/:slug" element={<TrackDetail />} />
           <Route path="/lesson/:id" element={<LessonDetail />} />
