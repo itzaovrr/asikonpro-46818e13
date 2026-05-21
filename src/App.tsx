@@ -47,6 +47,7 @@ const AdminCommunityMod = () => import("./pages/admin/AdminCommunity");
 const AdminMentorsMod = () => import("./pages/admin/AdminMentors");
 const AdminSettingsMod = () => import("./pages/admin/AdminSettings");
 const AdminHomeSectionsMod = () => import("./pages/admin/AdminHomeSections");
+const AdminBannersMod = () => import("./pages/admin/AdminBanners");
 const AdminTracksMod = () => import("./pages/admin/AdminTracks");
 const AdminLessonsMod = () => import("./pages/admin/AdminLessons");
 
@@ -83,6 +84,7 @@ const AdminCommunity = lazy(AdminCommunityMod);
 const AdminMentors = lazy(AdminMentorsMod);
 const AdminSettings = lazy(AdminSettingsMod);
 const AdminHomeSections = lazy(AdminHomeSectionsMod);
+const AdminBanners = lazy(AdminBannersMod);
 const AdminTracks = lazy(AdminTracksMod);
 const AdminLessons = lazy(AdminLessonsMod);
 const TrackDetail = lazy(TrackDetailMod);
@@ -173,6 +175,7 @@ function AnimatedRoutes() {
             <Route path="mentors" element={<AdminMentors />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="home-sections" element={<AdminHomeSections />} />
+            <Route path="banners" element={<AdminBanners />} />
             <Route path="tracks" element={<AdminTracks />} />
             <Route path="lessons" element={<AdminLessons />} />
           </Route>

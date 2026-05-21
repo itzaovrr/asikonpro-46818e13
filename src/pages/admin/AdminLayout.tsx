@@ -14,6 +14,7 @@ import {
   LogOut,
   Search,
   LayoutGrid,
+  Image as ImageIcon,
   GraduationCap,
   BookOpen,
 } from "lucide-react";
@@ -46,6 +47,7 @@ export const adminNavItems = [
   { title: "Community", url: "/asikonasik/community", icon: MessagesSquare },
   { title: "Mentors", url: "/asikonasik/mentors", icon: GraduationCap },
   { title: "Home Sections", url: "/asikonasik/home-sections", icon: LayoutGrid },
+  { title: "Banners", url: "/asikonasik/banners", icon: ImageIcon },
   { title: "Tracks", url: "/asikonasik/tracks", icon: GraduationCap },
   { title: "Lessons", url: "/asikonasik/lessons", icon: BookOpen },
   { title: "Settings", url: "/asikonasik/settings", icon: SettingsIcon },
