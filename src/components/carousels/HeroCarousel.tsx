@@ -104,7 +104,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
                 aria-label={`${index + 1} of ${slides.length}: ${slide.title}`}
                 className="flex-[0_0_100%] min-w-0 relative"
               >
-                <div className="relative aspect-[5/4] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden">
+                <div className="relative aspect-[16/10] sm:aspect-[21/9] md:aspect-[24/8] overflow-hidden">
                   <img
                     src={slide.image}
                     alt={slide.title}
