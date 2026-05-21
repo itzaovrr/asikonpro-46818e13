@@ -1,7 +1,7 @@
 // Single source of truth mapping pathname → active mobile tab.
 // Used by BottomNav (active chip) and MobileHeader (title + back chevron).
 
-export type TabId = "home" | "explore" | "earn" | "ai" | "profile" | null;
+export type TabId = "home" | "explore" | "game" | "community" | "profile" | null;
 
 export interface TabDef {
   id: Exclude<TabId, null>;
@@ -13,9 +13,9 @@ export interface TabDef {
 export const TABS: TabDef[] = [
   { id: "home", label: "Home", path: "/", matches: [] },
   { id: "explore", label: "Explore", path: "/shop", matches: ["/shop", "/product", "/cart", "/checkout", "/orders", "/wishlist"] },
-  { id: "earn", label: "Earn", path: "/game", matches: ["/game"] },
-  { id: "ai", label: "AI", path: "/learn", matches: ["/learn", "/track", "/lesson", "/prompts"] },
-  { id: "profile", label: "Profile", path: "/profile", matches: ["/profile", "/settings", "/about", "/community", "/mentors"] },
+  { id: "game", label: "Game", path: "/game", matches: ["/game", "/learn", "/track", "/lesson", "/prompts"] },
+  { id: "community", label: "Community", path: "/community", matches: ["/community"] },
+  { id: "profile", label: "Profile", path: "/profile", matches: ["/profile", "/settings", "/about", "/mentors"] },
 ];
 
 export function getActiveTab(pathname: string): TabId {

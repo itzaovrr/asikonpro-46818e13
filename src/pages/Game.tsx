@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trophy, History, BookOpen, UserPlus, Coins, Flame, CheckCircle2, PlayCircle, Calendar, Loader2, Gift } from "lucide-react";
+import { Trophy, History, BookOpen, UserPlus, Coins, Flame, CheckCircle2, PlayCircle, Calendar, Loader2, Gift, Wand2, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -115,6 +115,20 @@ const Game = () => {
             </div>
           </div>
         </MobileCard>
+
+        {/* AI Tutor CTA */}
+        <button type="button" onClick={() => navigate("/learn")} className="w-full text-left">
+          <MobileCard variant="glass" className="p-4 flex items-center gap-3 active:scale-[0.98] transition">
+            <div className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center shrink-0">
+              <Wand2 className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm leading-tight">Ask the AI Tutor</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Get instant help and earn XP</p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+          </MobileCard>
+        </button>
 
         {/* Streak + Stats */}
         <MobileSection title="This Week">
