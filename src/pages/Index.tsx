@@ -23,6 +23,7 @@ import { ProgressSnapshot } from "@/components/home/workspace/ProgressSnapshot";
 import { ContinueLearningRow } from "@/components/home/workspace/ContinueLearningRow";
 import { AiAssistantBox } from "@/components/home/workspace/AiAssistantBox";
 import { ActivityFeed } from "@/components/home/workspace/ActivityFeed";
+import { MobileCoursesTop } from "@/components/home/mobile/MobileCoursesTop";
 import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
 import { useHomeSections, HomeSection } from "@/hooks/useHomeSections";
 import { useAuth } from "@/hooks/useAuth";
