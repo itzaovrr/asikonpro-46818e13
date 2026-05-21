@@ -24,6 +24,8 @@ import { ContinueLearningRow } from "@/components/home/workspace/ContinueLearnin
 import { AiAssistantBox } from "@/components/home/workspace/AiAssistantBox";
 import { ActivityFeed } from "@/components/home/workspace/ActivityFeed";
 import { MobileCoursesTop } from "@/components/home/mobile/MobileCoursesTop";
+import { CategoriesScroll } from "@/components/home/mobile/CategoriesScroll";
+import { OfferStrip } from "@/components/home/mobile/OfferStrip";
 import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
 import { useHomeSections, HomeSection } from "@/hooks/useHomeSections";
 import { useAuth } from "@/hooks/useAuth";
