@@ -86,15 +86,22 @@ export function ProfileHeader({ user, isOwnProfile, onAvatarClick, onUpdate }: P
     <header className="relative">
       {/* Cover */}
       <div className="relative h-36 sm:h-44 overflow-hidden">
-        <div
-          key={user.coverImage || "default-cover"}
-          className="absolute inset-0 bg-cover bg-center animate-fade-in"
-          style={{
-            backgroundImage: user.coverImage
-              ? `url(${user.coverImage})`
-              : "linear-gradient(135deg, hsl(var(--primary)/0.55), hsl(var(--accent)/0.3), hsl(var(--background)))",
-          }}
-        />
+        {user.coverImage ? (
+          <div
+            key={user.coverImage}
+            className="absolute inset-0 bg-cover bg-center animate-fade-in"
+            style={{ backgroundImage: `url(${user.coverImage})` }}
+          />
+        ) : (
+          <div
+            key="default-cover"
+            className="absolute inset-0 animate-fade-in"
+            style={{
+              background:
+                "linear-gradient(135deg, hsl(233 80% 30%) 0%, hsl(280 80% 25%) 50%, hsl(220 90% 20%) 100%)",
+            }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background" />
 
         {isOwnProfile && (
