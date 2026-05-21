@@ -276,9 +276,8 @@ const Profile = () => {
   return (
     <AppLayout showBottomNav>
       <SEO
-        title={displayProfile?.full_name || displayProfile?.username || "Profile"}
-        description={`${displayProfile?.full_name || displayProfile?.username || "Asikon learner"} on Asikon — courses, posts, and learning progress.`}
-        noIndex={!isOwnProfile ? false : true}
+        title={displayProfile?.name || displayProfile?.username || "Profile"}
+        description={`${displayProfile?.name || displayProfile?.username || "Asikon learner"} on Asikon — courses, posts, and learning progress.`}
       />
       <MobilePage
         bleed={
