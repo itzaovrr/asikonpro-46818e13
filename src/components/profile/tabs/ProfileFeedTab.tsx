@@ -31,12 +31,14 @@ interface ProfileFeedTabProps {
 }
 
 export function ProfileFeedTab({ posts, user }: ProfileFeedTabProps) {
+  const navigate = useNavigate();
   if (posts.length === 0) {
     return (
       <EmptyState
         icon={<Newspaper className="h-10 w-10" />}
         title="No posts yet"
         hint="When this profile shares posts, they'll show up here."
+        action={<Button onClick={() => navigate("/community")}>Share your first post</Button>}
       />
     );
   }
