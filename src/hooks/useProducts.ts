@@ -14,7 +14,6 @@ const fallbackProducts = mockProducts.map((p, i) => ({
   rating: p.rating,
   review_count: p.reviews,
   is_featured: !!p.isTrending,
-  is_pod: false,
   category_id: null as string | null,
   created_at: new Date(Date.now() - i * 1000).toISOString(),
 }));
@@ -29,15 +28,14 @@ interface UseProductsOptions {
   minPrice?: number;
   maxPrice?: number;
   sortBy?: SortOption;
-  isPod?: boolean;
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
-  const { categoryId, featured, limit = 20, search, minPrice, maxPrice, sortBy = "newest", isPod } = options;
+  const { categoryId, featured, limit = 20, search, minPrice, maxPrice, sortBy = "newest" } = options;
 
-  const ck = cacheKey(["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy, isPod }]);
+  const ck = cacheKey(["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy }]);
   return useQuery({
-    queryKey: ["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy, isPod }],
+    queryKey: ["products", { categoryId, featured, limit, search, minPrice, maxPrice, sortBy }],
     initialData: () => readCache<any[]>(ck),
     queryFn: async () => {
       let query = supabase
@@ -50,10 +48,6 @@ export function useProducts(options: UseProductsOptions = {}) {
 
       if (featured !== undefined) {
         query = query.eq("is_featured", featured);
-      }
-
-      if (isPod !== undefined) {
-        query = query.eq("is_pod", isPod);
       }
 
       if (search) {

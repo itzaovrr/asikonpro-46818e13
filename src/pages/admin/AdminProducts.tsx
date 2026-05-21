@@ -30,13 +30,12 @@ type ProductForm = {
   image_url: string;
   category_id: string;
   is_featured: boolean;
-  is_pod: boolean;
   stock: string;
 };
 
 const empty: ProductForm = {
   name: "", slug: "", description: "", price: "", original_price: "",
-  image_url: "", category_id: "", is_featured: false, is_pod: false, stock: "0",
+  image_url: "", category_id: "", is_featured: false, stock: "0",
 };
 
 export default function AdminProducts() {
@@ -55,7 +54,7 @@ export default function AdminProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, slug, image_url, price, original_price, stock, is_featured, is_pod, category_id, description, created_at, rating, review_count")
+        .select("id, name, slug, image_url, price, original_price, stock, is_featured, category_id, description, created_at, rating, review_count")
         .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;
@@ -101,7 +100,6 @@ export default function AdminProducts() {
       image_url: p.image_url ?? "",
       category_id: p.category_id ?? "",
       is_featured: !!p.is_featured,
-      is_pod: !!p.is_pod,
       stock: String(p.stock ?? 0),
     });
     setOpen(true);
@@ -119,7 +117,6 @@ export default function AdminProducts() {
         image_url: form.image_url || null,
         category_id: form.category_id || null,
         is_featured: form.is_featured,
-        is_pod: form.is_pod,
         stock: Number(form.stock || 0),
       };
       if (editing) {
@@ -251,7 +248,6 @@ export default function AdminProducts() {
                   <Badge variant={p.stock === 0 ? "destructive" : p.stock < 5 ? "secondary" : "outline"} className="text-[10px]">
                     {p.stock ?? 0} in stock
                   </Badge>
-                  {p.is_pod && <Badge variant="outline" className="text-[10px]">POD</Badge>}
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1 shrink-0">
@@ -324,7 +320,6 @@ export default function AdminProducts() {
                         >
                           <Star className={`h-4 w-4 ${p.is_featured ? "fill-amber-400 text-amber-400" : "text-muted-foreground"}`} />
                         </button>
-                        {p.is_pod && <Badge variant="outline" className="text-[10px]">POD</Badge>}
                       </div>
                     </td>
                     <td className="px-4 py-2.5 text-right">
@@ -417,9 +412,6 @@ export default function AdminProducts() {
             <div className="flex items-center gap-6 pt-1">
               <label className="flex items-center gap-2 text-sm">
                 <Switch checked={form.is_featured} onCheckedChange={(v) => setForm({ ...form, is_featured: v })} /> Featured
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <Switch checked={form.is_pod} onCheckedChange={(v) => setForm({ ...form, is_pod: v })} /> POD
               </label>
             </div>
             <div className="space-y-1.5">

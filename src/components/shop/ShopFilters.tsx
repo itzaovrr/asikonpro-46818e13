@@ -11,7 +11,6 @@ import {
   LayoutGrid,
   Tag,
   Flame,
-  Palette,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,8 +56,6 @@ interface ShopFiltersProps {
   onOnSaleChange?: (value: boolean) => void;
   featuredOnly?: boolean;
   onFeaturedChange?: (value: boolean) => void;
-  podOnly?: boolean;
-  onPodChange?: (value: boolean) => void;
 }
 
 const sortOptions = [
@@ -102,8 +99,6 @@ export function ShopFilters({
   onOnSaleChange,
   featuredOnly = false,
   onFeaturedChange,
-  podOnly = false,
-  onPodChange,
 }: ShopFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -113,7 +108,6 @@ export function ShopFilters({
   const [localRating, setLocalRating] = useState(minRating);
   const [localSale, setLocalSale] = useState(onSaleOnly);
   const [localFeatured, setLocalFeatured] = useState(featuredOnly);
-  const [localPod, setLocalPod] = useState(podOnly);
 
   // Re-sync drafts whenever the sheet is opened
   useEffect(() => {
@@ -123,9 +117,8 @@ export function ShopFilters({
       setLocalRating(minRating);
       setLocalSale(onSaleOnly);
       setLocalFeatured(featuredOnly);
-      setLocalPod(podOnly);
     }
-  }, [isOpen, priceRange, productType, minRating, onSaleOnly, featuredOnly, podOnly]);
+  }, [isOpen, priceRange, productType, minRating, onSaleOnly, featuredOnly]);
 
   const handleApply = () => {
     onPriceChange(localPriceRange);
@@ -133,7 +126,6 @@ export function ShopFilters({
     onMinRatingChange?.(localRating);
     onOnSaleChange?.(localSale);
     onFeaturedChange?.(localFeatured);
-    onPodChange?.(localPod);
     setIsOpen(false);
   };
 
@@ -322,14 +314,6 @@ export function ShopFilters({
                     onCheckedChange={setLocalFeatured}
                     id="filter-featured"
                   />
-                  <ToggleRow
-                    icon={<Palette className="h-4 w-4 text-primary" />}
-                    label="Customizable (POD)"
-                    description="Print-on-demand products"
-                    checked={localPod}
-                    onCheckedChange={setLocalPod}
-                    id="filter-pod"
-                  />
                 </div>
               </div>
 
@@ -367,9 +351,6 @@ export function ShopFilters({
           )}
           {featuredOnly && onFeaturedChange && (
             <FilterChip label="Featured" onClear={() => onFeaturedChange(false)} />
-          )}
-          {podOnly && onPodChange && (
-            <FilterChip label="Customizable" onClear={() => onPodChange(false)} />
           )}
         </div>
       )}

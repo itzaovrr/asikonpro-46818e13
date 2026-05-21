@@ -1,4 +1,4 @@
-import { ShoppingBag, Star, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Price } from "@/lib/currency";
 
@@ -11,18 +11,15 @@ interface ShopProduct {
   reviewCount: number;
   isPurchased?: boolean;
   isReviewed?: boolean;
-  isSold?: boolean;
 }
 
 interface ProfileShopTabProps {
   products: ShopProduct[];
-  isPodCreator?: boolean;
 }
 
-export function ProfileShopTab({ products, isPodCreator }: ProfileShopTabProps) {
+export function ProfileShopTab({ products }: ProfileShopTabProps) {
   const purchasedProducts = products.filter(p => p.isPurchased);
   const reviewedProducts = products.filter(p => p.isReviewed);
-  const soldProducts = products.filter(p => p.isSold);
 
   return (
     <div className="p-4 space-y-6">
@@ -56,21 +53,6 @@ export function ProfileShopTab({ products, isPodCreator }: ProfileShopTabProps) 
         </section>
       )}
 
-      {/* Sold Section (for POD creators) */}
-      {isPodCreator && soldProducts.length > 0 && (
-        <section>
-          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            Designs Sold ({soldProducts.length})
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {soldProducts.map((product) => (
-              <ProductCard key={product.id} product={product} type="sold" />
-            ))}
-          </div>
-        </section>
-      )}
-
       {products.length === 0 && (
         <div className="py-16 text-center">
           <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
@@ -86,12 +68,11 @@ function ProductCard({
   type 
 }: { 
   product: ShopProduct; 
-  type: "purchased" | "reviewed" | "sold" 
+  type: "purchased" | "reviewed" 
 }) {
   const badgeConfig = {
     purchased: { label: "Purchased", color: "bg-blue-500/20 text-blue-400" },
     reviewed: { label: "Reviewed", color: "bg-amber-500/20 text-amber-400" },
-    sold: { label: "Sold", color: "bg-emerald-500/20 text-emerald-400" },
   };
 
   const badge = badgeConfig[type];

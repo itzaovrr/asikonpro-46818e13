@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, Tag, Flame, Palette, X, GraduationCap, BookOpen, Backpack, Wand2, LayoutGrid } from "lucide-react";
+import { Star, Tag, Flame, X, GraduationCap, BookOpen, Backpack, Wand2, LayoutGrid } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -19,8 +19,6 @@ interface DesktopFilterRailProps {
   onOnSaleChange: (v: boolean) => void;
   featuredOnly: boolean;
   onFeaturedChange: (v: boolean) => void;
-  podOnly: boolean;
-  onPodChange: (v: boolean) => void;
   activeFiltersCount: number;
   onClearFilters: () => void;
 }
@@ -57,8 +55,6 @@ export function DesktopFilterRail(props: DesktopFilterRailProps) {
     onOnSaleChange,
     featuredOnly,
     onFeaturedChange,
-    podOnly,
-    onPodChange,
     activeFiltersCount,
     onClearFilters,
   } = props;
@@ -165,7 +161,6 @@ export function DesktopFilterRail(props: DesktopFilterRailProps) {
           <div className="space-y-3 rounded-xl border border-border/60 bg-card/40 p-3">
             <Row id="d-sale" icon={<Tag className="h-4 w-4 text-primary" />} label="On sale" checked={onSaleOnly} onChange={onOnSaleChange} />
             <Row id="d-featured" icon={<Flame className="h-4 w-4 text-primary" />} label="Featured" checked={featuredOnly} onChange={onFeaturedChange} />
-            <Row id="d-pod" icon={<Palette className="h-4 w-4 text-primary" />} label="Customizable" checked={podOnly} onChange={onPodChange} />
           </div>
         </div>
       </div>

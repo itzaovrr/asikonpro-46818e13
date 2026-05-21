@@ -36,7 +36,6 @@ const Shop = () => {
   const [minRating, setMinRating] = useState(0);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [featuredOnly, setFeaturedOnly] = useState(false);
-  const [podOnly, setPodOnly] = useState(false);
 
   // Sync URL params (?type=courses, ?filter=trending|new|deals) → state
   useEffect(() => {
@@ -89,10 +88,9 @@ const Shop = () => {
       if (minRating > 0 && (p.rating ?? 0) < minRating) return false;
       if (onSaleOnly && !(p.original_price && p.original_price > p.price)) return false;
       if (featuredOnly && !p.is_featured) return false;
-      if (podOnly && !p.is_pod) return false;
       return true;
     });
-  }, [products, productType, minRating, onSaleOnly, featuredOnly, podOnly]);
+  }, [products, productType, minRating, onSaleOnly, featuredOnly]);
 
   // Transform categories for carousel
   const categoryItems = [
@@ -113,9 +111,8 @@ const Shop = () => {
     if (minRating > 0) count++;
     if (onSaleOnly) count++;
     if (featuredOnly) count++;
-    if (podOnly) count++;
     return count;
-  }, [priceRange, productType, minRating, onSaleOnly, featuredOnly, podOnly]);
+  }, [priceRange, productType, minRating, onSaleOnly, featuredOnly]);
 
   const handleClearFilters = () => {
     setSearchQuery("");
@@ -126,7 +123,6 @@ const Shop = () => {
     setMinRating(0);
     setOnSaleOnly(false);
     setFeaturedOnly(false);
-    setPodOnly(false);
   };
 
   return (
@@ -169,8 +165,6 @@ const Shop = () => {
               onOnSaleChange={setOnSaleOnly}
               featuredOnly={featuredOnly}
               onFeaturedChange={setFeaturedOnly}
-              podOnly={podOnly}
-              onPodChange={setPodOnly}
               activeFiltersCount={activeFiltersCount}
               onClearFilters={handleClearFilters}
             />
@@ -197,8 +191,6 @@ const Shop = () => {
                 onOnSaleChange={setOnSaleOnly}
                 featuredOnly={featuredOnly}
                 onFeaturedChange={setFeaturedOnly}
-                podOnly={podOnly}
-                onPodChange={setPodOnly}
               />
             </div>
 
@@ -261,11 +253,6 @@ const Shop = () => {
                           <Heart className="h-4 w-4 text-foreground group-hover:text-primary transition-colors" />
                         </button>
                         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                          {product.is_pod && (
-                            <Badge className="text-[10px] px-2 py-0.5 bg-accent/90 backdrop-blur-sm border-0">
-                              Custom
-                            </Badge>
-                          )}
                           {product.is_featured && (
                             <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full gradient-primary text-primary-foreground shadow-lg">
                               🔥 Hot
