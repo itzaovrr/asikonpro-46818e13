@@ -47,7 +47,7 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
             type="button"
             onClick={() => navigate(-1)}
             aria-label="Back"
-            className="flex items-center gap-1.5 -ml-1 px-2 py-1 rounded-xl hover:bg-secondary/60 active:scale-95 transition min-w-0"
+            className="flex items-center gap-1.5 -ml-1 px-2 py-1 rounded-xl bg-background/10 hover:bg-background/15 active:scale-95 transition min-w-0"
           >
             <ChevronLeft className="w-5 h-5 shrink-0" />
             <span className="text-[15px] font-semibold tracking-tight truncate max-w-[220px]">{innerTitle}</span>
@@ -57,7 +57,7 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
             type="button"
             onClick={onMenuClick}
             aria-label="Open menu"
-            className="flex items-center gap-2 -ml-1 px-1 py-1 rounded-xl hover:bg-secondary/60 active:scale-95 transition min-w-0"
+            className="flex items-center gap-2 -ml-1 px-1.5 py-1 rounded-xl bg-background/10 hover:bg-background/15 active:scale-95 transition min-w-0"
           >
             <img src={logo} alt="Asikon logo" className="w-7 h-7 shrink-0" />
             <h1 className="text-[16px] font-bold text-gradient leading-none tracking-tight truncate">{tabTitle}</h1>
@@ -65,7 +65,7 @@ export function MobileHeader({ onMenuClick, onSearchClick, cartCount = 0 }: Mobi
         )}
 
         {/* Right — Search + Cart only (minimal) */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1 rounded-2xl border border-border/30 bg-background/10 px-1 py-0.5 shadow-[inset_0_1px_0_hsl(var(--glass-highlight)/0.08)]">
           <Button variant="ghost" size="icon" onClick={onSearchClick} aria-label="Search">
             <Search className="w-5 h-5" />
           </Button>
