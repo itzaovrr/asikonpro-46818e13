@@ -227,50 +227,69 @@ const Game = () => {
         <MobileSection title="Quick Actions">
           <div className="grid grid-cols-4 gap-2">
             {quickActions.map((action) => (
-              <MobileCard key={action.label} variant="soft" className="p-3 flex flex-col items-center gap-2 cursor-pointer">
-                <action.icon className={`h-5 w-5 ${action.color}`} />
-                <span className="text-[11px] font-medium">{action.label}</span>
-              </MobileCard>
+              <button key={action.label} type="button" onClick={action.onClick} className="text-left">
+                <MobileCard variant="soft" className="p-3 flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition">
+                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                  <span className="text-[11px] font-medium">{action.label}</span>
+                </MobileCard>
+              </button>
             ))}
           </div>
         </MobileSection>
 
         {/* Hot Rewards */}
-        <MobileSection title="Hot Rewards" actionLabel="View all">
-          <div className="grid grid-cols-2 gap-3">
-            {rewards.map((reward, i) => {
-              const canAfford = (stats?.coins ?? 0) >= reward.coins;
-              const isRedeeming = redeem.isPending && redeem.variables?.rewardKey === reward.id;
-              return (
-                <MobileCard key={reward.id} variant="glass" animateIn index={i} noPadding className="overflow-hidden">
-                  <div className="relative h-28">
-                    <img src={reward.image} alt={reward.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
-                    <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-medium rounded-full bg-background/80 backdrop-blur-sm">
-                      {reward.type}
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <h3 className="font-medium text-sm mb-1 line-clamp-1">{reward.title}</h3>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-primary font-semibold">{reward.coins.toLocaleString()} Coins</span>
-                      <Button
-                        size="sm"
-                        variant={canAfford ? "default" : "secondary"}
-                        disabled={!canAfford || isRedeeming}
-                        onClick={() => handleRedeem(reward.id, reward.coins)}
-                        className={canAfford ? "gradient-primary border-0 h-7 text-[11px] px-2" : "h-7 text-[11px] px-2"}
-                      >
-                        {isRedeeming ? <Loader2 className="h-3 w-3 animate-spin" /> : canAfford ? "Redeem" : "Locked"}
-                      </Button>
+        <MobileSection title="Hot Rewards">
+          {rewardsLoading ? (
+            <div className="grid grid-cols-2 gap-3">
+              <Skeleton className="h-44 rounded-2xl" />
+              <Skeleton className="h-44 rounded-2xl" />
+            </div>
+          ) : rewards.length === 0 ? (
+            <MobileCard variant="glass" className="p-6 text-center text-sm text-muted-foreground">No rewards available yet.</MobileCard>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {rewards.map((reward, i) => {
+                const canAfford = (stats?.coins ?? 0) >= reward.coins_required;
+                const isRedeeming = redeem.isPending && redeem.variables?.rewardKey === reward.id;
+                return (
+                  <MobileCard key={reward.id} variant="glass" animateIn index={i} noPadding className="overflow-hidden">
+                    <div className="relative h-28 bg-gradient-to-br from-primary/30 to-accent/30 grid place-items-center">
+                      {reward.image_url ? (
+                        <img src={reward.image_url} alt={reward.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                      ) : (
+                        <Gift className="h-10 w-10 text-primary-foreground/70" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+                      <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-medium rounded-full bg-background/80 backdrop-blur-sm capitalize">
+                        {reward.type}
+                      </span>
                     </div>
-                  </div>
-                </MobileCard>
-              );
-            })}
-          </div>
+                    <div className="p-3">
+                      <h3 className="font-medium text-sm mb-1 line-clamp-1">{reward.title}</h3>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs text-primary font-semibold">{reward.coins_required.toLocaleString()} Coins</span>
+                        <Button
+                          size="sm"
+                          variant={canAfford ? "default" : "secondary"}
+                          disabled={!canAfford || isRedeeming}
+                          onClick={() => redeem.mutate({ rewardKey: reward.id, coins: reward.coins_required })}
+                          className={canAfford ? "gradient-primary border-0 h-7 text-[11px] px-2" : "h-7 text-[11px] px-2"}
+                        >
+                          {isRedeeming ? <Loader2 className="h-3 w-3 animate-spin" /> : canAfford ? "Redeem" : "Locked"}
+                        </Button>
+                      </div>
+                    </div>
+                  </MobileCard>
+                );
+              })}
+            </div>
+          )}
         </MobileSection>
       </MobilePage>
+
+      <LeaderboardSheet open={showRank} onOpenChange={setShowRank} />
+      <HistorySheet open={showHistory} onOpenChange={setShowHistory} />
+      <RulesDialog open={showRules} onOpenChange={setShowRules} />
     </AppLayout>
   );
 };
