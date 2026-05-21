@@ -4,6 +4,7 @@ import { Plus, MessageSquare, Trash2, PanelLeft, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useAiThreads,
   useCreateAiThread,
@@ -85,7 +86,11 @@ export function ThreadList({ activeId }: Props) {
       <ScrollArea className="flex-1">
         <div className="p-2">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground p-2">Loading…</p>
+            <div className="space-y-1.5 px-1 py-1">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-9 w-full rounded-lg" />
+              ))}
+            </div>
           ) : filtered.length === 0 ? (
             <div className="px-2 py-6 text-center text-sm text-muted-foreground">
               {q

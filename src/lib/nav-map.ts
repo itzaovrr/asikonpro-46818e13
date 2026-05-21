@@ -12,7 +12,7 @@ export interface TabDef {
 
 export const TABS: TabDef[] = [
   { id: "home", label: "Home", path: "/", matches: [] },
-  { id: "explore", label: "Explore", path: "/shop", matches: ["/shop", "/product", "/cart", "/checkout", "/orders", "/wishlist", "/mentors"] },
+  { id: "explore", label: "Explore", path: "/shop", matches: ["/shop", "/product", "/cart", "/checkout", "/orders", "/wishlist"] },
   { id: "ai", label: "AI", path: "/learn", matches: ["/learn", "/track", "/lesson", "/prompts"] },
   { id: "community", label: "Community", path: "/community", matches: ["/community", "/create"] },
   { id: "profile", label: "Profile", path: "/profile", matches: ["/profile", "/settings", "/about"] },

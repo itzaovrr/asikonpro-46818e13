@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight, Compass, Target, Trophy, Users, ShieldCheck, Headphones, Star, HelpCircle, Rocket, PlayCircle } from "lucide-react";
 import { HowItWorks } from "@/components/home/sections/HowItWorks";
 import { WhyTrust } from "@/components/home/sections/WhyTrust";
@@ -260,6 +261,10 @@ const Index = () => {
 
   return (
     <AppLayout>
+      <Helmet>
+        <title>Asikon — AI-Powered Learning Platform</title>
+        <meta name="description" content="Master AI, Python, and modern skills with expert-led courses, a 24/7 AI tutor, and a community of learners." />
+      </Helmet>
       <MobilePage spacing="space-y-5 lg:space-y-10">
         {user ? (
           <>
