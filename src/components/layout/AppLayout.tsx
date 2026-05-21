@@ -92,6 +92,10 @@ export function AppLayout({
   // Mock cart count - TODO: Replace with real cart state
   const cartCount = 2;
 
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
+  const showDesktopSidebar = showSidebar && !isHome;
+
   return (
     <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
       <div className="min-h-screen bg-background">
@@ -102,10 +106,11 @@ export function AppLayout({
             onSearchClick={() => setSearchOpen(true)}
             cartCount={cartCount}
           />
+        ) : isHome ? (
+          <HomeTopHeader showTrustStrip={showTrustStrip} cartCount={cartCount} />
         ) : (
-          <DesktopHeader 
-            showTrustStrip={showTrustStrip} 
-            cartCount={cartCount} 
+          <SlimDesktopHeader
+            cartCount={cartCount}
             isSidebarCollapsed={isCollapsed}
           />
         )}
@@ -113,11 +118,11 @@ export function AppLayout({
         {/* Mobile Sidebar (Sheet) */}
         <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
-        {/* Desktop Sidebar */}
-        {!isMobile && showSidebar && (
-          <DesktopSidebar 
-            isCollapsed={isCollapsed} 
-            onCollapsedChange={handleCollapsedChange} 
+        {/* Desktop Sidebar — hidden on home */}
+        {!isMobile && showDesktopSidebar && (
+          <DesktopSidebar
+            isCollapsed={isCollapsed}
+            onCollapsedChange={handleCollapsedChange}
           />
         )}
 
@@ -125,12 +130,12 @@ export function AppLayout({
         <MobileSearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
 
         {/* Main Content */}
-        <main 
+        <main
           className={cn(
             fillViewport ? "h-[100dvh] overflow-hidden" : "min-h-screen",
             "transition-all duration-300",
             !fillViewport && isMobile && showBottomNav && "pb-28",
-            !isMobile && showSidebar && (isCollapsed ? "lg:pl-16" : "lg:pl-60"),
+            !isMobile && showDesktopSidebar && (isCollapsed ? "lg:pl-16" : "lg:pl-60"),
             className
           )}
           style={
