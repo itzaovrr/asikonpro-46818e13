@@ -79,7 +79,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
       className={cn(
         "relative group/hero overflow-hidden rounded-3xl",
         "border border-primary/15",
-        "shadow-[0_12px_40px_-18px_hsl(var(--primary)/0.35)]",
+        "shadow-[0_8px_28px_-16px_hsl(var(--primary)/0.25)]",
         className,
       )}
       onMouseEnter={() => setIsPaused(true)}
@@ -104,7 +104,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
                 aria-label={`${index + 1} of ${slides.length}: ${slide.title}`}
                 className="flex-[0_0_100%] min-w-0 relative"
               >
-                <div className="relative aspect-[16/10] sm:aspect-[21/9] md:aspect-[21/8] lg:aspect-auto lg:h-[420px] xl:h-[480px] overflow-hidden">
+                <div className="relative aspect-[16/10] sm:aspect-[21/9] md:aspect-[24/8] lg:aspect-auto lg:h-[380px] xl:h-[440px] overflow-hidden">
                   <img
                     src={slide.image}
                     alt={slide.title}
@@ -129,7 +129,7 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
                   />
 
                   {/* Text block */}
-                  <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-5 md:p-6 lg:p-10 pb-6 sm:pb-7 lg:pb-12">
+                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6 lg:p-10 pb-6 sm:pb-7 lg:pb-12">
                     <div
                       key={`text-${selectedIndex}-${slide.id}`}
                       className={cn("max-w-md lg:max-w-xl", isActive && "animate-fade-in")}
@@ -195,8 +195,8 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
         <ChevronRight className="h-5 w-5 lg:h-6 lg:w-6" />
       </button>
 
-      {/* Progress segments */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 w-24 sm:w-28 flex gap-1">
+      {/* Progress segments — slimmer dots, centered on mobile, bottom-left on sm+ */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 w-28 sm:w-32 flex gap-1">
         {slides.map((_, index) => {
           const active = index === selectedIndex;
           return (
@@ -204,15 +204,15 @@ export function HeroCarousel({ slides, autoplayDelay = 5000, className }: HeroCa
               key={index}
               onClick={() => scrollTo(index)}
               aria-label={`Go to slide ${index + 1}`}
-              className="group/seg flex-1 h-[3px] rounded-full bg-foreground/15 backdrop-blur-sm overflow-hidden"
+              className="group/seg flex-1 h-[3px] rounded-full bg-foreground/15 overflow-hidden"
             >
               <span
                 key={`fill-${selectedIndex}-${index}`}
                 className={cn(
-                  "block h-full rounded-full bg-primary",
+                  "block h-full rounded-full",
                   active && autoplayActive ? "animate-[heroProgress_var(--hero-dur)_linear_forwards]" : active ? "w-full" : "w-0",
                 )}
-                style={{ ["--hero-dur" as any]: `${autoplayDelay}ms` }}
+                style={{ ["--hero-dur" as any]: `${autoplayDelay}ms`, background: "var(--gradient-primary)" }}
               />
             </button>
           );
