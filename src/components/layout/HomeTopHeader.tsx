@@ -107,14 +107,18 @@ export function HomeTopHeader({ showTrustStrip = true, cartCount = 0 }: HomeTopH
         </div>
       </div>
 
-      {/* Section 2 — Premium Mega Menu */}
+      {/* Section 2 — Premium Mega Menu band */}
       <div
         className={cn(
-          "hairline-bottom transition-all duration-300 overflow-hidden",
+          "hairline-bottom transition-all duration-300 overflow-hidden relative",
           "bg-background/40 backdrop-blur-xl",
-          "[background-image:linear-gradient(180deg,hsl(var(--primary)/0.04),transparent_70%)]",
-          isScrolled ? "h-0 opacity-0 py-0" : "py-1.5 opacity-100"
+          "shadow-[inset_0_1px_0_hsl(var(--glass-highlight)/0.06)]",
+          isScrolled ? "h-0 opacity-0 py-0" : "py-2 opacity-100"
         )}
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, hsl(var(--primary) / 0.06), transparent 70%), radial-gradient(60% 80% at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)",
+        }}
       >
         <div className="container-editorial flex items-center justify-center">
           <MegaMenu />
