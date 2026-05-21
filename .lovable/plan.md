@@ -1,140 +1,87 @@
+# Asikon — 10-Point Improvement Plan
 
-## Goal
-Rebuild the AI Tutor page (`/learn`) to feel like a polished modern AI chat (ChatGPT, Gemini, Claude) while keeping the brand identity (dark-red gradient, glass surfaces, Apu persona). Composer must always sit flush above the mobile bottom navigation — never under it, never floating mid-screen.
-
-## Scope
-Files:
-- `src/components/learn/LearnChat.tsx` — full structural rework
-- `src/components/learn/ThreadList.tsx` — visual polish, time grouping, count
-- `src/pages/Learn.tsx` — layout shell adjustments
-- `src/components/layout/AppLayout.tsx` — verify `fillViewport` math (read-only unless it's the cause)
-
-Out of scope: edge function logic, persistence, message schema, voice wiring.
+Tackling all 10 items in three phases (Critical → Medium → Polish). Each item lists the exact files touched and the approach. No source files will be edited until you approve.
 
 ---
 
-## 1. Page layout (mobile-first, desktop-grand)
+## Phase 1 — Critical Fixes
 
-### Mobile (≤ lg)
-```
-┌─────────────────────────────────┐
-│  ⇦ Apu — your tutor   ⊕   ⋯   │  ← slim glass header, brand wash
-├─────────────────────────────────┤
-│                                 │
-│   Transcript (scrollable)       │
-│   • user bubbles right          │
-│   • Apu replies left, no bubble │
-│   • streaming "Apu is typing"   │
-│                                 │
-│   [Jump to latest] (floating)   │
-├─────────────────────────────────┤
-│  pill composer  🎤  ⏹/⬆         │  ← sticky, above bottom nav
-└─────────────────────────────────┘
-         ▼ BottomNav (app shell)
-```
+### 1. Wire `/game` to real Supabase data
+**Files:** `src/pages/Game.tsx`, new `src/hooks/useGameData.ts`, new migration for `reward_redemptions`.
 
-### Desktop (≥ lg)
-Two-column shell:
-- Left rail (280px): ThreadList with search, grouped by time, hover/active states, new-chat button at top.
-- Right column: same chat layout as mobile but wider (`max-w-3xl` content) with a slim top bar showing thread title, model label "Apu · GPT", and overflow menu (rename / share / delete) — Gemini-style.
+- Replace `mockUser` with live data from `profiles` (coins) + `learner_profiles` (xp, streak_days) via a new `useGameData` hook.
+- Derive **level** from `xp` (e.g. `Math.floor(xp / 100) + 1`) — keep client-side, no schema change.
+- Replace `mockChallenges` with real progress: query `lesson_completions` joined with `lessons`/`tracks` to build "enrolled course" cards with `done / total` counts.
+- Build weekly activity bars from `lesson_completions.completed_at` grouped by weekday (last 7 days).
+- New table `reward_redemptions` (id, user_id, reward_key, coins_spent, created_at) with RLS (`user_id = auth.uid()` for insert/select). Redeem button inserts a row and decrements `profiles.coins` via an edge function (coins is admin-protected by trigger) — or simpler: edge function `redeem-reward` with service role that validates balance and writes both rows atomically.
+
+### 2. Global ErrorBoundary
+**Files:** new `src/components/ErrorBoundary.tsx`, `src/App.tsx`.
+
+- Class component catching render errors; shows branded fallback (logo, "Something went wrong", Reload + Go Home buttons) using existing design tokens.
+- Wrap `<BrowserRouter>` subtree inside `<ErrorBoundary>` in `App.tsx`.
+
+### 3. Fix `/learn` blank flash
+**Files:** `src/pages/Learn.tsx`, reuse `src/components/ui/skeleton.tsx`.
+
+- While `loading` (auth) or `isLoading` (threads) is true, render a skeleton shell (sidebar thread skeletons + chat skeleton) instead of returning nothing.
+- Only show the "Sign in" CTA after auth resolves and user is confirmed null.
 
 ---
 
-## 2. Composer — never under the bottom nav
+## Phase 2 — Medium Fixes
 
-Root cause of the current intermittent overlap: the chat root is `flex flex-col h-full` inside `AppLayout`'s `fillViewport` main, which uses `h-[100dvh]` + `paddingBottom: var(--bottom-nav-h)`. `100dvh` recalculates on iOS Safari URL-bar collapse; with `sticky bottom-0` it still rides the bottom *of the scroll container*, which is fine — but our previous build kept `sticky bottom-0` AND `shrink-0` inside a flex column. Inside flex children, `position: sticky` is a no-op because the parent doesn't scroll. The composer was actually staying placed only because of the flex layout, and on viewport resize the bottom edge could land under the nav.
+### 4. Community Live/Offers tabs
+**Files:** `src/components/community/CommunityTabs.tsx`, `src/pages/Community.tsx`.
 
-Fix (deterministic):
-- Keep the chat root as `flex flex-col h-full min-h-0`.
-- Composer remains the **last flex child with `shrink-0`** (so it's never under the nav as long as the parent's height is correct — which it is via `AppLayout` padding).
-- Drop the misleading `sticky bottom-0` (it doesn't apply in this flex context).
-- Add a CSS guard: composer wrapper uses `pb-[max(0.5rem,env(safe-area-inset-bottom))]` so the home-indicator area never eats into the input on iOS.
-- In `AppLayout`, ensure `--bottom-nav-h` already includes safe-area (it does: `calc(58px + env(safe-area-inset-bottom))`). The padded main + composer-as-last-flex-child = composer always sits exactly on top of nav.
-- Add a one-shot `ResizeObserver` on `window.visualViewport` to recompute `--app-vh` when the mobile keyboard opens, so when the user focuses the textarea the transcript shrinks and the composer rides above the keyboard (not behind it). Set `height: var(--app-vh, 100dvh)` on the chat root when on mobile.
+- Approach: **hide** both tabs from the visible tab bar (cleanest given no backing data). Keep the tab components in repo but unmount routes. Add a comment marking them as "ship when content exists."
+- If you'd rather keep them visible with a "Soon" pill, say the word and I'll switch the approach.
 
-Acceptance: open `/learn/:id` on a 393×701 viewport, scroll, focus textarea, rotate — composer is always visible directly above the bottom nav (or directly above the keyboard when it's open). Test passes on Chrome mobile emulation and the real preview viewport.
+### 5. Remove Mentors from bottom nav
+**Files:** `src/components/layout/BottomNav.tsx`, `src/components/layout/sidebar/SidebarNav.tsx`, `src/lib/nav-map.ts`.
 
----
+- Strip the Mentors entry from primary nav arrays. Route stays mounted in `App.tsx` so direct links + admin still work; just no nav surface.
 
-## 3. Chat surface (Gemini/ChatGPT-inspired, brand-local)
+### 6. Reset-password flow verification
+**Files:** `src/pages/Auth.tsx` (forgot-password call), `src/pages/ResetPassword.tsx`, `src/App.tsx` route.
 
-### Header (mobile)
-- Slim 44px glass bar with a 12%-opacity brand-red wash.
-- Left: back/menu (PanelLeft) opens thread sheet.
-- Center: thread title pill, tap = switch chat sheet. Below title: tiny "Apu · Tutor" subtitle in muted-foreground.
-- Right: New chat (`PenSquare`) + overflow menu (`MoreHorizontal`) with: Rename, Share link (copy), Clear history, Delete.
-
-### Header (desktop)
-- Same controls, plus a model/persona label chip ("Apu · SSC + HSC") and a "Share" icon button.
-
-### Transcript
-- Centered column `max-w-3xl`, vertical rhythm `space-y-6`.
-- **User messages**: right-aligned bubble, `bg-primary text-primary-foreground`, rounded-2xl, soft brand shadow, max 85% width.
-- **Apu messages**: left-aligned, no bubble — markdown rendered directly on the background (ChatGPT pattern). Avatar (24px) + name "Apu" pinned to the first line of each assistant turn.
-- **Hover actions** on each assistant message (desktop) and **long-press** (mobile): Copy, Regenerate, Like/Dislike feedback (visual only, persisted later). These are subtle ghost icons that fade in.
-- **Citations / sources**: if any `part.type === "source-url"` in the stream, render a `Sources` collapsible chip below the message (forward-compatible).
-- **Streaming**: while `status === "streaming"`, show a subtle blinking caret at the end of the streaming text + the "Apu is typing…" indicator persists until first token.
-- **Code blocks**: dark surface, language label top-right, copy-code button. Inline code already styled.
-- **Day separators**: when two consecutive messages span midnight, insert a small "Today" / "Yesterday" / formatted date chip.
-
-### Empty state
-- Centered hero: animated brand-red glow behind Apu avatar.
-- H1 "Hi, I'm Apu", warm subtitle.
-- Quick-prompt grid (4 cards, current set) with brand-tinted icon chips and `hover:-translate-y-0.5`.
-- Below grid: a tiny "What I'm good at" capability row (3 mini cards: "Explain concepts", "Practice with MCQs", "Plan revision").
-
-### Composer
-- Rounded-3xl card (not pill) on first turn for spaciousness (ChatGPT-style), collapses to slim pill after first send to maximize transcript room — toggleable via the existing minimize control.
-- Top row inside card (when expanded): the textarea with auto-grow up to 8 lines.
-- Bottom row inside card: left = Attach (paperclip, disabled tooltip "Files — coming soon"), Voice (mic, disabled tooltip). Right = character counter when >500 chars + Send/Stop button.
-- Focus ring uses brand red glow.
-- Action chips ("Explain like I'm 12", "In Bangla please", "Quiz me on this", "Give me an example", "TL;DR") shown above the composer once there's at least one message.
-
-### Floating helpers
-- "Jump to latest" pill — keep, position above composer (not absolute to viewport).
-- Scroll-shadow at the top of the transcript when scrolled.
+- Audit: confirm `resetPasswordForEmail` uses `redirectTo: ${window.location.origin}/reset-password`.
+- Confirm `/reset-password` route is public (it is — already in `App.tsx`).
+- Confirm `ResetPassword.tsx` listens for `PASSWORD_RECOVERY` event (it does) and calls `updateUser({ password })` then redirects to `/` (it does).
+- If `redirectTo` is wrong or missing in `Auth.tsx`, fix it. Test by sending a real reset email after deploy.
 
 ---
 
-## 4. ThreadList polish
+## Phase 3 — Improvements
 
-- Top: New chat button (kept) + search input (`Search threads…`).
-- Group threads by recency: Today / Yesterday / Previous 7 days / Older.
-- Each row: 14px message icon, title (truncate), tiny timestamp on the right, delete on hover (already exists, just refined).
-- Active row: brand-tinted soft pill, no harsh background.
-- Empty state: small illustration + "No chats yet — start your first conversation with Apu."
-- Sheet header on mobile shows thread count.
+### 7. Rename package
+**Files:** `package.json` → `"name": "asikonpro"`.
 
----
+### 8. Learn page skeletons
+**Files:** `src/components/learn/ThreadList.tsx`, `src/components/learn/LearnChat.tsx`.
 
-## 5. Micro-interactions / motion
+- Replace empty states during `isLoading` with skeleton rows (sidebar) and a transcript skeleton (chat area). Reuse existing `TranscriptSkeleton` if present, otherwise build from `Skeleton`.
 
-- New assistant message: fade-in (already), plus a 200ms subtle slide-up.
-- Send button: 150ms scale tap, 500ms shimmer sweep on click.
-- Stop button: pulse ring while streaming.
-- Typing indicator: existing 3-dot bounce, but tied to the same Apu avatar inline.
-- All animations respect `prefers-reduced-motion`.
+### 9. Branded 404
+**Files:** `src/pages/NotFound.tsx`.
 
----
+- Rebuild with dark gradient bg, Asikon logo, "Page not found" heading, friendly subcopy ("This page wandered off…"), primary CTA → `/`, secondary → `/learn`. Use existing tokens (`gradient-primary`, `text-gradient`).
 
-## 6. Copy (kept warm, Apu persona)
+### 10. Per-page SEO
+**Files:** `src/main.tsx` (HelmetProvider), all listed pages, `package.json` (add `react-helmet-async`).
 
-No changes needed — all current strings already follow the Apu voice. Add new strings:
-- Overflow menu: "Rename chat", "Share link", "Clear history", "Delete chat".
-- Capability cards: "Explain any concept", "Quiz me with MCQs", "Plan my revision".
-- Search placeholder: "Search your chats".
-- Sources collapsible: "Where this came from".
+- Install `react-helmet-async`, wrap app in `<HelmetProvider>`.
+- Add `<Helmet>` to `Shop.tsx`, `Learn.tsx`, `Community.tsx`, `Mentors.tsx`, `About.tsx`, `Index.tsx` with unique `<title>`, `<meta name="description">`, canonical, and og:title/description.
+- Update `index.html` sitewide defaults; remove the static canonical so per-route Helmet canonicals don't double up.
 
 ---
 
-## 7. Acceptance checklist
+## Execution order
+1. Migration for `reward_redemptions` (needs your approval before SQL runs).
+2. Phase 1 code (Game wiring, ErrorBoundary, Learn loading).
+3. Phase 2 code (tabs, nav, reset flow audit).
+4. Phase 3 code (package name, skeletons, 404, SEO).
 
-- [ ] Composer sits flush above bottom nav at 393×701, 360×800, and 414×896. Verified after focusing textarea (keyboard simulation) and after scrolling the transcript.
-- [ ] No off-brand colors introduced; only `primary`, `gradient-primary`, semantic tokens.
-- [ ] Assistant messages render with no background bubble; user messages keep brand pill.
-- [ ] Empty state shows Apu avatar + 4 quick prompts + 3 capability cards.
-- [ ] Streaming shows typing indicator + caret; Stop button replaces Send while busy.
-- [ ] Each assistant message has Copy + Regenerate hover affordance (desktop) / tap-and-hold sheet (mobile).
-- [ ] Thread list groups by recency and supports search filter.
-- [ ] Header overflow menu present with Rename / Share / Clear / Delete (delete + rename wire to existing hooks; share copies a `/learn/:id` link to clipboard; clear is a confirm dialog stub).
-- [ ] No console errors; no layout shift on first paint; lighthouse-style "looks like a real AI app" pass.
+## Open questions
+- **Community tabs:** hide entirely, or keep visible with a "Coming Soon" badge?
+- **Game rewards:** OK to add a `reward_redemptions` table + edge function for atomic redeem? (Required because `coins` is trigger-protected from client writes.)

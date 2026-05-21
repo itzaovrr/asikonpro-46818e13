@@ -956,6 +956,30 @@ export type Database = {
         }
         Relationships: []
       }
+      reward_redemptions: {
+        Row: {
+          coins_spent: number
+          created_at: string
+          id: string
+          reward_key: string
+          user_id: string
+        }
+        Insert: {
+          coins_spent: number
+          created_at?: string
+          id?: string
+          reward_key: string
+          user_id: string
+        }
+        Update: {
+          coins_spent?: number
+          created_at?: string
+          id?: string
+          reward_key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tracks: {
         Row: {
           created_at: string
@@ -1157,6 +1181,22 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      redeem_reward: {
+        Args: { _coins: number; _reward_key: string }
+        Returns: {
+          coins_spent: number
+          created_at: string
+          id: string
+          reward_key: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reward_redemptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
