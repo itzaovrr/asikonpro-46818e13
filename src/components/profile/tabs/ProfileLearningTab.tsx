@@ -7,8 +7,10 @@ interface ProfileLearningTabProps {
   stats: {
     xp: number;
     streak: number;
+    longestStreak: number;
     lessonsCompleted: number;
     milestones: Array<{ kind: string; unlocked_at: string }>;
+    weeklyActivity: boolean[]; // length 7, Mon..Sun
   };
   isOwnProfile?: boolean;
 }
@@ -19,6 +21,8 @@ const MILESTONE_LABEL: Record<string, string> = {
   streak_30: "30-day streak",
   track_complete: "Track complete",
 };
+
+const DAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
 export function ProfileLearningTab({ stats, isOwnProfile }: ProfileLearningTabProps) {
   const navigate = useNavigate();
@@ -35,23 +39,73 @@ export function ProfileLearningTab({ stats, isOwnProfile }: ProfileLearningTabPr
     );
   }
 
+  const level = Math.floor(stats.xp / 100) + 1;
+  const progress = (stats.xp % 100) / 100;
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference * (1 - progress);
+
   const tiles = [
     { label: "XP", value: stats.xp, icon: Sparkles, color: "text-primary" },
     { label: "Streak", value: `${stats.streak}d`, icon: Flame, color: "text-amber-400" },
     { label: "Lessons", value: stats.lessonsCompleted, icon: GraduationCap, color: "text-emerald-400" },
+    { label: "Best Streak", value: `${stats.longestStreak}d`, icon: Trophy, color: "text-amber-400" },
   ];
 
   return (
     <div className="space-y-4 pt-3">
-      <div className="grid grid-cols-3 gap-2">
+      {/* XP Progress Ring */}
+      <div className="rounded-2xl border border-border/60 bg-card/60 p-5 flex flex-col items-center">
+        <div className="relative w-[100px] h-[100px]">
+          <svg width="100" height="100" className="-rotate-90">
+            <circle cx="50" cy="50" r={radius} fill="none" className="stroke-muted" strokeWidth="6" />
+            <circle
+              cx="50"
+              cy="50"
+              r={radius}
+              fill="none"
+              className="stroke-primary transition-all duration-700"
+              strokeWidth="6"
+              strokeDasharray={circumference}
+              strokeDashoffset={dashOffset}
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-base font-bold tabular-nums">{stats.xp}</span>
+            <span className="text-[9px] uppercase tracking-wide text-muted-foreground">XP</span>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">Level {level}</p>
+      </div>
+
+      <div className="grid grid-cols-4 gap-2">
         {tiles.map((t) => (
           <div key={t.label} className="rounded-2xl border border-border/60 bg-card/60 p-3 text-center">
             <t.icon className={`h-5 w-5 mx-auto mb-1 ${t.color}`} />
-            <p className="text-lg font-bold tabular-nums">{t.value}</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t.label}</p>
+            <p className="text-base font-bold tabular-nums">{t.value}</p>
+            <p className="text-[9px] uppercase tracking-wide text-muted-foreground leading-tight">{t.label}</p>
           </div>
         ))}
       </div>
+
+      {/* Weekly Activity */}
+      <section>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+          This Week
+        </h3>
+        <div className="flex gap-1.5 justify-between">
+          {DAY_LABELS.map((d, i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <div
+                className={`w-7 h-7 rounded-lg ${stats.weeklyActivity[i] ? "bg-primary/80" : "bg-muted"}`}
+                aria-label={stats.weeklyActivity[i] ? "Active" : "Inactive"}
+              />
+              <span className="text-[10px] text-muted-foreground">{d}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {stats.milestones.length > 0 && (
         <section>
