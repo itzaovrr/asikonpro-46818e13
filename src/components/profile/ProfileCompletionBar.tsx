@@ -77,4 +77,4 @@ export function ProfileCompletionBar({ profile, learnerStats, postCount, onEdit 
   );
 }
 
-export const Plus_ = Plus;
+
