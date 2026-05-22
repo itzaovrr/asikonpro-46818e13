@@ -5,6 +5,39 @@ import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHomeBanners } from "@/hooks/useHomeBanners";
 import { cn } from "@/lib/utils";
+import courseAiMl from "@/assets/course-ai-ml.jpg";
+import coursePython from "@/assets/course-python.jpg";
+import promptLibrary from "@/assets/prompt-library.jpg";
+
+const FALLBACK_BANNERS = [
+  {
+    id: "fb-1",
+    image_url: courseAiMl,
+    alt_text: "Learn AI with Asikon",
+    link_url: "/shop?type=courses",
+    eyebrow: "New course",
+    title: "Master AI & ML",
+    subtitle: "Expert-led courses in Python, ML and modern AI tools",
+  },
+  {
+    id: "fb-2",
+    image_url: promptLibrary,
+    alt_text: "1000+ AI Prompts",
+    link_url: "/prompts",
+    eyebrow: "Prompt library",
+    title: "1000+ AI Prompts",
+    subtitle: "Boost your productivity with our curated prompts",
+  },
+  {
+    id: "fb-3",
+    image_url: coursePython,
+    alt_text: "Skill-Up Friday — 50% off",
+    link_url: "/shop?filter=deals",
+    eyebrow: "Limited deal",
+    title: "Skill-Up Friday",
+    subtitle: "50% off on top-rated courses and books — this week only",
+  },
+];
 
 export function ImageHeroSlider() {
   const { data: banners, isLoading } = useHomeBanners("hero");
@@ -32,7 +65,15 @@ export function ImageHeroSlider() {
     );
   }
 
-  const items = banners ?? [];
+  const items = (banners && banners.length > 0 ? banners : FALLBACK_BANNERS) as Array<{
+    id: string;
+    image_url: string;
+    alt_text?: string | null;
+    link_url?: string | null;
+    eyebrow?: string;
+    title?: string;
+    subtitle?: string;
+  }>;
   if (items.length === 0) return null;
 
   return (
@@ -44,10 +85,30 @@ export function ImageHeroSlider() {
               <div className="relative w-full aspect-[21/10] rounded-3xl overflow-hidden shadow-xl shadow-primary/10 border border-border/40">
                 <img
                   src={b.image_url}
-                  alt={b.alt_text ?? "Promotional banner"}
+                  alt={b.alt_text ?? b.title ?? "Promotional banner"}
                   loading="lazy"
                   className="w-full h-full object-cover"
                 />
+                {(b.title || b.subtitle || b.eyebrow) && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/30 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-4">
+                      {b.eyebrow && (
+                        <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.14em] px-2 py-0.5 rounded-full bg-background/70 backdrop-blur border border-primary/25 text-foreground mb-1.5">
+                          {b.eyebrow}
+                        </span>
+                      )}
+                      {b.title && (
+                        <h2 className="font-display font-bold text-lg leading-tight text-foreground">
+                          <span className="text-gradient">{b.title}</span>
+                        </h2>
+                      )}
+                      {b.subtitle && (
+                        <p className="mt-1 text-xs text-foreground/80 line-clamp-2">{b.subtitle}</p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             );
             return (
