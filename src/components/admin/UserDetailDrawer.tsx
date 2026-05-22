@@ -36,8 +36,21 @@ import {
   Sparkles,
   Activity as ActivityIcon,
   ExternalLink,
+  Copy,
+  ArrowUp,
+  ArrowDown,
+  History,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuditLog, resolveActorNames } from "@/hooks/useAuditLog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 interface Props {
   userId: string | null;
@@ -49,7 +62,9 @@ const xpToLevel = (xp: number) => Math.floor((xp ?? 0) / 100) + 1;
 export function UserDetailDrawer({ userId, onClose }: Props) {
   const qc = useQueryClient();
   const { isSuperAdmin } = useIsAdmin();
+  const audit = useAuditLog();
   const open = !!userId;
+
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["admin-user-profile", userId],
@@ -90,6 +105,45 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     },
   });
 
+  const { data: userRoleList } = useQuery({
+    queryKey: ["admin-user-roles", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId!);
+      return (data ?? []).map((r: any) => r.role as string);
+    },
+  });
+
+  const { data: auditTrail } = useQuery({
+    queryKey: ["admin-user-audit", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("admin_audit_log")
+        .select("id, action, meta, created_at, actor_id")
+        .eq("target_type", "user")
+        .eq("target_id", userId!)
+        .order("created_at", { ascending: false })
+        .limit(30);
+      const rows = data ?? [];
+      const actorIds = Array.from(new Set(rows.map((r: any) => r.actor_id).filter(Boolean)));
+      const names = await resolveActorNames(actorIds as string[]);
+      return rows.map((r: any) => ({ ...r, actor_name: names[r.actor_id] ?? "system" }));
+    },
+  });
+
+  const roleHistory = useMemo(
+    () =>
+      (auditTrail ?? []).filter((e: any) =>
+        ["role.grant", "role.revoke", "user.ban", "user.unban"].includes(e.action),
+      ),
+    [auditTrail],
+  );
+
+
   // --- Edit state ---
   const [editing, setEditing] = useState<Record<string, any>>({});
   const value = (k: string) => editing[k] ?? (profile as any)?.[k] ?? "";
@@ -108,7 +162,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
       toast.success("Profile updated");
       setEditing({});
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -135,7 +189,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     onSuccess: () => {
       toast.success("Coins updated");
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -167,7 +221,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     onSuccess: (amount) => {
       toast.success(`+${amount} coins granted to @${(profile as any)?.username ?? "user"}`);
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -176,14 +230,21 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     mutationFn: async (banned: boolean) => {
       const { error } = await supabase.from("profiles").update({ is_banned: banned }).eq("id", userId!);
       if (error) throw error;
+      await audit({
+        action: banned ? "user.ban" : "user.unban",
+        target_type: "user",
+        target_id: userId!,
+      });
     },
     onSuccess: (_, banned) => {
       toast.success(banned ? "User banned" : "User unbanned");
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      qc.invalidateQueries({ queryKey: ["admin-user-audit", userId] });
     },
     onError: (e: any) => toast.error(e.message),
   });
+
 
   const resetCoins = useMutation({
     mutationFn: async () => {
@@ -215,11 +276,46 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     },
     onSuccess: () => {
       toast.success("User deleted (soft delete). This cannot be undone.");
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
       onClose();
     },
     onError: (e: any) => toast.error(e.message),
   });
+
+  const grantRole = useMutation({
+    mutationFn: async (role: "moderator" | "admin") => {
+      const { error } = await supabase.from("user_roles").insert({ user_id: userId!, role });
+      if (error && !/duplicate/i.test(error.message)) throw error;
+      await audit({ action: "role.grant", target_type: "user", target_id: userId!, meta: { role } });
+    },
+    onSuccess: (_, role) => {
+      toast.success(`Granted ${role}`);
+      qc.invalidateQueries({ queryKey: ["admin-user-roles", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-user-audit", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const revokeRole = useMutation({
+    mutationFn: async (role: string) => {
+      const { error } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId!)
+        .eq("role", role as any);
+      if (error) throw error;
+      await audit({ action: "role.revoke", target_type: "user", target_id: userId!, meta: { role } });
+    },
+    onSuccess: (_, role) => {
+      toast.success(`Removed ${role}`);
+      qc.invalidateQueries({ queryKey: ["admin-user-roles", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-user-audit", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
 
   // --- Orders, posts, activity for tabs ---
   const { data: userOrders } = useQuery({
@@ -310,9 +406,10 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
         </SheetHeader>
 
         <Tabs defaultValue="profile" className="px-5 py-4">
-          <TabsList className="grid grid-cols-5 mb-4 h-9">
+          <TabsList className="grid grid-cols-6 mb-4 h-9">
             <TabsTrigger value="profile" className="text-[11px]">Profile</TabsTrigger>
             <TabsTrigger value="game" className="text-[11px]">Game</TabsTrigger>
+            <TabsTrigger value="roles" className="text-[11px]">Roles</TabsTrigger>
             <TabsTrigger value="orders" className="text-[11px]">Orders</TabsTrigger>
             <TabsTrigger value="activity" className="text-[11px]">Activity</TabsTrigger>
             <TabsTrigger value="danger" className="text-[11px] text-destructive">Danger</TabsTrigger>
@@ -320,8 +417,44 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
 
           {/* TAB 1 — PROFILE */}
           <TabsContent value="profile" className="space-y-3 mt-0">
+            {/* Quick info header */}
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <Metric label="Level" value={xpToLevel(learner?.xp ?? 0)} />
+                <Metric label="Coins" value={(profile as any)?.coins ?? 0} />
+                <Metric label="Lessons" value={lessonCount ?? 0} />
+                <Metric label="Streak" value={`${learner?.streak_days ?? 0}d`} />
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                {(userRoleList ?? ["user"]).map((r) => (
+                  <Badge key={r} variant={r === "super_admin" ? "destructive" : r === "admin" ? "default" : "secondary"} className="text-[10px]">
+                    {r}
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex items-center justify-between gap-2 text-[10.5px] text-muted-foreground pt-1">
+                <span className="font-mono truncate">{userId}</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6"
+                  onClick={() => {
+                    navigator.clipboard.writeText(userId ?? "");
+                    toast.success("ID copied");
+                  }}
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+              </div>
+              <div className="flex items-center justify-between gap-2 text-[10.5px] text-muted-foreground">
+                <span>Joined {(profile as any)?.created_at ? new Date((profile as any).created_at).toLocaleDateString() : "—"}</span>
+                <span>Last seen {(profile as any)?.last_seen_at ? new Date((profile as any).last_seen_at).toLocaleString() : "—"}</span>
+              </div>
+            </div>
+
             <Field label="Full name">
               <Input
+
                 value={value("full_name") ?? ""}
                 onChange={(e) => setEditing({ ...editing, full_name: e.target.value })}
               />
@@ -441,7 +574,95 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
             </div>
           </TabsContent>
 
+          {/* TAB — ROLES */}
+          <TabsContent value="roles" className="space-y-3 mt-0">
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground">Current roles</h4>
+              <div className="flex flex-wrap gap-1.5">
+                {(userRoleList ?? []).length === 0 && (
+                  <span className="text-xs text-muted-foreground">No explicit roles</span>
+                )}
+                {(userRoleList ?? []).map((r) => {
+                  const isSuper = r === "super_admin";
+                  const canRevoke = !isSuper && (r === "moderator" || (r === "admin" && isSuperAdmin));
+                  return (
+                    <Badge
+                      key={r}
+                      variant={isSuper ? "destructive" : r === "admin" ? "default" : "secondary"}
+                      className="text-[10px] gap-1"
+                    >
+                      {r}
+                      {canRevoke && (
+                        <button
+                          onClick={() => revokeRole.mutate(r)}
+                          className="ml-1 hover:text-destructive-foreground"
+                          aria-label={`Revoke ${r}`}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground">Grant role</h4>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  disabled={(userRoleList ?? []).includes("moderator") || grantRole.isPending}
+                  onClick={() => grantRole.mutate("moderator")}
+                >
+                  <ArrowUp className="h-3.5 w-3.5 mr-1.5" />
+                  Moderator
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  disabled={!isSuperAdmin || (userRoleList ?? []).includes("admin") || grantRole.isPending}
+                  onClick={() => grantRole.mutate("admin")}
+                >
+                  <ArrowUp className="h-3.5 w-3.5 mr-1.5" />
+                  Admin
+                </Button>
+              </div>
+              {!isSuperAdmin && (
+                <p className="text-[10px] text-muted-foreground">Only super-admin can grant admin role.</p>
+              )}
+            </div>
+
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <History className="h-3 w-3" /> Role &amp; ban history
+              </h4>
+              {roleHistory.length === 0 ? (
+                <p className="text-xs text-muted-foreground py-1">No history yet.</p>
+              ) : (
+                <ul className="space-y-1">
+                  {roleHistory.map((e: any) => (
+                    <li key={e.id} className="flex items-start gap-2 text-[11px] border-l-2 border-border/60 pl-2 py-1">
+                      <span className="font-mono text-muted-foreground whitespace-nowrap">
+                        {new Date(e.created_at).toLocaleDateString()}
+                      </span>
+                      <span className="flex-1">
+                        <span className="font-semibold">{e.action}</span>
+                        {e.meta?.role && <span className="text-muted-foreground"> · {e.meta.role}</span>}
+                        <span className="text-muted-foreground"> by @{e.actor_name}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </TabsContent>
+
           {/* TAB 3 — ORDERS */}
+
           <TabsContent value="orders" className="space-y-2 mt-0">
             {(userOrders ?? []).length === 0 ? (
               <p className="text-center text-sm text-muted-foreground py-8">No orders.</p>
@@ -525,7 +746,36 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
                 </ul>
               )}
             </div>
+            <div>
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                <History className="h-3 w-3" /> Audit trail
+              </h4>
+              {(auditTrail ?? []).length === 0 ? (
+                <p className="text-xs text-muted-foreground py-2">No admin actions recorded.</p>
+              ) : (
+                <ul className="space-y-1">
+                  {auditTrail!.slice(0, 15).map((e: any) => (
+                    <li
+                      key={e.id}
+                      className="flex items-start gap-2 text-[11px] p-2 rounded-lg border border-border/40"
+                    >
+                      <Badge variant="outline" className="text-[10px] shrink-0">{e.action}</Badge>
+                      <span className="flex-1 truncate text-muted-foreground">
+                        by @{e.actor_name}
+                        {e.meta && Object.keys(e.meta).length > 0 && (
+                          <span> · {JSON.stringify(e.meta)}</span>
+                        )}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                        {new Date(e.created_at).toLocaleDateString()}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </TabsContent>
+
 
           {/* TAB 5 — DANGER ZONE */}
           <TabsContent value="danger" className="space-y-3 mt-0">
