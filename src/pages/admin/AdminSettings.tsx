@@ -1,16 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/lib/db";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { useAuth } from "@/hooks/useAuth";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/transitions/Reveal";
-import { ExternalLink, ShieldCheck } from "lucide-react";
+import { ExternalLink, ShieldCheck, ScrollText, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 
 interface Setting { key: string; value: any }
 
