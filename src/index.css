@@ -560,6 +560,12 @@
   }
 }
 
+.dark .nav-ai-active {
+  filter:
+    invert(38%) sepia(90%) saturate(600%)
+    hue-rotate(210deg) brightness(115%) contrast(100%);
+}
+
 @layer utilities {
   .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }

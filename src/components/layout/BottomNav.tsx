@@ -201,13 +201,39 @@ function NavItem({
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
       <span className="relative inline-flex z-10">
-        <Icon
-          aria-hidden
-          className={cn(
-            "pointer-events-none h-[24px] w-[24px]",
-            active ? "text-primary" : "text-muted-foreground"
-          )}
-        />
+        {item.iconFill === AsikonIcon ? (
+          <img
+            src={asikonMark}
+            alt=""
+            aria-hidden
+            className={cn(
+              "h-[22px] w-[22px]",
+              "transition-all duration-200",
+              active ? "opacity-100 nav-ai-active" : "opacity-40"
+            )}
+            style={
+              active
+                ? {
+                    filter:
+                      "invert(32%) sepia(98%) saturate(748%)" +
+                      " hue-rotate(215deg) brightness(105%)" +
+                      " contrast(101%)",
+                  }
+                : undefined
+            }
+          />
+        ) : (
+          <Icon
+            aria-hidden
+            className={cn(
+              "h-[24px] w-[24px]",
+              "transition-all duration-200",
+              active
+                ? "text-primary"
+                : "text-muted-foreground/60"
+            )}
+          />
+        )}
 
         {showBadge && (
           <span
