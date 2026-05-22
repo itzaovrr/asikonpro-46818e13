@@ -39,6 +39,19 @@ export default function AdminSettings() {
     },
   });
 
+  const { data: recentAudit } = useQuery({
+    queryKey: ["settings-recent-audit"],
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("admin_audit_log")
+        .select("id,action,target_type,created_at,actor_id")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   useEffect(() => {
     const cg = settings?.find((s) => s.key === "default_coin_grant");
     if (cg) setCoinGrant(String(cg.value));
@@ -138,6 +151,41 @@ export default function AdminSettings() {
           </div>
         </Reveal>
       )}
+
+      <Reveal>
+        <div className="glass rounded-2xl p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ScrollText className="h-4 w-4 text-primary" />
+              <h3 className="font-semibold">Recent admin activity</h3>
+            </div>
+            <Button asChild size="sm" variant="ghost" className="h-7">
+              <Link to="/asikonasik/audit-log">
+                View all <ArrowRight className="h-3 w-3 ml-1" />
+              </Link>
+            </Button>
+          </div>
+          {!recentAudit?.length ? (
+            <p className="text-xs text-muted-foreground py-2">No audit entries yet.</p>
+          ) : (
+            <ul className="divide-y divide-border/40 -mx-1">
+              {recentAudit.map((r: any) => (
+                <li key={r.id} className="px-1 py-2 flex items-center justify-between gap-2 text-sm">
+                  <span className="font-mono text-xs truncate">{r.action}</span>
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    {r.target_type && (
+                      <Badge variant="outline" className="text-[10px]">{r.target_type}</Badge>
+                    )}
+                    <span className="text-[11px] text-muted-foreground">
+                      {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </Reveal>
 
       <Reveal>
         <div className="glass rounded-2xl p-5 space-y-2">
