@@ -62,7 +62,9 @@ const xpToLevel = (xp: number) => Math.floor((xp ?? 0) / 100) + 1;
 export function UserDetailDrawer({ userId, onClose }: Props) {
   const qc = useQueryClient();
   const { isSuperAdmin } = useIsAdmin();
+  const audit = useAuditLog();
   const open = !!userId;
+
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["admin-user-profile", userId],
