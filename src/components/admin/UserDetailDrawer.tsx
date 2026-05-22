@@ -282,6 +282,41 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const grantRole = useMutation({
+    mutationFn: async (role: "moderator" | "admin") => {
+      const { error } = await supabase.from("user_roles").insert({ user_id: userId!, role });
+      if (error && !/duplicate/i.test(error.message)) throw error;
+      await audit({ action: "role.grant", target_type: "user", target_id: userId!, meta: { role } });
+    },
+    onSuccess: (_, role) => {
+      toast.success(`Granted ${role}`);
+      qc.invalidateQueries({ queryKey: ["admin-user-roles", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-user-audit", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const revokeRole = useMutation({
+    mutationFn: async (role: string) => {
+      const { error } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId!)
+        .eq("role", role as any);
+      if (error) throw error;
+      await audit({ action: "role.revoke", target_type: "user", target_id: userId!, meta: { role } });
+    },
+    onSuccess: (_, role) => {
+      toast.success(`Removed ${role}`);
+      qc.invalidateQueries({ queryKey: ["admin-user-roles", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-user-audit", userId] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+
   // --- Orders, posts, activity for tabs ---
   const { data: userOrders } = useQuery({
     queryKey: ["admin-user-orders", userId],
