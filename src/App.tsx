@@ -54,6 +54,7 @@ const AdminLessonsMod = () => import("./pages/admin/AdminLessons");
 const AdminAnalyticsMod = () => import("./pages/admin/AdminAnalytics");
 const AdminNotificationsMod = () => import("./pages/admin/AdminNotifications");
 const AdminRewardsMod = () => import("./pages/admin/AdminRewards");
+const AdminAuditLogMod = () => import("./pages/admin/AdminAuditLog");
 
 const TrackDetailMod = () => import("./pages/TrackDetail");
 const LessonDetailMod = () => import("./pages/LessonDetail");
@@ -94,6 +95,7 @@ const AdminLessons = lazy(AdminLessonsMod);
 const AdminAnalytics = lazy(AdminAnalyticsMod);
 const AdminNotifications = lazy(AdminNotificationsMod);
 const AdminRewards = lazy(AdminRewardsMod);
+const AdminAuditLog = lazy(AdminAuditLogMod);
 const TrackDetail = lazy(TrackDetailMod);
 const LessonDetail = lazy(LessonDetailMod);
 
@@ -191,6 +193,7 @@ function AnimatedRoutes() {
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="rewards" element={<AdminRewards />} />
+            <Route path="audit-log" element={<AdminAuditLog />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
