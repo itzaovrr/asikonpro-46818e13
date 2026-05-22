@@ -119,21 +119,39 @@ export default function AdminOrders() {
         subtitle={`Total revenue (paid): ৳${Math.round(revenue).toLocaleString()}`}
       />
 
-      <Reveal className="flex flex-wrap gap-1.5">
-        {STATUSES.map((s) => {
-          const count = s === "all" ? (orders ?? []).length : (orders ?? []).filter((o: any) => o.status === s).length;
-          return (
-            <Button
-              key={s}
-              size="sm"
-              variant={tab === s ? "default" : "outline"}
-              onClick={() => setTab(s)}
-              className="h-8"
-            >
-              {s} <span className="ml-1.5 text-[10px] opacity-70">{count}</span>
-            </Button>
-          );
-        })}
+      <Reveal className="flex flex-wrap items-center gap-2">
+        <div className="relative flex-1 min-w-[180px] sm:max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search order id, user, address…"
+            className="pl-9 bg-background/60 h-9"
+          />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {STATUSES.map((s) => {
+            const count =
+              s === "all"
+                ? (orders ?? []).length
+                : (orders ?? []).filter((o: any) => o.status === s).length;
+            return (
+              <Button
+                key={s}
+                size="sm"
+                variant={tab === s ? "default" : "outline"}
+                onClick={() => setTab(s)}
+                className="h-8 capitalize"
+              >
+                {s} <span className="ml-1.5 text-[10px] opacity-70">{count}</span>
+              </Button>
+            );
+          })}
+        </div>
+        <Button size="sm" variant="outline" onClick={exportCsv} className="h-8 ml-auto">
+          <Download className="h-3.5 w-3.5 mr-1.5" />
+          Export CSV
+        </Button>
       </Reveal>
 
       {/* Mobile: cards */}
