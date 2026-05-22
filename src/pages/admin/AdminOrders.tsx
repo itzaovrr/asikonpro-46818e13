@@ -1,12 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import { toast } from "sonner";
-import { Truck, Eye } from "lucide-react";
+import { Truck, Eye, Search, Download } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/transitions/Reveal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import {
   Sheet,
   SheetContent,
@@ -19,7 +21,10 @@ type Status = (typeof STATUSES)[number];
 
 export default function AdminOrders() {
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const [tab, setTab] = useState<Status>("all");
+  const [q, setQ] = useState("");
+  const dq = useDeferredValue(q);
   const [openOrder, setOpenOrder] = useState<any | null>(null);
 
   const { data: orders } = useQuery({
@@ -51,6 +56,11 @@ export default function AdminOrders() {
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase.from("orders").update({ status }).eq("id", id);
       if (error) throw error;
+      void audit({
+        action: status === "cancelled" ? "order.cancel" : `order.${status}`,
+        target_type: "order",
+        target_id: id,
+      });
     },
     onSuccess: () => {
       toast.success("Order updated");
@@ -60,9 +70,41 @@ export default function AdminOrders() {
   });
 
   const filtered = useMemo(() => {
-    const list = orders ?? [];
-    return tab === "all" ? list : list.filter((o: any) => o.status === tab);
-  }, [orders, tab]);
+    let list = orders ?? [];
+    if (tab !== "all") list = list.filter((o: any) => o.status === tab);
+    if (dq.trim()) {
+      const n = dq.toLowerCase();
+      list = list.filter((o: any) => {
+        const addr = o.shipping_address ? JSON.stringify(o.shipping_address).toLowerCase() : "";
+        return (
+          o.id.toLowerCase().includes(n) ||
+          o.user_id.toLowerCase().includes(n) ||
+          addr.includes(n)
+        );
+      });
+    }
+    return list;
+  }, [orders, tab, dq]);
+
+  const exportCsv = () => {
+    const rows = filtered;
+    if (!rows.length) {
+      toast.error("Nothing to export");
+      return;
+    }
+    const headers = ["id", "total", "status", "payment_method", "payment_status", "user_id", "created_at"];
+    const body = rows.map((o: any) =>
+      headers.map((h) => JSON.stringify(o[h] ?? "")).join(","),
+    );
+    const csv = [headers.join(","), ...body].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const revenue = useMemo(
     () => (orders ?? []).filter((o: any) => o.payment_status === "paid").reduce((s: number, o: any) => s + Number(o.total || 0), 0),
