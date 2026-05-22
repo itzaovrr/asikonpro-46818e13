@@ -11,6 +11,7 @@ import { Trash2, Plus, Pencil, Star, Search, ImagePlus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/transitions/Reveal";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
@@ -40,6 +41,7 @@ const empty: ProductForm = {
 
 export default function AdminProducts() {
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const [editing, setEditing] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<ProductForm>(empty);
@@ -142,6 +144,7 @@ export default function AdminProducts() {
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("products").delete().eq("id", id);
       if (error) throw error;
+      void audit({ action: "product.delete", target_type: "product", target_id: id });
     },
     onSuccess: () => {
       toast.success("Deleted");

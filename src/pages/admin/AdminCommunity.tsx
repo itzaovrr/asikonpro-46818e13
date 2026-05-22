@@ -1,13 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Trash2, Pin, PinOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trash2, Pin, PinOff, Search } from "lucide-react";
 import { toast } from "sonner";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/transitions/Reveal";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -15,7 +17,10 @@ import {
 
 export default function AdminCommunity() {
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const [confirmDel, setConfirmDel] = useState<any | null>(null);
+  const [q, setQ] = useState("");
+  const dq = useDeferredValue(q);
 
   const { data: posts } = useQuery({
     queryKey: ["admin-posts"],
@@ -47,6 +52,7 @@ export default function AdminCommunity() {
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("posts").delete().eq("id", id);
       if (error) throw error;
+      void audit({ action: "post.delete", target_type: "post", target_id: id });
     },
     onSuccess: () => {
       toast.success("Post removed");
@@ -59,6 +65,7 @@ export default function AdminCommunity() {
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("post_comments").delete().eq("id", id);
       if (error) throw error;
+      void audit({ action: "comment.delete", target_type: "comment", target_id: id });
     },
     onSuccess: () => {
       toast.success("Comment removed");
@@ -71,10 +78,38 @@ export default function AdminCommunity() {
     mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
       const { error } = await supabase.from("posts").update({ is_pinned: value }).eq("id", id);
       if (error) throw error;
+      void audit({
+        action: value ? "post.pin" : "post.unpin",
+        target_type: "post",
+        target_id: id,
+      });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-posts"] }),
     onError: (e: any) => toast.error(e.message),
   });
+
+  const filteredPosts = useMemo(() => {
+    const list = posts ?? [];
+    if (!dq.trim()) return list;
+    const n = dq.toLowerCase();
+    return list.filter(
+      (p: any) =>
+        (p.content ?? "").toLowerCase().includes(n) ||
+        (p.profiles?.username ?? "").toLowerCase().includes(n) ||
+        (p.type ?? "").toLowerCase().includes(n),
+    );
+  }, [posts, dq]);
+
+  const filteredComments = useMemo(() => {
+    const list = comments ?? [];
+    if (!dq.trim()) return list;
+    const n = dq.toLowerCase();
+    return list.filter(
+      (c: any) =>
+        (c.content ?? "").toLowerCase().includes(n) ||
+        (c.profiles?.username ?? "").toLowerCase().includes(n),
+    );
+  }, [comments, dq]);
 
   return (
     <div className="space-y-5">
@@ -83,6 +118,16 @@ export default function AdminCommunity() {
         title="Community"
         subtitle="Pin highlights or remove content that violates guidelines."
       />
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search posts, comments, users…"
+          className="pl-9 bg-background/60"
+        />
+      </div>
 
       <Tabs defaultValue="posts">
         <TabsList>
@@ -93,8 +138,8 @@ export default function AdminCommunity() {
         <TabsContent value="posts" className="mt-4">
           <Reveal>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {(posts ?? []).length === 0 && <p className="text-sm text-muted-foreground col-span-full">No community posts yet.</p>}
-              {(posts ?? []).map((p: any) => (
+              {filteredPosts.length === 0 && <p className="text-sm text-muted-foreground col-span-full">No community posts match.</p>}
+              {filteredPosts.map((p: any) => (
                 <div key={p.id} className="glass rounded-2xl p-3 space-y-2 hover-lift">
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-xs text-muted-foreground truncate">@{p.profiles?.username ?? "unknown"} · {p.type}</div>
@@ -130,8 +175,8 @@ export default function AdminCommunity() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(comments ?? []).length === 0 && <tr><td colSpan={4} className="text-center py-6 text-muted-foreground">No comments.</td></tr>}
-                  {(comments ?? []).map((c: any) => (
+                  {filteredComments.length === 0 && <tr><td colSpan={4} className="text-center py-6 text-muted-foreground">No comments match.</td></tr>}
+                  {filteredComments.map((c: any) => (
                     <tr key={c.id} className="border-t border-border/40 hover:bg-muted/40">
                       <td className="px-4 py-2.5 text-xs">@{c.profiles?.username ?? "—"}</td>
                       <td className="px-4 py-2.5 line-clamp-2 max-w-md">{c.content}</td>

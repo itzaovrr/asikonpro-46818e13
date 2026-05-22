@@ -14,6 +14,7 @@ import {
   LayoutGrid,
   Settings as SettingsIcon,
   Image as ImageIcon,
+  ScrollText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -52,6 +53,7 @@ export const adminNavItems: AdminNavItem[] = [
   { title: "Notifications", url: "/asikonasik/notifications", icon: Bell, section: "Admin", badgeKey: "notifications" },
   { title: "Home Sections", url: "/asikonasik/home-sections", icon: LayoutGrid, section: "Admin" },
   { title: "Banners", url: "/asikonasik/banners", icon: ImageIcon, section: "Admin" },
+  { title: "Audit Log", url: "/asikonasik/audit-log", icon: ScrollText, section: "Admin" },
   { title: "Settings", url: "/asikonasik/settings", icon: SettingsIcon, section: "Admin" },
 ];
 
