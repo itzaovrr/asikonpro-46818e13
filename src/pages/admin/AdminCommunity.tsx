@@ -119,6 +119,16 @@ export default function AdminCommunity() {
         subtitle="Pin highlights or remove content that violates guidelines."
       />
 
+      <div className="relative max-w-md">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search posts, comments, users…"
+          className="pl-9 bg-background/60"
+        />
+      </div>
+
       <Tabs defaultValue="posts">
         <TabsList>
           <TabsTrigger value="posts">Posts</TabsTrigger>
@@ -128,8 +138,8 @@ export default function AdminCommunity() {
         <TabsContent value="posts" className="mt-4">
           <Reveal>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {(posts ?? []).length === 0 && <p className="text-sm text-muted-foreground col-span-full">No community posts yet.</p>}
-              {(posts ?? []).map((p: any) => (
+              {filteredPosts.length === 0 && <p className="text-sm text-muted-foreground col-span-full">No community posts match.</p>}
+              {filteredPosts.map((p: any) => (
                 <div key={p.id} className="glass rounded-2xl p-3 space-y-2 hover-lift">
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-xs text-muted-foreground truncate">@{p.profiles?.username ?? "unknown"} · {p.type}</div>
@@ -165,8 +175,8 @@ export default function AdminCommunity() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(comments ?? []).length === 0 && <tr><td colSpan={4} className="text-center py-6 text-muted-foreground">No comments.</td></tr>}
-                  {(comments ?? []).map((c: any) => (
+                  {filteredComments.length === 0 && <tr><td colSpan={4} className="text-center py-6 text-muted-foreground">No comments match.</td></tr>}
+                  {filteredComments.map((c: any) => (
                     <tr key={c.id} className="border-t border-border/40 hover:bg-muted/40">
                       <td className="px-4 py-2.5 text-xs">@{c.profiles?.username ?? "—"}</td>
                       <td className="px-4 py-2.5 line-clamp-2 max-w-md">{c.content}</td>
