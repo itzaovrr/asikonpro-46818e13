@@ -574,7 +574,95 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
             </div>
           </TabsContent>
 
+          {/* TAB — ROLES */}
+          <TabsContent value="roles" className="space-y-3 mt-0">
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground">Current roles</h4>
+              <div className="flex flex-wrap gap-1.5">
+                {(userRoleList ?? []).length === 0 && (
+                  <span className="text-xs text-muted-foreground">No explicit roles</span>
+                )}
+                {(userRoleList ?? []).map((r) => {
+                  const isSuper = r === "super_admin";
+                  const canRevoke = !isSuper && (r === "moderator" || (r === "admin" && isSuperAdmin));
+                  return (
+                    <Badge
+                      key={r}
+                      variant={isSuper ? "destructive" : r === "admin" ? "default" : "secondary"}
+                      className="text-[10px] gap-1"
+                    >
+                      {r}
+                      {canRevoke && (
+                        <button
+                          onClick={() => revokeRole.mutate(r)}
+                          className="ml-1 hover:text-destructive-foreground"
+                          aria-label={`Revoke ${r}`}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground">Grant role</h4>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  disabled={(userRoleList ?? []).includes("moderator") || grantRole.isPending}
+                  onClick={() => grantRole.mutate("moderator")}
+                >
+                  <ArrowUp className="h-3.5 w-3.5 mr-1.5" />
+                  Moderator
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  disabled={!isSuperAdmin || (userRoleList ?? []).includes("admin") || grantRole.isPending}
+                  onClick={() => grantRole.mutate("admin")}
+                >
+                  <ArrowUp className="h-3.5 w-3.5 mr-1.5" />
+                  Admin
+                </Button>
+              </div>
+              {!isSuperAdmin && (
+                <p className="text-[10px] text-muted-foreground">Only super-admin can grant admin role.</p>
+              )}
+            </div>
+
+            <div className="glass rounded-2xl p-3 space-y-2">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <History className="h-3 w-3" /> Role &amp; ban history
+              </h4>
+              {roleHistory.length === 0 ? (
+                <p className="text-xs text-muted-foreground py-1">No history yet.</p>
+              ) : (
+                <ul className="space-y-1">
+                  {roleHistory.map((e: any) => (
+                    <li key={e.id} className="flex items-start gap-2 text-[11px] border-l-2 border-border/60 pl-2 py-1">
+                      <span className="font-mono text-muted-foreground whitespace-nowrap">
+                        {new Date(e.created_at).toLocaleDateString()}
+                      </span>
+                      <span className="flex-1">
+                        <span className="font-semibold">{e.action}</span>
+                        {e.meta?.role && <span className="text-muted-foreground"> · {e.meta.role}</span>}
+                        <span className="text-muted-foreground"> by @{e.actor_name}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </TabsContent>
+
           {/* TAB 3 — ORDERS */}
+
           <TabsContent value="orders" className="space-y-2 mt-0">
             {(userOrders ?? []).length === 0 ? (
               <p className="text-center text-sm text-muted-foreground py-8">No orders.</p>
