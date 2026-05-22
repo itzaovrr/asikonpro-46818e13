@@ -162,7 +162,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
       toast.success("Profile updated");
       setEditing({});
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -189,7 +189,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     onSuccess: () => {
       toast.success("Coins updated");
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -221,7 +221,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     onSuccess: (amount) => {
       toast.success(`+${amount} coins granted to @${(profile as any)?.username ?? "user"}`);
       qc.invalidateQueries({ queryKey: ["admin-user-profile", userId] });
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -276,7 +276,7 @@ export function UserDetailDrawer({ userId, onClose }: Props) {
     },
     onSuccess: () => {
       toast.success("User deleted (soft delete). This cannot be undone.");
-      qc.invalidateQueries({ queryKey: ["admin-users-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
       onClose();
     },
     onError: (e: any) => toast.error(e.message),
