@@ -1,291 +1,259 @@
 import { Helmet } from "react-helmet-async";
-import { Gift, Flame, Sparkles, GraduationCap, BookOpen, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useMemo, useEffect, useState } from "react";
+import { ArrowRight, ChevronRight, Sparkles, BookOpen, Users, ShoppingBag } from "lucide-react";
+
+import {
+  AppleHeroSection,
+  AppleProductCard,
+  AppleFeatureCard,
+  AppleTextShowcase,
+  AppleSectionDivider,
+} from "@/components/home/AppleHeroSection";
+import { AppleHeader } from "@/components/layout/AppleHeader";
+import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/hooks/useCart";
+import { Reveal } from "@/components/transitions/Reveal";
 import { HowItWorks } from "@/components/home/sections/HowItWorks";
 import { WhyTrust } from "@/components/home/sections/WhyTrust";
-import { Link, Navigate } from "react-router-dom";
-import { useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { MobilePage } from "@/components/layout/MobilePage";
+import { Testimonials } from "@/components/home/sections/Testimonials";
+import { FinalCta } from "@/components/home/sections/FinalCta";
 
-import { PostCard } from "@/components/community/PostCard";
-import { HeroCarousel, ProductCarousel } from "@/components/carousels";
-import { mockPosts } from "@/lib/mock-data";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SectionHeader } from "@/components/ui/section-header";
-import { Reveal } from "@/components/transitions/Reveal";
-import { ProductCard } from "@/components/shop/ProductCard";
-import { MobileScroller } from "@/components/ui/mobile-scroller";
-import { MentorshipHomeSection } from "@/components/mentorship/MentorshipHomeSection";
-import { GreetingStrip } from "@/components/home/workspace/GreetingStrip";
-import { QuickAccessGrid } from "@/components/home/workspace/QuickAccessGrid";
-import { ProgressSnapshot } from "@/components/home/workspace/ProgressSnapshot";
-import { ContinueLearningRow } from "@/components/home/workspace/ContinueLearningRow";
-import { AiAssistantBox } from "@/components/home/workspace/AiAssistantBox";
-import { ActivityFeed } from "@/components/home/workspace/ActivityFeed";
-import { MobileCoursesTop } from "@/components/home/mobile/MobileCoursesTop";
-import { CategoriesScroll } from "@/components/home/mobile/CategoriesScroll";
-import { ImageHeroSlider } from "@/components/home/mobile/ImageHeroSlider";
-import { ImageOfferGrid } from "@/components/home/mobile/ImageOfferGrid";
-import { useProducts, useFeaturedProducts } from "@/hooks/useProducts";
-import { useHomeSections, HomeSection } from "@/hooks/useHomeSections";
-import { useAuth } from "@/hooks/useAuth";
-import { useLearnerProfile } from "@/hooks/useLearnerProfile";
-import { TodayMissionCard } from "@/features/mission/TodayMissionCard";
-import { TrackProgress } from "@/features/tracks/TrackProgress";
-import { StreakBadge } from "@/features/progress/StreakBadge";
-import { XPBar } from "@/features/progress/XPBar";
+// Hero images
 import courseAiMl from "@/assets/course-ai-ml.jpg";
 import coursePython from "@/assets/course-python.jpg";
 import promptLibrary from "@/assets/prompt-library.jpg";
-
-const heroSlides = [
-  { id: "1", image: courseAiMl, eyebrow: "New course", title: "Learn AI with Asikon", subtitle: "Master ML, Python, and modern AI tools — taught by experts", cta: { label: "Browse Courses", href: "/shop?type=courses" }, secondaryCta: { label: "See syllabus", href: "/shop?type=courses" } },
-  { id: "2", image: promptLibrary, eyebrow: "Prompt library", title: "1000+ AI Prompts", subtitle: "Boost your productivity with our curated prompt library", cta: { label: "Get the Library", href: "/prompts" } },
-  { id: "3", image: coursePython, eyebrow: "Limited deal", title: "Skill-Up Friday — 50% Off", subtitle: "Limited time deals on top-rated courses and books", cta: { label: "View Deals", href: "/shop?filter=deals" } },
-];
+import aiTutorImg from "@/assets/ai-tutor.jpg";
 
 const transformProduct = (p: any) => ({
   id: p.id,
   name: p.name,
-  brand: "Asikon Academy",
+  description: p.description,
   price: p.price,
-  originalPrice: p.original_price || undefined,
+  originalPrice: p.original_price,
   image: p.image_url || "/placeholder.svg",
-  rating: p.rating || 0,
-  reviews: p.review_count || 0,
-  isNew: false,
-  isTrending: p.is_featured || false,
   slug: p.slug,
 });
 
-const quickCategories = [
-  { icon: GraduationCap, label: "Courses", href: "/shop?type=courses" },
-  { icon: BookOpen, label: "Books", href: "/shop?type=books" },
-  { icon: Sparkles, label: "Prompts", href: "/prompts" },
-  { icon: Flame, label: "Trending", href: "/shop?filter=trending" },
-];
-
-const ProductCardSkeleton = () => (
-  <div className="bg-card rounded-xl overflow-hidden border border-border/50 flex flex-col h-full">
-    <Skeleton className="aspect-square w-full rounded-none" />
-    <div className="p-3 flex flex-col flex-1 gap-2">
-      <Skeleton className="h-3 w-1/3" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-2/3 mb-2" />
-      <div className="flex items-center justify-between mt-auto">
-        <Skeleton className="h-4 w-12" />
-        <Skeleton className="h-3 w-8" />
-      </div>
-    </div>
-  </div>
-);
-
-const CarouselSkeleton = ({ title }: { title: string }) => (
-  <div>
-    <div className="flex items-center justify-between mb-3 section-x">
-      <h2 className="font-semibold text-lg">{title}</h2>
-    </div>
-    <div className="flex gap-3 overflow-hidden pl-4 lg:pl-0">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex-[0_0_45%] sm:flex-[0_0_35%] md:flex-[0_0_28%] lg:flex-[0_0_22%] xl:flex-[0_0_18%]">
-          <ProductCardSkeleton />
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-type RenderCtx = {
-  sec: HomeSection;
-  products: any[] | undefined;
-  featuredProducts: any[] | undefined;
-  productsLoading: boolean;
-  featuredLoading: boolean;
-  trendingItems: any[];
-  newArrivalItems: any[];
-  curated: any[];
-};
-
-const SECTION_RENDERERS: Record<string, (ctx: RenderCtx) => JSX.Element | null> = {
-  hero: () => <ImageHeroSlider />,
-  mentorship: () => <MentorshipHomeSection />,
-  quick_actions: () => (
-    <Reveal as="section" className="section-x">
-      {/* Mobile: 2 compact tiles. Desktop: 2 wide cards. */}
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-        <Link
-          to="/learn"
-          className="group relative overflow-hidden rounded-2xl border border-primary/20 p-3 sm:p-4 pressable focus-ring"
-          style={{ background: "var(--gradient-primary-soft)" }}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl gradient-primary flex items-center justify-center shadow-[var(--shadow-glow)] shrink-0">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-semibold text-[13px] sm:text-sm flex items-center gap-1 truncate">
-                AI Tutor
-                <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
-              </p>
-              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">24/7 · Bangla & English</p>
-            </div>
-          </div>
-        </Link>
-        <div className="flex items-center justify-between p-3 sm:p-4 rounded-2xl glass">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-              <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-            </div>
-            <div className="min-w-0">
-              <p className="font-semibold text-[13px] sm:text-sm truncate">Daily streak</p>
-              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">+30 XP today</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Reveal>
-  ),
-  quick_categories: () => (
-    <section className="section-x">
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
-        {quickCategories.map((cat, i) => {
-          const Icon = cat.icon;
-          return (
-            <Reveal key={cat.label} delay={i * 60} variant="scale">
-              <Link
-                to={cat.href}
-                className="pressable focus-ring flex flex-col items-center justify-center gap-1.5 aspect-[1.1] rounded-2xl glass border border-border/50 hover:border-primary/30 transition-colors"
-              >
-                <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <Icon className="h-[16px] w-[16px] text-primary" />
-                </div>
-                <span className="text-[11px] font-medium">{cat.label}</span>
-              </Link>
-            </Reveal>
-          );
-        })}
-      </div>
-    </section>
-  ),
-  trending: ({ sec, featuredLoading, trendingItems }) => (
-    <Reveal as="section">
-      {featuredLoading ? (
-        <CarouselSkeleton title={sec.title_override ?? "Trending now"} />
-      ) : (
-        <ProductCarousel products={trendingItems} title={sec.title_override ?? "Trending now"} viewAllHref="/shop?filter=trending" />
-      )}
-    </Reveal>
-  ),
-  community: ({ sec }) => (
-    <Reveal as="section" className="section-x">
-      <SectionHeader
-        title={sec.title_override ?? "From the community"}
-        viewAllHref="/community"
-        viewAllLabel="View all"
-      />
-      <PostCard post={mockPosts[0]} />
-    </Reveal>
-  ),
-  how_it_works: ({ sec }) => <HowItWorks title={sec.title_override ?? undefined} />,
-  why_trust: ({ sec }) => <WhyTrust title={sec.title_override ?? undefined} />,
-  curated: ({ sec, productsLoading, curated }) => (
-    <section className="section-x">
-      <SectionHeader title={sec.title_override ?? "Curated for you"} viewAllHref="/shop" />
-      {productsLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (<ProductCardSkeleton key={i} />))}
-        </div>
-      ) : (
-        <MobileScroller itemWidthMobile="46%" gridCols="md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" gap="gap-3 lg:gap-4">
-          {curated.map((p: any) => (
-            <Link key={p.id} to={`/product/${p.slug}`} className="h-full block focus-ring rounded-2xl">
-              <ProductCard product={transformProduct(p)} variant="compact" />
-            </Link>
-          ))}
-        </MobileScroller>
-      )}
-    </section>
-  ),
-  new_arrivals: ({ sec, productsLoading, newArrivalItems }) => (
-    <Reveal as="section">
-      {productsLoading ? (
-        <CarouselSkeleton title={sec.title_override ?? "New arrivals"} />
-      ) : (
-        <ProductCarousel products={newArrivalItems} title={sec.title_override ?? "New arrivals"} viewAllHref="/shop?filter=new" />
-      )}
-    </Reveal>
-  ),
-};
-
 const Index = () => {
   const { user } = useAuth();
-  const { data: profile, isLoading: profileLoading } = useLearnerProfile();
-  const { data: products, isLoading: productsLoading } = useProducts({ limit: 20 });
-  const { data: featuredProducts, isLoading: featuredLoading } = useFeaturedProducts(10);
-  const { data: sections } = useHomeSections();
+  const { data: products } = useProducts({ limit: 12 });
+  const { data: featuredProducts } = useFeaturedProducts(6);
+  const { cartCount } = useCart();
+  const [mounted, setMounted] = useState(false);
 
-  const trendingItems = useMemo(() => featuredProducts?.map(transformProduct) || [], [featuredProducts]);
-  const newArrivalItems = useMemo(() => products?.slice().reverse().map(transformProduct) || [], [products]);
-  const curated = useMemo(() => products?.slice(0, 10) || [], [products]);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const enabledSections = useMemo(() => (sections ?? []).filter((s) => s.enabled), [sections]);
+  const featuredItems = useMemo(() => featuredProducts?.map(transformProduct) || [], [featuredProducts]);
+  const newArrivals = useMemo(() => products?.slice(0, 6).map(transformProduct) || [], [products]);
 
-  const heroSection = enabledSections.find((s) => s.key === "hero");
-  const restSections = enabledSections.filter((s) => s.key !== "hero");
-
-  const renderSection = (sec: HomeSection) => {
-    const render = SECTION_RENDERERS[sec.key];
-    if (!render) return null;
-    return (
-      <div key={sec.id}>
-        {render({ sec, products, featuredProducts, productsLoading, featuredLoading, trendingItems, newArrivalItems, curated })}
-      </div>
-    );
-  };
+  if (!mounted) return null;
 
   return (
-    <AppLayout>
+    <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Asikon — AI-Powered Learning Platform</title>
-        <meta name="description" content="Master AI, Python, and modern skills with expert-led courses, a 24/7 AI tutor, and a community of learners." />
+        <title>Asikon - AI-Powered Learning Platform</title>
+        <meta
+          name="description"
+          content="Master AI, Python, and modern skills with expert-led courses and a 24/7 AI tutor."
+        />
       </Helmet>
-      <MobilePage spacing="space-y-3 lg:space-y-14">
-        {user ? (
-          <>
-            {/* Header greeting */}
-            <GreetingStrip />
-            {/* Hero slider (admin-uploaded image banners) */}
-            {heroSection && <ImageHeroSlider />}
-            {/* Quick actions (category-style chips) */}
-            <QuickAccessGrid />
-            {/* Popular Courses (mobile) */}
-            <MobileCoursesTop />
-            {/* Categories (Asikon, scrollable like quick access) */}
-            <CategoriesScroll />
-            {/* Offers (admin-uploaded image cards) */}
-            <ImageOfferGrid />
 
-            <section className="section-x">
-              <TodayMissionCard />
-            </section>
-            <ContinueLearningRow />
-            <ProgressSnapshot />
-            <AiAssistantBox />
-            {/* Commerce + discovery */}
-            {restSections.map(renderSection)}
-            {/* Lower-priority personal */}
-            <ActivityFeed />
-          </>
-        ) : (
-          <>
-            {heroSection && renderSection(heroSection)}
-            <QuickAccessGrid />
-            {restSections.map(renderSection)}
-          </>
-        )}
-      </MobilePage>
-    </AppLayout>
+      {/* Apple-style Header */}
+      <AppleHeader cartCount={cartCount} />
+
+      {/* Hero Section */}
+      <AppleHeroSection
+        eyebrow="AI-Powered Learning"
+        title="Learn smarter. Build faster."
+        subtitle="Expert-led courses, a 24/7 AI tutor, and a community of learners. All in one platform."
+        primaryCta={{ label: "Start Learning", href: "/learn" }}
+        secondaryCta={{ label: "Browse Catalog", href: "/shop" }}
+        size="large"
+        gradient="bg-gradient-to-br from-background via-background to-primary/5"
+      />
+
+      {/* Quick Access */}
+      <section className="py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { icon: Sparkles, label: "AI Tutor", desc: "24/7 assistance", href: "/learn" },
+              { icon: BookOpen, label: "Courses", desc: "50+ programs", href: "/shop?type=courses" },
+              { icon: ShoppingBag, label: "Shop", desc: "Books & tools", href: "/shop" },
+              { icon: Users, label: "Community", desc: "Learn together", href: "/community" },
+            ].map((item, i) => (
+              <Reveal key={item.label} delay={i * 100}>
+                <Link
+                  to={item.href}
+                  className="group block p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
+                >
+                  <item.icon className="w-6 h-6 text-primary mb-3" />
+                  <h3 className="font-semibold text-base">{item.label}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{item.desc}</p>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <AppleSectionDivider />
+
+      {/* Featured Products */}
+      {featuredItems.length > 0 && (
+        <section className="section-padding">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <Reveal>
+              <div className="flex items-center justify-between mb-8 md:mb-12">
+                <div>
+                  <p className="eyebrow mb-2">Featured</p>
+                  <h2 className="display-2">Top picks for you</h2>
+                </div>
+                <Link to="/shop" className="link-chevron text-sm font-medium hidden sm:flex">
+                  See all
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </Reveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {featuredItems.slice(0, 6).map((product: any, i) => (
+                <Reveal key={product.id} delay={i * 100 + 200}>
+                  <AppleProductCard
+                    title={product.name}
+                    subtitle={product.description}
+                    price={`${product.price}`}
+                    image={product.image}
+                    href={`/product/${product.slug}`}
+                  />
+                </Reveal>
+              ))}
+            </div>
+
+            <div className="mt-8 text-center sm:hidden">
+              <Link to="/shop" className="link-chevron text-sm font-medium">
+                See all products
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Feature Showcase - AI Tutor */}
+      <AppleTextShowcase
+        eyebrow="AI Tutor"
+        title="Your personal learning assistant"
+        description="Get instant answers, personalized explanations, and guidance 24/7. Our AI tutor adapts to your learning style and pace."
+        image={aiTutorImg}
+        imagePosition="right"
+        features={[
+          { title: "Multilingual Support", description: "Learn in English or Bangla with seamless language switching." },
+          { title: "Context-Aware", description: "The AI understands your progress and tailors explanations to your level." },
+          { title: "Instant Feedback", description: "Get real-time help with exercises and projects." },
+        ]}
+      />
+
+      {/* Full-width Feature Cards */}
+      <section className="section-padding">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <Reveal>
+              <AppleFeatureCard
+                title="Master AI & Machine Learning"
+                description="From fundamentals to advanced neural networks. Learn at your own pace."
+                image={courseAiMl}
+                href="/shop?type=courses"
+              />
+            </Reveal>
+            <Reveal delay={150}>
+              <AppleFeatureCard
+                title="Python for Everyone"
+                description="Start from zero or level up your skills with project-based learning."
+                image={coursePython}
+                href="/shop?type=courses"
+                layout="wide"
+              />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <AppleSectionDivider />
+
+      {/* How It Works */}
+      <HowItWorks />
+
+      {/* Testimonials */}
+      <Testimonials />
+
+      {/* Why Trust Us */}
+      <WhyTrust />
+
+      {/* Final CTA */}
+      <FinalCta />
+
+      {/* Footer */}
+      <footer className="border-t border-border/40 bg-muted/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 md:py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            {/* Brand */}
+            <div className="col-span-2 md:col-span-1">
+              <Link to="/" className="inline-flex items-center gap-2 mb-4">
+                <img src="/favicon.ico" alt="Asikon" className="w-8 h-8 rounded-lg" />
+                <span className="font-display font-semibold text-lg">Asikon</span>
+              </Link>
+              <p className="text-sm text-muted-foreground max-w-xs">
+                AI-powered learning platform. Master new skills with expert guidance.
+              </p>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4">Learn</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/learn" className="hover:text-foreground transition-colors">AI Tutor</Link></li>
+                <li><Link to="/shop?type=courses" className="hover:text-foreground transition-colors">Courses</Link></li>
+                <li><Link to="/prompts" className="hover:text-foreground transition-colors">Prompt Library</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-sm mb-4">Shop</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/shop" className="hover:text-foreground transition-colors">All Products</Link></li>
+                <li><Link to="/shop?type=courses" className="hover:text-foreground transition-colors">Courses</Link></li>
+                <li><Link to="/shop?type=books" className="hover:text-foreground transition-colors">Books</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-sm mb-4">Company</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/about" className="hover:text-foreground transition-colors">About Us</Link></li>
+                <li><Link to="/community" className="hover:text-foreground transition-colors">Community</Link></li>
+                <li><Link to="/mentors" className="hover:text-foreground transition-colors">Mentors</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom */}
+          <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-muted-foreground">
+              &copy; {new Date().getFullYear()} Asikon. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6 text-xs text-muted-foreground">
+              <Link to="/settings" className="hover:text-foreground transition-colors">Privacy</Link>
+              <Link to="/settings" className="hover:text-foreground transition-colors">Terms</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 
